@@ -1,0 +1,266 @@
+/* ========== GLOBAL RESET ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  color: #2c3e50;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ========== HEADER ========== */
+header {
+  background-color: #343a40;
+  color: #fff;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+header div {
+  margin-top: 5px;
+  font-size: 1rem;
+}
+
+/* ========== NAVIGATION ========== */
+nav {
+  background-color: #495057;
+  padding: 0.5rem 1rem;
+  text-align: center;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 1rem;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* ========== CONTAINER ========== */
+#container,
+.container,
+#message-container {
+  background-color: #fff;
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  max-width: 900px;
+  width: 100%;
+  margin: 2rem auto;
+}
+
+/* ========== HEADINGS ========== */
+h1 {
+  color: #34495e;
+}
+
+h2 {
+  color: #34495e;
+  margin-bottom: 1rem;
+}
+
+h3, h4 {
+  margin-top: 0;
+  color: #495057;
+}
+
+/* ========== HOME PAGE ELEMENTS ========== */
+.main-heading {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 25px;
+}
+
+.greeting {
+  font-size: 18px;
+  color: #27ae60;
+  margin-bottom: 20px;
+}
+
+.login-prompt {
+  font-size: 18px;
+  color: #c0392b;
+  margin-bottom: 20px;
+}
+
+#username {
+  font-weight: bold;
+}
+
+#login-link {
+  color: #2980b9;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+#login-link:hover {
+  text-decoration: underline;
+}
+
+#demo-btn {
+  padding: 12px 25px;
+  background-color: #2980b9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+#demo-btn:hover {
+  background-color: #3498db;
+}
+
+/* ========== DASHBOARD ELEMENTS ========== */
+.dashboard-welcome {
+  background-color: #e9ecef;
+  padding: 1rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+}
+
+.dashboard-section {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background-color: #f1f3f5;
+}
+
+/* ========== MESSAGE PAGE ========== */
+.message-title {
+  font-size: 28px;
+  color: #34495e;
+  margin-bottom: 20px;
+}
+
+.message-text {
+  font-size: 18px;
+  color: #2c3e50;
+  margin-bottom: 25px;
+}
+
+#back-home {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #2980b9;
+  color: #fff;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+#back-home:hover {
+  background-color: #3498db;
+}
+
+/* ========== FORM ELEMENTS ========== */
+#course-form {
+  text-align: left;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #bdc3c7;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2980b9;
+}
+
+.btn {
+  padding: 12px 25px;
+  background-color: #2980b9;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #3498db;
+}
+
+/* ========== COURSES LIST AND VIEW ========== */
+.course-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.course-item {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  background-color: #f1f3f5;
+  border-radius: 6px;
+  transition: 0.2s;
+}
+
+.course-item a {
+  color: #2980b9;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.course-item a:hover {
+  text-decoration: underline;
+}
+
+.student-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.student-list li {
+  padding: 5px 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* ========== MEDIA QUERIES ========== */
+@media (max-width: 768px) {
+  .container,
+  #container,
+  #message-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  nav a {
+    display: block;
+    margin: 0.5rem 0;
+  }
+}

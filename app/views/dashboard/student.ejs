@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - EDU LMS</title>
+    <%- include('../partials/header') %>
+    <style>
+        .student-stats .card {
+            transition: transform 0.3s ease;
+            border: none;
+            border-radius: 10px;
+        }
+        .student-stats .card:hover {
+            transform: translateY(-5px);
+        }
+        .course-card {
+            transition: all 0.3s ease;
+        }
+        .course-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .progress {
+            height: 8px;
+        }
+        .deadline-badge {
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/navigation') %>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/dashboard/student">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/courses">
+                                <i class="fas fa-book me-2"></i>My Courses
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/assignments">
+                                <i class="fas fa-tasks me-2"></i>Assignments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/grades">
+                                <i class="fas fa-chart-bar me-2"></i>Grades
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/schedule">
+                                <i class="fas fa-calendar me-2"></i>Schedule
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Student Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a href="/courses" class="btn btn-sm btn-primary">
+                            <i class="fas fa-search me-1"></i>Browse Courses
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Welcome Message -->
+                <div class="alert alert-success">
+                    <h4>Welcome back, <%= user?.firstName %>!</h4>
+                    <p class="mb-0">You have <strong><%= stats?.pendingAssignments || 0 %> assignments</strong> due soon.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row student-stats">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Enrolled Courses</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= stats?.enrolledCourses || 0 %>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-book fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Completed Assignments</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= stats?.completedAssignments || 0 %>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Pending Assignments</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= stats?.pendingAssignments || 0 %>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Average Grade</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= stats?.averageGrade || 'N/A' %>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enrolled Courses -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">My Courses</h6>
+                                <a href="/courses" class="btn btn-sm btn-primary">View All</a>
+                            </div>
+                            <div class="card-body">
+                                <% if (enrolledCourses && enrolledCourses.length > 0) { %>
+                                    <div class="row">
+                                        <% enrolledCourses.forEach(course => { %>
+                                            <div class="col-md-6 mb-3">
+                                                <div class="card course-card h-100">
+                                                    <div class="card-body">
+                                                        <h5 class="card-title"><%= course.title %></h5>
+                                                        <p class="card-text text-muted">
+                                                            <small>Instructor: <%= course.instructor %></small>
+                                                        </p>
+                                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                                            <span class="badge bg-<%= course.status === 'active' ? 'success' : 'secondary' %>">
+                                                                <%= course.status %>
+                                                            </span>
+                                                            <span class="text-muted"><%= course.progress %>% complete</span>
+                                                        </div>
+                                                        <div class="progress mb-3">
+                                                            <div class="progress-bar bg-<%= course.progress >= 80 ? 'success' : course.progress >= 50 ? 'warning' : 'info' %>" 
+                                                                 style="width: <%= course.progress %>%"></div>
+                                                        </div>
+                                                        <div class="d-grid">
+                                                            <a href="/courses/view/<%= course.id %>" class="btn btn-outline-primary btn-sm">
+                                                                Continue Learning
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                <% } else { %>
+                                    <p class="text-muted text-center">You are not enrolled in any courses. <a href="/courses">Browse available courses</a></p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <!-- Upcoming Deadlines -->
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Upcoming Deadlines</h6>
+                            </div>
+                            <div class="card-body">
+                                <% if (upcomingDeadlines && upcomingDeadlines.length > 0) { %>
+                                    <div class="list-group list-group-flush">
+                                        <% upcomingDeadlines.forEach(deadline => { %>
+                                            <div class="list-group-item d-flex justify-content-between align-items-start">
+                                                <div class="ms-2 me-auto">
+                                                    <div class="fw-bold"><%= deadline.title %></div>
+                                                    <small class="text-muted"><%= deadline.course %></small>
+                                                </div>
+                                                <span class="badge bg-<%= deadline.priority %> deadline-badge">
+                                                    <%= deadline.dueDate %>
+                                                </span>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                <% } else { %>
+                                    <p class="text-muted text-center">No upcoming deadlines</p>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <!-- Quick Links -->
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Quick Links</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-grid gap-2">
+                                    <a href="/courses" class="btn btn-outline-primary">
+                                        <i class="fas fa-book me-2"></i>My Courses
+                                    </a>
+                                    <a href="/assignments" class="btn btn-outline-success">
+                                        <i class="fas fa-tasks me-2"></i>Assignments
+                                    </a>
+                                    <a href="/grades" class="btn btn-outline-info">
+                                        <i class="fas fa-chart-bar me-2"></i>View Grades
+                                    </a>
+                                    <a href="/schedule" class="btn btn-outline-warning">
+                                        <i class="fas fa-calendar me-2"></i>Class Schedule
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Recent Activity</h6>
+                            </div>
+                            <div class="card-body">
+                                <% if (recentActivity && recentActivity.length > 0) { %>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Activity</th>
+                                                    <th>Course</th>
+                                                    <th>Date</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% recentActivity.forEach(activity => { %>
+                                                    <tr>
+                                                        <td><%= activity.description %></td>
+                                                        <td><%= activity.course %></td>
+                                                        <td><%= activity.date %></td>
+                                                        <td>
+                                                            <span class="badge bg-<%= activity.status === 'completed' ? 'success' : activity.status === 'pending' ? 'warning' : 'info' %>">
+                                                                <%= activity.status %>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                <% }) %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <% } else { %>
+                                    <p class="text-muted text-center">No recent activity</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

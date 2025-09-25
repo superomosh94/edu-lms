@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EDU LMS - Professional Learning Management System</title>
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4361ee;
+      --primary-dark: #3a0ca3;
+      --secondary: #7209b7;
+      --accent: #f72585;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --success: #4cc9f0;
+    }
+    
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      line-height: 1.6;
+      color: var(--dark);
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 600;
+    }
+    
+    .hero-section {
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      padding: 150px 0 100px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      width: 200%;
+      height: 200%;
+      top: -50%;
+      left: -50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      z-index: 0;
+    }
+    
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .section-title {
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 4px;
+      background: var(--primary);
+      bottom: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    
+    .feature-card {
+      background: white;
+      padding: 30px 20px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      height: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-top: 4px solid var(--primary);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+    
+    .feature-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      color: white;
+      font-size: 2rem;
+    }
+    
+    .pricing-card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+      transition: transform 0.3s ease;
+      position: relative;
+    }
+    
+    .pricing-card:hover {
+      transform: translateY(-5px);
+    }
+    
+    .pricing-card.popular {
+      border: 2px solid var(--primary);
+      transform: scale(1.05);
+      z-index: 1;
+    }
+    
+    .pricing-card.popular::before {
+      content: 'Most Popular';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--primary);
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+    
+    .price {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 20px 0;
+    }
+    
+    .testimonial-card {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .testimonial-card::before {
+      content: '\201C';
+      font-size: 5rem;
+      color: rgba(67, 97, 238, 0.1);
+      position: absolute;
+      top: -10px;
+      left: 10px;
+      line-height: 1;
+    }
+    
+    .testimonial-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 15px;
+    }
+    
+    .client-logo {
+      height: 40px;
+      margin: 20px;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      filter: grayscale(100%);
+    }
+    
+    .client-logo:hover {
+      opacity: 1;
+      filter: grayscale(0%);
+    }
+    
+    .footer {
+      background: var(--dark);
+      color: white;
+      padding: 70px 0 30px;
+    }
+    
+    .footer h5 {
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    
+    .footer a {
+      color: #aaa;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .footer a:hover {
+      color: white;
+    }
+    
+    .footer ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .footer ul li {
+      margin-bottom: 10px;
+    }
+    
+    .social-icons a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      margin-right: 10px;
+      transition: background 0.3s ease;
+    }
+    
+    .social-icons a:hover {
+      background: var(--primary);
+    }
+    
+    .cta-section {
+      background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
+      color: white;
+      padding: 80px 0;
+      text-align: center;
+    }
+    
+    .stats-section {
+      padding: 80px 0;
+      background: var(--light);
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 20px;
+    }
+    
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+    
+    .nav-link {
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      font-weight: 500;
+      padding: 10px 25px;
+    }
+    
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+    }
+    
+    .btn-outline-primary {
+      color: var(--primary);
+      border-color: var(--primary);
+      font-weight: 500;
+      padding: 10px 25px;
+    }
+    
+    .btn-outline-primary:hover {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+    
+    .accordion-button {
+      font-weight: 500;
+    }
+    
+    .accordion-button:not(.collapsed) {
+      background-color: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+    }
+    
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      
+      .pricing-card.popular {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm py-3">
+    <div class="container">
+      <a class="navbar-brand text-primary" href="#">
+        <i class="fas fa-graduation-cap me-2"></i>EDU LMS
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+          <li class="nav-item"><a class="nav-link" href="#solutions">Solutions</a></li>
+          <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
+          <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
+          <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+          <li class="nav-item ms-lg-3 mt-2 mt-lg-0"><a class="btn btn-primary" href="/auth/login">Login</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 hero-content">
+          <h1 class="hero-title">Transform Your Learning Journey with EDU LMS</h1>
+          <p class="lead mb-4">An enterprise-grade learning management platform trusted by 5,000+ institutions worldwide to deliver engaging educational experiences.</p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="/auth/register" class="btn btn-light btn-lg px-4 py-3 fw-semibold">
+              <i class="fas fa-user-plus me-2"></i> Start Free Trial
+            </a>
+            <a href="#pricing" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">
+              <i class="fas fa-chart-line me-2"></i> View Plans
+            </a>
+          </div>
+          <p class="mt-3 small">No credit card required • 14-day free trial • Setup in minutes</p>
+        </div>
+        <div class="col-lg-6 text-center mt-5 mt-lg-0">
+          <img src="https://via.placeholder.com/600x400/4361ee/ffffff?text=EDU+LMS+Dashboard" alt="EDU LMS Dashboard" class="img-fluid rounded shadow-lg" style="max-height: 400px;">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="row text-center">
+        <div class="col-md-3 col-6 stat-item">
+          <div class="stat-number">5,000+</div>
+          <p>Educational Institutions</p>
+        </div>
+        <div class="col-md-3 col-6 stat-item">
+          <div class="stat-number">2M+</div>
+          <p>Active Learners</p>
+        </div>
+        <div class="col-md-3 col-6 stat-item">
+          <div class="stat-number">98%</div>
+          <p>Customer Satisfaction</p>
+        </div>
+        <div class="col-md-3 col-6 stat-item">
+          <div class="stat-number">24/7</div>
+          <p>Support Available</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="features" class="py-5 bg-white">
+    <div class="container">
+      <h2 class="text-center section-title">Powerful Features</h2>
+      <p class="text-center text-muted mb-5">Designed to meet the needs of modern educational institutions and corporate training programs</p>
+      
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <h5>Advanced Course Builder</h5>
+            <p>Create engaging courses with multimedia content, interactive quizzes, assignments, and SCORM compliance.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            <h5>Comprehensive Analytics</h5>
+            <p>Track student progress, engagement metrics, and performance data with customizable reporting dashboards.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h5>Mobile-First Design</h5>
+            <p>Native mobile apps for iOS and Android with offline access capabilities and push notifications.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-users"></i>
+            </div>
+            <h5>Collaboration Tools</h5>
+            <p>Integrated discussion forums, group projects, and real-time communication features for enhanced engagement.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-shield-alt"></i>
+            </div>
+            <h5>Enterprise Security</h5>
+            <p>SOC 2 Type II certified, GDPR compliant, single sign-on (SSO), and advanced data encryption.</p>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="feature-card">
+            <div class="feature-icon">
+              <i class="fas fa-plug"></i>
+            </div>
+            <h5>Integration Ecosystem</h5>
+            <p>Seamlessly connect with popular tools like Zoom, Salesforce, Google Workspace, and Microsoft 365.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Solutions -->
+  <section id="solutions" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center section-title">Solutions for Every Need</h2>
+      <p class="text-center text-muted mb-5">Tailored learning management solutions for different educational contexts</p>
+      
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="feature-card">
+            <h4><i class="fas fa-university text-primary me-2"></i> Higher Education</h4>
+            <p>Comprehensive tools for universities and colleges including degree tracking, accreditation management, and research collaboration features.</p>
+            <ul class="mt-3">
+              <li>Academic program management</li>
+              <li>Faculty development tools</li>
+              <li>Research and publication tracking</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="feature-card">
+            <h4><i class="fas fa-school text-primary me-2"></i> K-12 Schools</h4>
+            <p>Age-appropriate interfaces, parent portals, and curriculum alignment tools designed specifically for primary and secondary education.</p>
+            <ul class="mt-3">
+              <li>Parent-teacher communication</li>
+              <li>Standardized test preparation</li>
+              <li>Curriculum mapping</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="feature-card">
+            <h4><i class="fas fa-briefcase text-primary me-2"></i> Corporate Training</h4>
+            <p>Scalable solutions for employee onboarding, compliance training, skill development, and performance tracking.</p>
+            <ul class="mt-3">
+              <li>Certification and compliance tracking</li>
+              <li>Skills gap analysis</li>
+              <li>ROI measurement tools</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="feature-card">
+            <h4><i class="fas fa-globe text-primary me-2"></i> Online Academies</h4>
+            <p>Monetization features, multi-language support, and marketing tools for creating and selling online courses.</p>
+            <ul class="mt-3">
+              <li>E-commerce integration</li>
+              <li>Multi-currency support</li>
+              <li>Affiliate marketing tools</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section id="testimonials" class="py-5 bg-white">
+    <div class="container">
+      <h2 class="text-center section-title">Trusted by Leading Institutions</h2>
+      <p class="text-center text-muted mb-5">Hear from educators and administrators who have transformed their learning programs</p>
+      
+      <div class="row">
+        <div class="col-md-4">
+          <div class="testimonial-card">
+            <p>"EDU LMS has revolutionized how we deliver courses. The analytics dashboard helps us identify at-risk students early and provide targeted support, improving our retention rates by 23%."</p>
+            <div class="d-flex align-items-center mt-4">
+              <img src="https://via.placeholder.com/60/4361ee/ffffff?text=SJ" alt="Sarah Johnson" class="testimonial-avatar">
+              <div>
+                <p class="fw-bold mb-0">Sarah Johnson</p>
+                <p class="text-muted small">Professor of Computer Science, Stanford University</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="testimonial-card">
+            <p>"As a student, I love the intuitive interface and mobile app. It keeps all my course materials organized and sends reminders for assignments. The collaborative features make group projects much easier."</p>
+            <div class="d-flex align-items-center mt-4">
+              <img src="https://via.placeholder.com/60/7209b7/ffffff?text=MC" alt="Michael Chen" class="testimonial-avatar">
+              <div>
+                <p class="fw-bold mb-0">Michael Chen</p>
+                <p class="text-muted small">MBA Student, Harvard Business School</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="testimonial-card">
+            <p>"Implementing EDU LMS across our district was seamless. The training resources and customer support were exceptional. Teachers adopted it quickly, and we've seen a significant improvement in student engagement."</p>
+            <div class="d-flex align-items-center mt-4">
+              <img src="https://via.placeholder.com/60/3a0ca3/ffffff?text=RW" alt="Robert Williams" class="testimonial-avatar">
+              <div>
+                <p class="fw-bold mb-0">Dr. Robert Williams</p>
+                <p class="text-muted small">Superintendent, Chicago Public Schools</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mt-5">
+        <h4 class="mb-4">Trusted by 5,000+ institutions worldwide</h4>
+        <div class="d-flex flex-wrap justify-content-center align-items-center">
+          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=Stanford" alt="Stanford" class="client-logo">
+          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=Microsoft" alt="Microsoft" class="client-logo">
+          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=MIT" alt="MIT" class="client-logo">
+          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=Google" alt="Google" class="client-logo">
+          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=Harvard" alt="Harvard" class="client-logo">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center section-title">Flexible Pricing Plans</h2>
+      <p class="text-center text-muted mb-5">Choose the plan that fits your institution's needs</p>
+      
+      <div class="row g-4 justify-content-center">
+        <div class="col-lg-4 col-md-6">
+          <div class="pricing-card">
+            <h4>Basic</h4>
+            <p class="text-muted">For small institutions and individual instructors</p>
+            <div class="price">$29<span class="fs-6">/month</span></div>
+            <ul class="list-unstyled mb-4">
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Up to 100 students</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 10GB storage</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Basic analytics</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Email support</li>
+              <li class="mb-2 text-muted"><i class="fas fa-times me-2"></i> Advanced integrations</li>
+              <li class="mb-2 text-muted"><i class="fas fa-times me-2"></i> Custom branding</li>
+            </ul>
+            <a href="#" class="btn btn-outline-primary w-100">Choose Plan</a>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="pricing-card popular">
+            <h4>Professional</h4>
+            <p class="text-muted">For growing institutions and departments</p>
+            <div class="price">$79<span class="fs-6">/month</span></div>
+            <ul class="list-unstyled mb-4">
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Up to 500 students</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 50GB storage</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced analytics</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Priority support</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> API access</li>
+              <li class="mb-2 text-muted"><i class="fas fa-times me-2"></i> Custom branding</li>
+            </ul>
+            <a href="#" class="btn btn-primary w-100">Choose Plan</a>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="pricing-card">
+            <h4>Enterprise</h4>
+            <p class="text-muted">For large institutions and corporations</p>
+            <div class="price">Custom</div>
+            <ul class="list-unstyled mb-4">
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Unlimited students</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Custom storage</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced analytics</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 24/7 dedicated support</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Full customization</li>
+              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Custom branding</li>
+            </ul>
+            <a href="#" class="btn btn-outline-primary w-100">Contact Sales</a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mt-5">
+        <p class="text-muted">All plans include a 14-day free trial with full feature access. No credit card required.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-5 bg-white">
+    <div class="container">
+      <h2 class="text-center section-title">Frequently Asked Questions</h2>
+      <p class="text-center text-muted mb-5">Find answers to common questions about EDU LMS</p>
+      
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="accordion" id="faqAccordion">
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                  What is EDU LMS and who is it for?
+                </button>
+              </h2>
+              <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  EDU LMS is a comprehensive learning management system designed for educational institutions, corporate training departments, and individual educators. It provides tools for course creation, delivery, tracking, and assessment. Our platform serves K-12 schools, higher education institutions, corporations, and online academies.
+                </div>
+              </div>
+            </div>
+            
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                  Is there a free trial available?
+                </button>
+              </h2>
+              <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Yes, we offer a 14-day free trial with full access to all features of the Professional plan. No credit card is required to start your trial. You can upgrade, downgrade, or cancel at any time during the trial period.
+                </div>
+              </div>
+            </div>
+            
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                  Can I integrate EDU LMS with my existing systems?
+                </button>
+              </h2>
+              <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Absolutely. EDU LMS offers robust API access and pre-built integrations with popular systems including:
+                  <ul>
+                    <li>Student Information Systems (SIS)</li>
+                    <li>Single Sign-On (SSO) providers</li>
+                    <li>Video conferencing tools (Zoom, Microsoft Teams)</li>
+                    <li>Content repositories and libraries</li>
+                    <li>Payment gateways for course monetization</li>
+                  </ul>
+                  Our technical team can assist with custom integrations for enterprise clients.
+                </div>
+              </div>
+            </div>
+            
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                  What kind of support do you provide?
+                </button>
+              </h2>
+              <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  We offer multiple support tiers:
+                  <ul>
+                    <li><strong>Basic:</strong> Email support with 24-hour response time</li>
+                    <li><strong>Professional:</strong> Priority email and chat support with 4-hour response time</li>
+                    <li><strong>Enterprise:</strong> 24/7 dedicated phone support, account manager, and custom training</li>
+                  </ul>
+                  All plans include access to our comprehensive knowledge base, video tutorials, and community forums.
+                </div>
+              </div>
+            </div>
+            
+            <div class="accordion-item border-0 mb-3 shadow-sm">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
+                  Is my data secure with EDU LMS?
+                </button>
+              </h2>
+              <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body">
+                  Security is our top priority. EDU LMS is SOC 2 Type II certified and compliant with GDPR, FERPA, and other data protection regulations. We employ:
+                  <ul>
+                    <li>End-to-end encryption for data in transit and at rest</li>
+                    <li>Regular security audits and penetration testing</li>
+                    <li>Role-based access controls</li>
+                    <li>Advanced threat detection systems</li>
+                    <li>Regular data backups with geo-redundancy</li>
+                  </ul>
+                  Enterprise clients can choose their data residency options for additional compliance.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+          <h2 class="mb-4">Ready to Transform Your Learning Experience?</h2>
+          <p class="lead mb-5">Join thousands of institutions using EDU LMS to deliver exceptional educational experiences.</p>
+          <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+            <a href="/auth/register" class="btn btn-light btn-lg px-4 py-3 fw-semibold">
+              <i class="fas fa-rocket me-2"></i> Start Free Trial
+            </a>
+            <a href="#" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">
+              <i class="fas fa-calendar me-2"></i> Schedule a Demo
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-4 mb-4 mb-lg-0">
+          <h5><i class="fas fa-graduation-cap me-2"></i> EDU LMS</h5>
+          <p class="mt-3">The leading learning management platform for educational institutions and corporate training programs worldwide.</p>
+          <div class="social-icons mt-4">
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-3 mb-4 mb-md-0">
+          <h5>Product</h5>
+          <ul>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">Solutions</a></li>
+            <li><a href="#">Pricing</a></li>
+            <li><a href="#">Demo</a></li>
+            <li><a href="#">Updates</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-3 mb-4 mb-md-0">
+          <h5>Resources</h5>
+          <ul>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Webinars</a></li>
+            <li><a href="#">Community</a></li>
+            <li><a href="#">Support</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-3 mb-4 mb-md-0">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Partners</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Press</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-3">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+            <li><a href="#">GDPR</a></li>
+            <li><a href="#">Security</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="my-5" style="border-color: #444;">
+      <div class="row align-items-center">
+        <div class="col-md-6 text-center text-md-start">
+          <p>&copy; 2025 EDU LMS. All Rights Reserved.</p>
+        </div>
+        <div class="col-md-6 text-center text-md-end">
+          <p>Designed with <i class="fas fa-heart text-danger"></i> for educators worldwide</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

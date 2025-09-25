@@ -1,0 +1,268 @@
+<%- include('../partials/header', { title: 'Dashboard - EDU LMS' }) %>
+<%- include('../partials/navigation') %>
+
+<style>
+.dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 60px 0;
+    margin-bottom: 40px;
+}
+
+.dashboard-header h2 {
+    font-size: 2.5em;
+    font-weight: 300;
+    margin-bottom: 10px;
+}
+
+.dashboard-header p {
+    font-size: 1.2em;
+    opacity: 0.9;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    margin: 40px 0;
+}
+
+.stat-card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    font-size: 3em;
+    margin-bottom: 15px;
+}
+
+.stat-number {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #667eea;
+    display: block;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 1.1em;
+}
+
+.quick-actions {
+    margin: 50px 0;
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.action-card {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+}
+
+.action-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.action-icon {
+    font-size: 2.5em;
+    margin-bottom: 15px;
+    color: #667eea;
+}
+
+.recent-activity {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.activity-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.activity-item:last-child {
+    border-bottom: none;
+}
+
+.activity-icon {
+    background: #f8f9fa;
+    padding: 10px;
+    border-radius: 50%;
+    margin-right: 15px;
+    color: #667eea;
+}
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-time {
+    color: #666;
+    font-size: 0.9em;
+}
+</style>
+
+<div class="dashboard-header">
+    <div class="container">
+        <h2>Welcome back, <%= user.name %>!</h2>
+        <p>Here's what's happening in your EDU LMS account today.</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">📊</div>
+            <span class="stat-number"><%= data.stats ? data.stats.courses || data.stats.enrollments || data.stats.subjects || data.stats.users : '0' %></span>
+            <span class="stat-label">
+                <% if (role === 'Student') { %>Enrolled Courses<% } %>
+                <% if (role === 'Teacher') { %>Subjects<% } %>
+                <% if (role === 'Admin' || role === 'Super Admin') { %>Total Courses<% } %>
+            </span>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <span class="stat-number"><%= data.stats ? data.stats.assignments || data.stats.completed || data.stats.pendingGrading : '0' %></span>
+            <span class="stat-label">
+                <% if (role === 'Student') { %>Completed<% } %>
+                <% if (role === 'Teacher') { %>Assignments<% } %>
+                <% if (role === 'Admin' || role === 'Super Admin') { %>Total Users<% } %>
+            </span>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <span class="stat-number">
+                <% if (data.stats && data.stats.revenue) { %>$<%= data.stats.revenue %><% } else { %>0<% } %>
+            </span>
+            <span class="stat-label">
+                <% if (role === 'Finance Officer') { %>Revenue<% } else { %>Performance<% } %>
+            </span>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">🎯</div>
+            <span class="stat-number">
+                <% if (data.stats && data.stats.pending) { %><%= data.stats.pending %><% } else { %>0<% } %>
+            </span>
+            <span class="stat-label">
+                <% if (role === 'Student') { %>Pending<% } %>
+                <% if (role === 'Teacher') { %>To Grade<% } %>
+                <% if (role === 'Finance Officer') { %>Pending<% } %>
+            </span>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <h3 style="margin-bottom: 20px; color: #333;">Quick Actions</h3>
+        <div class="actions-grid">
+            <% if (role === 'Student') { %>
+                <a href="/courses" class="action-card">
+                    <div class="action-icon">📚</div>
+                    <h4>Browse Courses</h4>
+                    <p>Explore available courses</p>
+                </a>
+                <a href="/assignments" class="action-card">
+                    <div class="action-icon">📝</div>
+                    <h4>My Assignments</h4>
+                    <p>View and submit work</p>
+                </a>
+                <a href="/grades" class="action-card">
+                    <div class="action-icon">📊</div>
+                    <h4>View Grades</h4>
+                    <p>Check your progress</p>
+                </a>
+            <% } %>
+            
+            <% if (role === 'Teacher') { %>
+                <a href="/assignments/create" class="action-card">
+                    <div class="action-icon">➕</div>
+                    <h4>Create Assignment</h4>
+                    <p>Add new assignment</p>
+                </a>
+                <a href="/assignments" class="action-card">
+                    <div class="action-icon">📋</div>
+                    <h4>Grade Submissions</h4>
+                    <p>Review student work</p>
+                </a>
+                <a href="/attendance" class="action-card">
+                    <div class="action-icon">👥</div>
+                    <h4>Take Attendance</h4>
+                    <p>Mark student presence</p>
+                </a>
+            <% } %>
+            
+            <% if (role === 'Admin' || role === 'Super Admin') { %>
+                <a href="/courses/create" class="action-card">
+                    <div class="action-icon">➕</div>
+                    <h4>Add Course</h4>
+                    <p>Create new course</p>
+                </a>
+                <a href="/admin/users" class="action-card">
+                    <div class="action-icon">👥</div>
+                    <h4>Manage Users</h4>
+                    <p>User administration</p>
+                </a>
+                <a href="/admin/reports" class="action-card">
+                    <div class="action-icon">📈</div>
+                    <h4>View Reports</h4>
+                    <p>System analytics</p>
+                </a>
+            <% } %>
+        </div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin: 50px 0;">
+        <div class="recent-activity">
+            <h3 style="margin-bottom: 20px; color: #333;">Recent Activity</h3>
+            <% if (data.recentActivity && data.recentActivity.length > 0) { %>
+                <% data.recentActivity.forEach(activity => { %>
+                    <div class="activity-item">
+                        <div class="activity-icon">📢</div>
+                        <div class="activity-content">
+                            <strong><%= activity.action %></strong>
+                            <div class="activity-time"><%= new Date(activity.created_at).toLocaleString() %></div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <p style="text-align: center; color: #666; padding: 40px;">No recent activity</p>
+            <% } %>
+        </div>
+        
+        <div style="background: white; border-radius: 10px; padding: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+            <h3 style="margin-bottom: 20px; color: #333;">Upcoming</h3>
+            <div style="text-align: center; color: #666; padding: 40px 20px;">
+                <div style="font-size: 3em; margin-bottom: 10px;">📅</div>
+                <p>No upcoming events</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

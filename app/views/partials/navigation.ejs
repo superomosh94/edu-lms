@@ -1,0 +1,269 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/dashboard">
+            <i class="fas fa-graduation-cap me-2"></i>EDU LMS
+        </a>
+        
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/dashboard">
+                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/courses">
+                        <i class="fas fa-book me-1"></i>Courses
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/assignments">
+                        <i class="fas fa-tasks me-1"></i>Assignments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/grades">
+                        <i class="fas fa-chart-bar me-1"></i>Grades
+                    </a>
+                </li>
+                <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-cogs me-1"></i>Management
+                    </a>
+                    <ul class="dropdown-menu">
+                        <% if (user.role === 'admin') { %>
+                        <li><a class="dropdown-item" href="/admin/users">User Management</a></li>
+                        <li><a class="dropdown-item" href="/admin/courses">Course Management</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <% } %>
+                        <li><a class="dropdown-item" href="/courses/create">Create Course</a></li>
+                        <li><a class="dropdown-item" href="/assignments/create">Create Assignment</a></li>
+                    </ul>
+                </li>
+                <% } %>
+            </ul>
+            
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <!-- Notifications -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-bell"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            3
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                        <li><h6 class="dropdown-header">Notifications</h6></li>
+                        <li><a class="dropdown-item" href="#">
+                            <div class="d-flex w-100 justify-content-between">
+                                <small>New assignment posted</small>
+                                <small class="text-muted">5 min ago</small>
+                            </div>
+                            <small class="text-muted">Mathematics 101</small>
+                        </a></li>
+                        <li><a class="dropdown-item" href="#">
+                            <div class="d-flex w-100 justify-content-between">
+                                <small>Grade available</small>
+                                <small class="text-muted">1 hour ago</small>
+                            </div>
+                            <small class="text-muted">Science Project</small>
+                        </a></li>
+                        <li><a class="dropdown-item" href="#">
+                            <div class="d-flex w-100 justify-content-between">
+                                <small>Course announcement</small>
+                                <small class="text-muted">2 hours ago</small>
+                            </div>
+                            <small class="text-muted">History 201</small>
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center" href="#">View all notifications</a></li>
+                    </ul>
+                </li>
+                
+                <!-- Messages -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link position-relative" href="#" id="messageDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-envelope"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">
+                            2
+                        </span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messageDropdown">
+                        <li><h6 class="dropdown-header">Messages</h6></li>
+                        <li><a class="dropdown-item" href="#">
+                            <div class="d-flex w-100 justify-content-between">
+                                <strong>Dr. Smith</strong>
+                                <small class="text-muted">10 min ago</small>
+                            </div>
+                            <small class="text-muted">Regarding your assignment submission...</small>
+                        </a></li>
+                        <li><a class="dropdown-item" href="#">
+                            <div class="d-flex w-100 justify-content-between">
+                                <strong>Course Coordinator</strong>
+                                <small class="text-muted">1 hour ago</small>
+                            </div>
+                            <small class="text-muted">Important course update...</small>
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center" href="#">View all messages</a></li>
+                    </ul>
+                </li>
+                
+                <!-- User Profile -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i>
+                        <% if (user) { %>
+                            <%= user.firstName %> <%= user.lastName %>
+                        <% } else { %>
+                            Guest
+                        <% } %>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li><a class="dropdown-item" href="/profile">
+                            <i class="fas fa-user me-2"></i>My Profile
+                        </a></li>
+                        <li><a class="dropdown-item" href="/settings">
+                            <i class="fas fa-cog me-2"></i>Settings
+                        </a></li>
+                        <li><a class="dropdown-item" href="/help">
+                            <i class="fas fa-question-circle me-2"></i>Help & Support
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <a class="dropdown-item" href="/auth/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            
+            <!-- Search -->
+            <form class="d-flex ms-2">
+                <div class="input-group">
+                    <input class="form-control form-control-sm" type="search" placeholder="Search..." aria-label="Search">
+                    <button class="btn btn-outline-light btn-sm" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</nav>
+
+<!-- Mobile Sidebar -->
+<div class="offcanvas offcanvas-start d-lg-none" tabindex="-1" id="mobileSidebar">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">
+            <i class="fas fa-graduation-cap me-2"></i>EDU LMS
+        </h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <div class="offcanvas-body">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="/dashboard">
+                    <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/courses">
+                    <i class="fas fa-book me-2"></i>Courses
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/assignments">
+                    <i class="fas fa-tasks me-2"></i>Assignments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/grades">
+                    <i class="fas fa-chart-bar me-2"></i>Grades
+                </a>
+            </li>
+            <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
+            <li class="nav-item">
+                <a class="nav-link" href="/courses/create">
+                    <i class="fas fa-plus-circle me-2"></i>Create Course
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/assignments/create">
+                    <i class="fas fa-tasks me-2"></i>Create Assignment
+                </a>
+            </li>
+            <% if (user.role === 'admin') { %>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/users">
+                    <i class="fas fa-users me-2"></i>User Management
+                </a>
+            </li>
+            <% } %>
+            <% } %>
+        </ul>
+        
+        <hr>
+        
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="/profile">
+                    <i class="fas fa-user me-2"></i>My Profile
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/settings">
+                    <i class="fas fa-cog me-2"></i>Settings
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/help">
+                    <i class="fas fa-question-circle me-2"></i>Help
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-danger" href="/auth/logout">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    // Mobile sidebar toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const navbarToggler = document.querySelector('.navbar-toggler');
+        const mobileSidebar = new bootstrap.Offcanvas(document.getElementById('mobileSidebar'));
+        
+        navbarToggler.addEventListener('click', function() {
+            mobileSidebar.show();
+        });
+    });
+    
+    // Notification and message dropdowns
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mark notifications as read when dropdown is shown
+        const notificationDropdown = document.getElementById('notificationDropdown');
+        notificationDropdown.addEventListener('show.bs.dropdown', function() {
+            const badge = this.querySelector('.badge');
+            if (badge) {
+                badge.style.display = 'none';
+            }
+        });
+        
+        // Mark messages as read when dropdown is shown
+        const messageDropdown = document.getElementById('messageDropdown');
+        messageDropdown.addEventListener('show.bs.dropdown', function() {
+            const badge = this.querySelector('.badge');
+            if (badge) {
+                badge.style.display = 'none';
+            }
+        });
+    });
+</script>

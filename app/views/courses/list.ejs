@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses - EDU LMS</title>
+    <%- include('../partials/header') %>
+    <style>
+        .course-card {
+            transition: all 0.3s ease;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .course-image {
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .progress {
+            height: 6px;
+        }
+        .filter-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .search-box {
+            position: relative;
+        }
+        .search-box .form-control {
+            padding-left: 40px;
+        }
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<%- include('../partials/navigation') %>
+
+<div class="container-fluid py-4">
+    <% const safeUser = user || { role: 'student' }; %>
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/courses">
+                            <i class="fas fa-book me-2"></i>Courses
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/assignments">
+                            <i class="fas fa-tasks me-2"></i>Assignments
+                        </a>
+                    </li>
+                    <% if (safeUser.role === 'teacher' || safeUser.role === 'admin') { %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/courses/create">
+                                <i class="fas fa-plus-circle me-2"></i>Create Course
+                            </a>
+                        </li>
+                    <% } %>
+                </ul>
+
+                <!-- Filters -->
+                <div class="mt-4">
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Filters</span>
+                    </h6>
+                    <div class="nav flex-column">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="filter-enrolled">
+                            <label class="form-check-label" for="filter-enrolled">My Courses</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="filter-available">
+                            <label class="form-check-label" for="filter-available">Available</label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="filter-completed">
+                            <label class="form-check-label" for="filter-completed">Completed</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Courses</h1>
+                <% if (safeUser.role === 'teacher' || safeUser.role === 'admin') { %>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <a href="/courses/create" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>Create Course
+                        </a>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" class="form-control" placeholder="Search courses...">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select">
+                        <option>Sort by: Newest</option>
+                        <option>Sort by: Popular</option>
+                        <option>Sort by: Alphabetical</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Courses Grid -->
+            <div class="row">
+                <% if (courses && courses.length > 0) { %>
+                    <% courses.forEach(course => { %>
+                        <div class="col-xl-4 col-lg-6 mb-4">
+                            <div class="card course-card h-100">
+                                <img src="<%= course.image || 'https://via.placeholder.com/300x200' %>" 
+                                     class="course-image" alt="<%= course.title || 'Course' %>">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <h5 class="card-title"><%= course.title || 'Untitled Course' %></h5>
+                                        <span class="badge bg-<%= course.category === 'Science' ? 'primary' : course.category === 'Math' ? 'success' : course.category === 'Arts' ? 'warning' : 'info' %>">
+                                            <%= course.category || 'General' %>
+                                        </span>
+                                    </div>
+                                    <p class="card-text text-muted"><%= (course.description || '').substring(0, 100) %>...</p>
+                                    <div class="mb-3">
+                                        <small class="text-muted">
+                                            <i class="fas fa-user-tie me-1"></i>Instructor: <%= course.instructor || 'N/A' %>
+                                        </small>
+                                    </div>
+                                    <div class="mb-3">
+                                        <small class="text-muted">
+                                            <i class="fas fa-users me-1"></i>Enrolled: <%= course.enrolledCount || 0 %> students
+                                        </small>
+                                    </div>
+
+                                    <% if (course.progress !== undefined) { %>
+                                        <div class="mb-2">
+                                            <small>Progress: <%= course.progress %>%</small>
+                                            <div class="progress">
+                                                <div class="progress-bar" style="width: <%= course.progress %>%"></div>
+                                            </div>
+                                        </div>
+                                    <% } %>
+
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="badge bg-<%= course.difficulty === 'Beginner' ? 'success' : course.difficulty === 'Intermediate' ? 'warning' : 'danger' %>">
+                                            <%= course.difficulty || 'Unknown' %>
+                                        </span>
+                                        <span class="text-muted"><%= course.duration || '-' %> weeks</span>
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <div class="d-grid gap-2">
+                                        <a href="/courses/view/<%= course.id || '#' %>" class="btn btn-primary">
+                                            <% if (course.isEnrolled) { %>
+                                                Continue Learning
+                                            <% } else { %>
+                                                View Course
+                                            <% } %>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <div class="col-12 text-center py-5">
+                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">No courses available</h4>
+                        <p class="text-muted">Check back later for new courses.</p>
+                        <% if (safeUser.role === 'teacher' || safeUser.role === 'admin') { %>
+                            <a href="/courses/create" class="btn btn-primary">Create First Course</a>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
+
+            <!-- Pagination -->
+            <nav aria-label="Course pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#" tabindex="-1">Previous</a>
+                    </li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">Next</a>
+                    </li>
+                </ul>
+            </nav>
+        </main>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+
+<script>
+    document.querySelector('.search-box input').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const courseCards = document.querySelectorAll('.course-card');
+
+        courseCards.forEach(card => {
+            const title = card.querySelector('.card-title').textContent.toLowerCase();
+            const description = card.querySelector('.card-text').textContent.toLowerCase();
+
+            card.parentElement.style.display = (title.includes(searchTerm) || description.includes(searchTerm)) ? 'block' : 'none';
+        });
+    });
+</script>
+</body>
+</html>

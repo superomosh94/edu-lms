@@ -1,0 +1,13 @@
+<%- include('../partials/header') %>
+<div style="display:flex; justify-content:center; align-items:center; min-height:80vh;">
+  <div style="background:white; padding:40px; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.1); max-width:400px; width:100%; text-align:center;">
+    <h2 style="margin-bottom:25px; color:#343a40;">Login</h2>
+    <form action="/auth/login" method="POST" style="display:flex; flex-direction:column; gap:15px;">
+      <input type="email" name="email" placeholder="Email" required style="padding:10px; border-radius:6px; border:1px solid #ced4da;">
+      <input type="password" name="password" placeholder="Password" required style="padding:10px; border-radius:6px; border:1px solid #ced4da;">
+      <button type="submit" style="padding:10px; border:none; border-radius:6px; background:#0d6efd; color:white; cursor:pointer;">Login</button>
+    </form>
+    <p style="margin-top:15px;">Don't have an account? <a href="/auth/register" style="color:#0d6efd;">Register</a></p>
+  </div>
+</div>
+<%- include('../partials/footer') %>

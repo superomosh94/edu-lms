@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= assignment.title %> - EDU LMS</title>
+    <%- include('../partials/header') %>
+    <style>
+        .assignment-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+        .assignment-sidebar {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+        .requirement-list li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .requirement-list li:before {
+            content: "•";
+            color: #007bff;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+        .submission-status {
+            font-size: 0.9rem;
+        }
+        .grade-display {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        .tab-content {
+            min-height: 400px;
+        }
+        .comment-section {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .instruction-content {
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/navigation') %>
+
+    <!-- Assignment Header -->
+    <div class="assignment-header">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb bg-transparent p-0">
+                    <li class="breadcrumb-item"><a href="/assignments" class="text-white">Assignments</a></li>
+                    <li class="breadcrumb-item text-white active" aria-current="page"><%= assignment.title %></li>
+                </ol>
+            </nav>
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-6 fw-bold"><%= assignment.title %></h1>
+                    <p class="lead mb-3"><%= assignment.courseTitle %></p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <span class="badge bg-light text-dark">
+                            <i class="fas fa-<%= assignment.type === 'essay' ? 'file-alt' : assignment.type === 'quiz' ? 'question-circle' : 'tasks' %> me-1"></i>
+                            <%= assignment.type %>
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            <i class="fas fa-clock me-1"></i>Due: <%= assignment.dueDate %>
+                        </span>
+                        <span class="badge bg-light text-dark">
+                            <i class="fas fa-weight me-1"></i><%= assignment.maxPoints %> points
+                        </span>
+                        <span class="badge bg-<%= assignment.status === 'submitted' ? 'success' : assignment.status === 'graded' ? 'info' : assignment.isOverdue ? 'danger' : 'warning' %>">
+                            <%= assignment.status === 'pending' ? 'Pending' : 
+                               assignment.status === 'submitted' ? 'Submitted' : 
+                               assignment.status === 'graded' ? 'Graded' : 'Overdue' %>
+                        </span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <% if (user.role === 'student' && assignment.status === 'pending') { %>
+                        <a href="/assignments/submit/<%= assignment.id %>" class="btn btn-light btn-lg">
+                            <i class="fas fa-paper-plane me-2"></i>Submit Assignment
+                        </a>
+                    <% } %>
+                    <% if (user.role === 'teacher' || user.role === 'admin') { %>
+                        <a href="/assignments/grade/<%= assignment.id %>" class="btn btn-light btn-lg">
+                            <i class="fas fa-edit me-2"></i>Grade Submissions
+                        </a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Assignment Tabs -->
+                <ul class="nav nav-tabs" id="assignmentTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="instructions-tab" data-bs-toggle="tab" data-bs-target="#instructions" type="button" role="tab">
+                            <i class="fas fa-info-circle me-2"></i>Instructions
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="submission-tab" data-bs-toggle="tab" data-bs-target="#submission" type="button" role="tab">
+                            <i class="fas fa-upload me-2"></i>Submission
+                        </button>
+                    </li>
+                    <% if (assignment.status === 'graded' || user.role === 'teacher') { %>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="grading-tab" data-bs-toggle="tab" data-bs-target="#grading" type="button" role="tab">
+                            <i class="fas fa-chart-bar me-2"></i>Grading
+                        </button>
+                    </li>
+                    <% } %>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab">
+                            <i class="fas fa-comments me-2"></i>Comments
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="assignmentTabsContent">
+                    <!-- Instructions Tab -->
+                    <div class="tab-pane fade show active" id="instructions" role="tabpanel">
+                        <div class="card border-top-0">
+                            <div class="card-body">
+                                <h5 class="card-title">Assignment Instructions</h5>
+                                <div class="instruction-content">
+                                    <%= assignment.instructions || assignment.description %>
+                                </div>
+
+                                <% if (assignment.requirements && assignment.requirements.length > 0) { %>
+                                    <h6 class="mt-4">Requirements:</h6>
+                                    <ul class="requirement-list">
+                                        <% assignment.requirements.forEach(requirement => { %>
+                                            <li><%= requirement %></li>
+                                        <% }) %>
+                                    </ul>
+                                <% } %>
+
+                                <% if (assignment.resources && assignment.resources.length > 0) { %>
+                                    <h6 class="mt-4">Resources:</h6>
+                                    <div class="list-group">
+                                        <% assignment.resources.forEach(resource => { %>
+                                            <a href="<%= resource.url %>" class="list-group-item list-group-item-action">
+                                                <i class="fas fa-<%= resource.type === 'pdf' ? 'file-pdf' : resource.type === 'video' ? 'video' : 'link' %> me-2"></i>
+                                                <%= resource.title %>
+                                            </a>
+                                        <% }) %>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submission Tab -->
+                    <div class="tab-pane fade" id="submission" role="tabpanel">
+                        <div class="card border-top-0">
+                            <div class="card-body">
+                                <h5 class="card-title">Your Submission</h5>
+                                
+                                <% if (assignment.submission) { %>
+                                    <div class="alert alert-success">
+                                        <h6><i class="fas fa-check-circle me-2"></i>Assignment Submitted</h6>
+                                        <p class="mb-2">Submitted on: <%= assignment.submission.submittedAt %></p>
+                                        <% if (assignment.submission.files && assignment.submission.files.length > 0) { %>
+                                            <p class="mb-1">Files submitted:</p>
+                                            <ul>
+                                                <% assignment.submission.files.forEach(file => { %>
+                                                    <li>
+                                                        <a href="<%= file.url %>" class="text-decoration-none">
+                                                            <i class="fas fa-file me-1"></i><%= file.name %>
+                                                        </a>
+                                                        (<%= file.size %>)
+                                                    </li>
+                                                <% }) %>
+                                            </ul>
+                                        <% } %>
+                                        <% if (assignment.submission.text) { %>
+                                            <p class="mb-1">Text submission:</p>
+                                            <div class="border p-3 bg-light">
+                                                <%= assignment.submission.text %>
+                                            </div>
+                                        <% } %>
+                                    </div>
+
+                                    <% if (assignment.allowResubmit) { %>
+                                        <div class="mt-3">
+                                            <a href="/assignments/submit/<%= assignment.id %>" class="btn btn-warning">
+                                                <i class="fas fa-redo me-2"></i>Resubmit Assignment
+                                            </a>
+                                        </div>
+                                    <% } %>
+                                <% } else { %>
+                                    <div class="alert alert-info">
+                                        <h6><i class="fas fa-info-circle me-2"></i>No Submission Yet</h6>
+                                        <p class="mb-3">You haven't submitted this assignment yet.</p>
+                                        <a href="/assignments/submit/<%= assignment.id %>" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane me-2"></i>Submit Assignment
+                                        </a>
+                                    </div>
+
+                                    <!-- Submission Guidelines -->
+                                    <div class="mt-4">
+                                        <h6>Submission Guidelines:</h6>
+                                        <ul class="requirement-list">
+                                            <li>Due date: <strong><%= assignment.dueDate %></strong></li>
+                                            <% if (assignment.allowLate) { %>
+                                                <li>Late submissions are allowed with penalty</li>
+                                            <% } else { %>
+                                                <li>Late submissions are not allowed</li>
+                                            <% } %>
+                                            <% if (assignment.allowedFiles && assignment.allowedFiles.length > 0) { %>
+                                                <li>Allowed file types: <%= assignment.allowedFiles.join(', ') %></li>
+                                            <% } %>
+                                            <% if (assignment.maxFileSize) { %>
+                                                <li>Maximum file size: <%= assignment.maxFileSize %>MB</li>
+                                            <% } %>
+                                        </ul>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grading Tab -->
+                    <% if (assignment.status === 'graded' || user.role === 'teacher') { %>
+                    <div class="tab-pane fade" id="grading" role="tabpanel">
+                        <div class="card border-top-0">
+                            <div class="card-body">
+                                <% if (assignment.grade) { %>
+                                    <div class="text-center mb-4">
+                                        <div class="grade-display text-<%= assignment.grade >= 90 ? 'success' : assignment.grade >= 70 ? 'warning' : 'danger' %>">
+                                            <%= assignment.grade %>%
+                                        </div>
+                                        <p class="text-muted">Out of <%= assignment.maxPoints %> points</p>
+                                    </div>
+
+                                    <% if (assignment.feedback) { %>
+                                        <h6>Instructor Feedback:</h6>
+                                        <div class="border p-3 bg-light mb-3">
+                                            <%= assignment.feedback %>
+                                        </div>
+                                    <% } %>
+
+                                    <!-- Rubric (if available) -->
+                                    <% if (assignment.rubric && assignment.rubric.length > 0) { %>
+                                        <h6 class="mt-4">Grading Rubric:</h6>
+                                        <div class="table-responsive">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Criteria</th>
+                                                        <th>Weight</th>
+                                                        <th>Score</th>
+                                                        <th>Comments</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% assignment.rubric.forEach(criteria => { %>
+                                                        <tr>
+                                                            <td><%= criteria.name %></td>
+                                                            <td><%= criteria.weight %>%</td>
+                                                            <td><%= criteria.score %>/<%= criteria.maxScore %></td>
+                                                            <td><%= criteria.comments || '-' %></td>
+                                                        </tr>
+                                                    <% }) %>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    <% } %>
+                                <% } else if (user.role === 'teacher') { %>
+                                    <div class="alert alert-info">
+                                        <h6><i class="fas fa-info-circle me-2"></i>No Grades Yet</h6>
+                                        <p>This assignment hasn't been graded yet.</p>
+                                        <a href="/assignments/grade/<%= assignment.id %>" class="btn btn-primary">
+                                            <i class="fas fa-edit me-2"></i>Grade Submissions
+                                        </a>
+                                    </div>
+                                <% } else { %>
+                                    <div class="alert alert-info">
+                                        <h6><i class="fas fa-clock me-2"></i>Not Graded Yet</h6>
+                                        <p>Your submission is being reviewed by the instructor.</p>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                    <% } %>
+
+                    <!-- Comments Tab -->
+                    <div class="tab-pane fade" id="comments" role="tabpanel">
+                        <div class="card border-top-0">
+                            <div class="card-body">
+                                <h5 class="card-title">Discussion</h5>
+                                
+                                <!-- Comment Form -->
+                                <div class="mb-4">
+                                    <form id="commentForm">
+                                        <div class="mb-3">
+                                            <textarea class="form-control" id="commentText" rows="3" placeholder="Add a comment..."></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                                    </form>
+                                </div>
+
+                                <!-- Comments List -->
+                                <div class="comment-section">
+                                    <% if (assignment.comments && assignment.comments.length > 0) { %>
+                                        <% assignment.comments.forEach(comment => { %>
+                                            <div class="card mb-3">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                                        <div class="d-flex align-items-center">
+                                                            <img src="<%= comment.authorAvatar || 'https://via.placeholder.com/40' %>" 
+                                                                 class="rounded-circle me-3" width="40" height="40" alt="Author">
+                                                            <div>
+                                                                <strong><%= comment.authorName %></strong>
+                                                                <br>
+                                                                <small class="text-muted"><%= comment.timestamp %></small>
+                                                            </div>
+                                                        </div>
+                                                        <% if (comment.isInstructor) { %>
+                                                            <span class="badge bg-primary">Instructor</span>
+                                                        <% } %>
+                                                    </div>
+                                                    <p class="mb-0"><%= comment.content %></p>
+                                                    
+                                                    <!-- Replies -->
+                                                    <% if (comment.replies && comment.replies.length > 0) { %>
+                                                        <div class="mt-3 ps-4 border-start">
+                                                            <% comment.replies.forEach(reply => { %>
+                                                                <div class="mb-2">
+                                                                    <div class="d-flex justify-content-between">
+                                                                        <strong><%= reply.authorName %></strong>
+                                                                        <small class="text-muted"><%= reply.timestamp %></small>
+                                                                    </div>
+                                                                    <p class="mb-0"><%= reply.content %></p>
+                                                                </div>
+                                                            <% }) %>
+                                                        </div>
+                                                    <% } %>
+
+                                                    <!-- Reply Form -->
+                                                    <div class="mt-2">
+                                                        <button class="btn btn-sm btn-outline-secondary reply-btn" data-comment-id="<%= comment.id %>">
+                                                            Reply
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% }) %>
+                                    <% } else { %>
+                                        <p class="text-muted text-center">No comments yet. Be the first to comment!</p>
+                                    <% } %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="assignment-sidebar sticky-top" style="top: 20px;">
+                    <!-- Assignment Info -->
+                    <h6>Assignment Information</h6>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">
+                            <i class="fas fa-book me-2"></i>
+                            <strong>Course:</strong> <%= assignment.courseTitle %>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-user-tie me-2"></i>
+                            <strong>Instructor:</strong> <%= assignment.instructorName %>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-clock me-2"></i>
+                            <strong>Due Date:</strong> <%= assignment.dueDate %>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-weight me-2"></i>
+                            <strong>Points:</strong> <%= assignment.maxPoints %>
+                        </li>
+                        <li class="mb-2">
+                            <i class="fas fa-<%= assignment.allowLate ? 'check' : 'times' %> me-2 text-<%= assignment.allowLate ? 'success' : 'danger' %>"></i>
+                            <strong>Late Submissions:</strong> <%= assignment.allowLate ? 'Allowed' : 'Not Allowed' %>
+                        </li>
+                    </ul>
+
+                    <!-- Submission Status -->
+                    <h6 class="mt-4">Submission Status</h6>
+                    <div class="submission-status">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>Status:</span>
+                            <span class="badge bg-<%= assignment.status === 'submitted' ? 'success' : assignment.status === 'graded' ? 'info' : assignment.isOverdue ? 'danger' : 'warning' %>">
+                                <%= assignment.status === 'pending' ? 'Pending' : 
+                                   assignment.status === 'submitted' ? 'Submitted' : 
+                                   assignment.status === 'graded' ? 'Graded' : 'Overdue' %>
+                            </span>
+                        </div>
+                        <% if (assignment.submission) { %>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Submitted:</span>
+                                <span><%= assignment.submission.submittedAt %></span>
+                            </div>
+                        <% } %>
+                        <% if (assignment.grade) { %>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>Grade:</span>
+                                <span class="fw-bold text-<%= assignment.grade >= 90 ? 'success' : assignment.grade >= 70 ? 'warning' : 'danger' %>">
+                                    <%= assignment.grade %>%
+                                </span>
+                            </div>
+                        <% } %>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="mt-4">
+                        <% if (user.role === 'student' && assignment.status === 'pending') { %>
+                            <a href="/assignments/submit/<%= assignment.id %>" class="btn btn-primary w-100 mb-2">
+                                <i class="fas fa-paper-plane me-2"></i>Submit Assignment
+                            </a>
+                        <% } %>
+                        <% if (user.role === 'teacher' || user.role === 'admin') { %>
+                            <a href="/assignments/grade/<%= assignment.id %>" class="btn btn-warning w-100 mb-2">
+                                <i class="fas fa-edit me-2"></i>Grade Submissions
+                            </a>
+                        <% } %>
+                        <a href="/assignments" class="btn btn-outline-secondary w-100">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Assignments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+
+    <script>
+        // Comment form handling
+        document.getElementById('commentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const commentText = document.getElementById('commentText').value.trim();
+            
+            if (commentText) {
+                // In a real application, this would send the comment to the server
+                alert('Comment posted! (This is a demo)');
+                document.getElementById('commentText').value = '';
+            }
+        });
+
+        // Reply button functionality
+        document.querySelectorAll('.reply-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const commentId = this.dataset.commentId;
+                // In a real application, this would show a reply form
+                alert('Reply functionality would be implemented here');
+            });
+        });
+
+        // Initialize tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,234 @@
+<%- include('../partials/header', { title: title || 'Register' }) %>
+<%- include('../partials/navigation') %>
+
+<style>
+  .auth-container {
+    max-width: 450px;
+    margin: 60px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+
+  .auth-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 24px;
+    color: #333;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #444;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 10px 40px 10px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  .form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+
+  .toggle-password {
+    position: absolute;
+    right: 12px;
+    top: 36px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #666;
+  }
+
+  .alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    border-left: 4px solid #dc3545;
+    font-size: 14px;
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 12px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background: #0056b3;
+  }
+
+  .auth-switch {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #555;
+  }
+
+  .auth-switch a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .auth-switch a:hover {
+    text-decoration: underline;
+  }
+
+  .password-checklist {
+    font-size: 13px;
+    margin-top: 10px;
+    color: #666;
+  }
+  .password-checklist li {
+    margin-bottom: 5px;
+    list-style: none;
+  }
+  .password-checklist li.valid {
+    color: green;
+    font-weight: 600;
+  }
+  .password-checklist li.invalid {
+    color: red;
+  }
+</style>
+
+<div class="auth-container">
+  <h2>Register</h2>
+
+  <% if (error) { %>
+    <div class="alert-error"><%= error %></div>
+  <% } %>
+
+  <form action="/auth/register" method="POST">
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input 
+        type="text" 
+        id="name" 
+        name="name" 
+        value="<%= name || '' %>" 
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        value="<%= email || '' %>" 
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input 
+        type="password" 
+        id="password" 
+        name="password" 
+        required
+      >
+      <span class="toggle-password" onclick="togglePassword('password', this)">
+        <i class="fas fa-eye"></i>
+      </span>
+      <ul class="password-checklist">
+        <li id="length" class="invalid">At least 8 characters</li>
+        <li id="uppercase" class="invalid">At least one uppercase letter</li>
+        <li id="number" class="invalid">At least one number</li>
+        <li id="special" class="invalid">At least one special character (!@#$%^&*)</li>
+      </ul>
+    </div>
+
+    <div class="form-group">
+      <label for="confirmPassword">Confirm Password</label>
+      <input 
+        type="password" 
+        id="confirmPassword" 
+        name="confirmPassword" 
+        required
+      >
+      <span class="toggle-password" onclick="togglePassword('confirmPassword', this)">
+        <i class="fas fa-eye"></i>
+      </span>
+      <small id="matchMsg" style="color:red; display:none;">Passwords do not match</small>
+    </div>
+
+    <button type="submit" class="btn-primary">Register</button>
+  </form>
+
+  <p class="auth-switch">
+    Already have an account? <a href="/auth/login">Login here</a>.
+  </p>
+</div>
+
+<script>
+  const passwordInput = document.getElementById("password");
+  const confirmPasswordInput = document.getElementById("confirmPassword");
+  const matchMsg = document.getElementById("matchMsg");
+
+  const checks = {
+    length: /.{8,}/,
+    uppercase: /[A-Z]/,
+    number: /[0-9]/,
+    special: /[!@#$%^&*]/,
+  };
+
+  passwordInput.addEventListener("input", () => {
+    Object.keys(checks).forEach(key => {
+      const element = document.getElementById(key);
+      if (checks[key].test(passwordInput.value)) {
+        element.classList.remove("invalid");
+        element.classList.add("valid");
+      } else {
+        element.classList.remove("valid");
+        element.classList.add("invalid");
+      }
+    });
+  });
+
+  confirmPasswordInput.addEventListener("input", () => {
+    if (confirmPasswordInput.value !== passwordInput.value) {
+      matchMsg.style.display = "block";
+    } else {
+      matchMsg.style.display = "none";
+    }
+  });
+
+  function togglePassword(fieldId, el) {
+    const input = document.getElementById(fieldId);
+    const icon = el.querySelector("i");
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.remove("fa-eye");
+      icon.classList.add("fa-eye-slash");
+    } else {
+      input.type = "password";
+      icon.classList.remove("fa-eye-slash");
+      icon.classList.add("fa-eye");
+    }
+  }
+</script>
+
+<%- include('../partials/footer') %>

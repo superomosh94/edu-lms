@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - EDU LMS</title>
+    <%- include('../partials/header') %>
+    <style>
+        .admin-stats .card {
+            transition: transform 0.3s ease;
+            border: none;
+            border-radius: 10px;
+        }
+        .admin-stats .card:hover {
+            transform: translateY(-5px);
+        }
+        .quick-actions .btn {
+            margin: 5px;
+        }
+        .user-management table th {
+            border-top: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/navigation') %>
+
+    <div class="container-fluid py-4">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/dashboard/admin">
+                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/users">
+                                <i class="fas fa-users me-2"></i>User Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/courses">
+                                <i class="fas fa-book me-2"></i>Course Management
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/system">
+                                <i class="fas fa-cogs me-2"></i>System Settings
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/reports">
+                                <i class="fas fa-chart-bar me-2"></i>Reports
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Admin Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
+                            <i class="fas fa-download me-1"></i>Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="row admin-stats">
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            Total Users</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= stats?.totalUsers || 0 %>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Active Courses</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= stats?.activeCourses || 0 %>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-book fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Pending Approvals</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <%= stats?.pendingApprovals || 0 %>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-clock fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            System Health</div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                            <span class="text-success">Good</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-heart fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card shadow">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                            </div>
+                            <div class="card-body text-center quick-actions">
+                                <a href="/admin/users/create" class="btn btn-primary">
+                                    <i class="fas fa-user-plus me-2"></i>Add User
+                                </a>
+                                <a href="/courses/create" class="btn btn-success">
+                                    <i class="fas fa-plus-circle me-2"></i>Create Course
+                                </a>
+                                <a href="/admin/reports" class="btn btn-info">
+                                    <i class="fas fa-chart-bar me-2"></i>Generate Reports
+                                </a>
+                                <a href="/admin/system" class="btn btn-warning">
+                                    <i class="fas fa-cogs me-2"></i>System Settings
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Users -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">Recent Users</h6>
+                                <a href="/admin/users" class="btn btn-sm btn-primary">View All</a>
+                            </div>
+                            <div class="card-body user-management">
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Role</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% if (recentUsers && recentUsers.length > 0) { %>
+                                                <% recentUsers.forEach(user => { %>
+                                                    <tr>
+                                                        <td><%= user.name %></td>
+                                                        <td>
+                                                            <span class="badge bg-<%= user.role === 'admin' ? 'danger' : user.role === 'teacher' ? 'warning' : 'info' %>">
+                                                                <%= user.role %>
+                                                            </span>
+                                                        </td>
+                                                        <td>
+                                                            <span class="badge bg-<%= user.status === 'active' ? 'success' : 'secondary' %>">
+                                                                <%= user.status %>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                <% }) %>
+                                            <% } else { %>
+                                                <tr>
+                                                    <td colspan="3" class="text-center text-muted">No recent users</td>
+                                                </tr>
+                                            <% } %>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h6 class="m-0 font-weight-bold text-primary">System Alerts</h6>
+                                <span class="badge bg-danger"><%= alerts?.length || 0 %></span>
+                            </div>
+                            <div class="card-body">
+                                <% if (alerts && alerts.length > 0) { %>
+                                    <div class="list-group list-group-flush">
+                                        <% alerts.forEach(alert => { %>
+                                            <div class="list-group-item d-flex justify-content-between align-items-start">
+                                                <div class="ms-2 me-auto">
+                                                    <div class="fw-bold"><%= alert.title %></div>
+                                                    <%= alert.message %>
+                                                </div>
+                                                <span class="badge bg-<%= alert.type %> rounded-pill">
+                                                    <%= alert.priority %>
+                                                </span>
+                                            </div>
+                                        <% }) %>
+                                    </div>
+                                <% } else { %>
+                                    <p class="text-muted text-center">No system alerts</p>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>
