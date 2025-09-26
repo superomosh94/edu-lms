@@ -150,13 +150,13 @@
         <div class="form-group">
           <label for="password" class="form-label">Password</label>
           <input type="password" id="password" class="form-control" required>
-          <button type="button" class="toggle-password" onclick="togglePassword('password', this)">👁</button>
+          <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="password">👁</button>
         </div>
 
         <div class="form-group">
           <label for="confirmPassword" class="form-label">Confirm Password</label>
           <input type="password" id="confirmPassword" class="form-control" required>
-          <button type="button" class="toggle-password" onclick="togglePassword('confirmPassword', this)">👁</button>
+          <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="confirmPassword">👁</button>
         </div>
 
         <button type="submit" class="btn btn-primary">Register</button>
@@ -168,37 +168,6 @@
     </div>
   </div>
 
-  <script>
-    function togglePassword(fieldId, btn) {
-      const input = document.getElementById(fieldId);
-      if (input.type === "password") {
-        input.type = "text";
-        btn.textContent = "🙈";
-      } else {
-        input.type = "password";
-        btn.textContent = "👁";
-      }
-    }
-
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const fullName = document.getElementById('fullName').value;
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirmPassword').value;
-
-      if (password !== confirmPassword) {
-        alert('Passwords do not match');
-        return;
-      }
-
-      if (fullName && email && password) {
-        alert('Registration successful! Redirecting...');
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 1000);
-      }
-    });
-  </script>
+  <script src="/public/js/auth.js"></script>
 </body>
 </html>
