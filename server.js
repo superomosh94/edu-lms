@@ -71,21 +71,20 @@ app.use((req, res, next) => {
 });
 
 // Import routes
-
 const gradesRoutes = require('./app/routes/grades');
-app.use('/grades', gradesRoutes);
-
-
 const authRoutes = require('./app/routes/authRoutes');
 const dashboardRoutes = require('./app/routes/dashboardRoutes');
 const courseRoutes = require('./app/routes/courseRoutes');
 const assignmentRoutes = require('./app/routes/assignmentRoutes');
+const settingsRoutes = require('./app/routes/settingsRoutes'); // NEW
 
 // Use routes
+app.use('/grades', gradesRoutes);
 app.use('/auth', authLimiter, authRoutes);
 app.use('/dashboard', dashboardRoutes);
 app.use('/courses', courseRoutes);
 app.use('/assignments', assignmentRoutes);
+app.use('/settings', settingsRoutes); // NEW
 
 // Home route
 app.get('/', (req, res) => {

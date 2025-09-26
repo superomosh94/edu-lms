@@ -1,822 +1,1485 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EDU LMS - Professional Learning Management System</title>
-  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #4361ee;
-      --primary-dark: #3a0ca3;
-      --secondary: #7209b7;
-      --accent: #f72585;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
-      --success: #4cc9f0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edu-LMS | Modern Learning Management System</title>
+    <meta name="description" content="Edu-LMS is a comprehensive learning management system designed for educational institutions. Streamline courses, assignments, attendance, and more.">
     
-    body {
-      font-family: 'Inter', Arial, sans-serif;
-      line-height: 1.6;
-      color: var(--dark);
-    }
+    <!-- Open Graph / Social Media Metadata -->
+    <meta property="og:title" content="Edu-LMS | Modern Learning Management System">
+    <meta property="og:description" content="Streamline educational processes with our comprehensive LMS solution.">
+    <meta property="og:type" content="website">
     
-    h1, h2, h3, h4, h5, h6 {
-      font-weight: 600;
-    }
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="#">
     
-    .hero-section {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      padding: 150px 0 100px;
-      position: relative;
-      overflow: hidden;
-    }
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    .hero-section::before {
-      content: '';
-      position: absolute;
-      width: 200%;
-      height: 200%;
-      top: -50%;
-      left: -50%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      z-index: 0;
-    }
-    
-    .hero-title {
-      font-size: 3.5rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-    }
-    
-    .hero-content {
-      position: relative;
-      z-index: 1;
-    }
-    
-    .section-title {
-      font-size: 2.5rem;
-      margin-bottom: 3rem;
-      position: relative;
-    }
-    
-    .section-title::after {
-      content: '';
-      position: absolute;
-      width: 80px;
-      height: 4px;
-      background: var(--primary);
-      bottom: -15px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-radius: 2px;
-    }
-    
-    .feature-card {
-      background: white;
-      padding: 30px 20px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      height: 100%;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      border-top: 4px solid var(--primary);
-    }
-    
-    .feature-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-    }
-    
-    .feature-icon {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      color: white;
-      font-size: 2rem;
-    }
-    
-    .pricing-card {
-      background: white;
-      padding: 40px 30px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
-      transition: transform 0.3s ease;
-      position: relative;
-    }
-    
-    .pricing-card:hover {
-      transform: translateY(-5px);
-    }
-    
-    .pricing-card.popular {
-      border: 2px solid var(--primary);
-      transform: scale(1.05);
-      z-index: 1;
-    }
-    
-    .pricing-card.popular::before {
-      content: 'Most Popular';
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--primary);
-      color: white;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-    }
-    
-    .price {
-      font-size: 3rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin: 20px 0;
-    }
-    
-    .testimonial-card {
-      background: #fff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      position: relative;
-    }
-    
-    .testimonial-card::before {
-      content: '\201C';
-      font-size: 5rem;
-      color: rgba(67, 97, 238, 0.1);
-      position: absolute;
-      top: -10px;
-      left: 10px;
-      line-height: 1;
-    }
-    
-    .testimonial-avatar {
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-right: 15px;
-    }
-    
-    .client-logo {
-      height: 40px;
-      margin: 20px;
-      opacity: 0.7;
-      transition: opacity 0.3s ease;
-      filter: grayscale(100%);
-    }
-    
-    .client-logo:hover {
-      opacity: 1;
-      filter: grayscale(0%);
-    }
-    
-    .footer {
-      background: var(--dark);
-      color: white;
-      padding: 70px 0 30px;
-    }
-    
-    .footer h5 {
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
-    
-    .footer a {
-      color: #aaa;
-      text-decoration: none;
-      transition: color 0.3s ease;
-    }
-    
-    .footer a:hover {
-      color: white;
-    }
-    
-    .footer ul {
-      list-style: none;
-      padding: 0;
-    }
-    
-    .footer ul li {
-      margin-bottom: 10px;
-    }
-    
-    .social-icons a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-      height: 40px;
-      background: rgba(255,255,255,0.1);
-      border-radius: 50%;
-      margin-right: 10px;
-      transition: background 0.3s ease;
-    }
-    
-    .social-icons a:hover {
-      background: var(--primary);
-    }
-    
-    .cta-section {
-      background: linear-gradient(135deg, var(--secondary), var(--primary-dark));
-      color: white;
-      padding: 80px 0;
-      text-align: center;
-    }
-    
-    .stats-section {
-      padding: 80px 0;
-      background: var(--light);
-    }
-    
-    .stat-item {
-      text-align: center;
-      padding: 20px;
-    }
-    
-    .stat-number {
-      font-size: 3rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 10px;
-    }
-    
-    .nav-link {
-      font-weight: 500;
-      transition: color 0.3s ease;
-    }
-    
-    .navbar-brand {
-      font-weight: 700;
-      font-size: 1.5rem;
-    }
-    
-    .btn-primary {
-      background: var(--primary);
-      border-color: var(--primary);
-      font-weight: 500;
-      padding: 10px 25px;
-    }
-    
-    .btn-primary:hover {
-      background: var(--primary-dark);
-      border-color: var(--primary-dark);
-    }
-    
-    .btn-outline-primary {
-      color: var(--primary);
-      border-color: var(--primary);
-      font-weight: 500;
-      padding: 10px 25px;
-    }
-    
-    .btn-outline-primary:hover {
-      background: var(--primary);
-      border-color: var(--primary);
-    }
-    
-    .accordion-button {
-      font-weight: 500;
-    }
-    
-    .accordion-button:not(.collapsed) {
-      background-color: rgba(67, 97, 238, 0.1);
-      color: var(--primary);
-    }
-    
-    @media (max-width: 768px) {
-      .hero-title {
-        font-size: 2.5rem;
-      }
-      
-      .pricing-card.popular {
-        transform: scale(1);
-      }
-    }
-  </style>
+    <style>
+        /* CSS Variables for consistent theming */
+        :root {
+            /* Colors */
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --secondary-purple: #7c3aed;
+            --secondary-purple-dark: #6d28d9;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-text: #f1f5f9;
+            --light-text: #94a3b8;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --white: #ffffff;
+            
+            /* Typography */
+            --font-primary: 'Inter', sans-serif;
+            --font-secondary: 'Poppins', sans-serif;
+            
+            /* Spacing */
+            --space-xs: 0.5rem;
+            --space-sm: 1rem;
+            --space-md: 1.5rem;
+            --space-lg: 2rem;
+            --space-xl: 3rem;
+            --space-xxl: 4rem;
+            
+            /* Border Radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: var(--font-secondary);
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: var(--space-md);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+        }
+        
+        h2 {
+            font-size: 2rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+        }
+        
+        p {
+            margin-bottom: var(--space-md);
+            color: var(--light-text);
+        }
+        
+        a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        a:hover {
+            color: var(--primary-blue-dark);
+        }
+        
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-md);
+        }
+        
+        .section {
+            padding: var(--space-xxl) 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: var(--space-xl);
+        }
+        
+        .section-title h2 {
+            position: relative;
+            display: inline-block;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple));
+            border-radius: 2px;
+        }
+        
+        .section-title p {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: var(--white);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-blue-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--dark-text);
+            border: 1px solid var(--light-text);
+        }
+        
+        .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary-blue);
+            transform: translateY(-2px);
+        }
+        
+        .btn-large {
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+        }
+        
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: var(--space-sm) 0;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+        
+        .logo span {
+            color: var(--primary-blue);
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-left: var(--space-lg);
+        }
+        
+        .nav-link {
+            color: var(--dark-text);
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: var(--primary-blue);
+        }
+        
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            font-size: 1.5rem;
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding-top: 8rem;
+            padding-bottom: var(--space-xxl);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+            align-items: center;
+        }
+        
+        .hero-text h1 {
+            font-size: 3rem;
+            margin-bottom: var(--space-md);
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .hero-text p {
+            font-size: 1.2rem;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: var(--space-md);
+        }
+        
+        .hero-image {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .hero-image::before {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary-blue), var(--secondary-purple));
+            opacity: 0.1;
+            filter: blur(60px);
+            z-index: -1;
+        }
+        
+        .hero-image img {
+            max-width: 100%;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        /* Features Section */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .feature-card {
+            background-color: var(--dark-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-md);
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            color: var(--white);
+            font-size: 1.5rem;
+        }
+        
+        /* Roles Section */
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .role-card {
+            background-color: var(--dark-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .role-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-md);
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            color: var(--white);
+            font-size: 2rem;
+        }
+        
+        /* Demo Section */
+        .demo-container {
+            background-color: var(--dark-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        
+        .demo-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            font-size: 1.2rem;
+            position: relative;
+        }
+        
+        .demo-image::before {
+            content: 'Edu-LMS Dashboard Preview';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Testimonials Section */
+        .testimonials-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .testimonial-card {
+            background-color: var(--dark-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .testimonial-content {
+            margin-bottom: var(--space-md);
+            font-style: italic;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+        
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            margin-right: var(--space-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: bold;
+        }
+        
+        .author-info h4 {
+            margin-bottom: 0;
+        }
+        
+        .author-info p {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        /* Pricing Section */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--space-lg);
+        }
+        
+        .pricing-card {
+            background-color: var(--dark-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: var(--shadow-md);
+            position: relative;
+        }
+        
+        .pricing-card.featured {
+            border: 2px solid var(--primary-blue);
+            transform: scale(1.05);
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .pricing-card.featured:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+        
+        .pricing-header {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .pricing-name {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+        }
+        
+        .pricing-period {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .pricing-features li {
+            padding: var(--space-xs) 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .pricing-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* FAQ Section */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .faq-item {
+            background-color: var(--dark-card);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .faq-question {
+            padding: var(--space-md);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+        
+        .faq-item.active .faq-question::after {
+            transform: rotate(45deg);
+        }
+        
+        .faq-answer {
+            padding: 0 var(--space-md);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 0 var(--space-md) var(--space-md);
+            max-height: 500px;
+        }
+        
+        /* Contact Section */
+        .contact-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+        }
+        
+        .contact-form {
+            background-color: var(--dark-card);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .form-group {
+            margin-bottom: var(--space-md);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: var(--space-xs);
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--dark-text);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .info-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: var(--space-md);
+            color: var(--white);
+            font-size: 1.2rem;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--dark-card);
+            padding: var(--space-xl) 0 var(--space-md);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-xl);
+            margin-bottom: var(--space-xl);
+        }
+        
+        .footer-column h3 {
+            font-size: 1.2rem;
+            margin-bottom: var(--space-md);
+            position: relative;
+            padding-bottom: var(--space-xs);
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple));
+        }
+        
+        .footer-links {
+            list-style: none;
+        }
+        
+        .footer-links li {
+            margin-bottom: var(--space-xs);
+        }
+        
+        .footer-links a {
+            color: var(--light-text);
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary-blue);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-md);
+        }
+        
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        
+        .social-link:hover {
+            background-color: var(--primary-blue);
+            transform: translateY(-3px);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: var(--space-md);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        /* Auth Pages Styles */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-xxl) 0;
+            background-color: var(--dark-bg);
+        }
+        
+        .auth-card {
+            background-color: var(--dark-card);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xl);
+            width: 100%;
+            max-width: 450px;
+            padding: var(--space-xl);
+            margin: var(--space-md);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: var(--space-lg);
+        }
+        
+        .auth-logo {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: var(--space-sm);
+            color: var(--white);
+        }
+        
+        .auth-logo span {
+            color: var(--primary-blue);
+        }
+        
+        .auth-title {
+            font-size: 1.5rem;
+            margin-bottom: var(--space-xs);
+        }
+        
+        .auth-subtitle {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+        
+        .auth-form .form-group {
+            margin-bottom: var(--space-md);
+        }
+        
+        .auth-form .form-label {
+            margin-bottom: var(--space-xs);
+            font-weight: 500;
+        }
+        
+        .auth-form .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--dark-text);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .auth-form .form-control:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+        }
+        
+        .auth-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+            font-size: 0.9rem;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember-me input {
+            margin-right: var(--space-xs);
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: var(--space-lg);
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+        
+        .auth-footer a {
+            color: var(--primary-blue);
+            font-weight: 500;
+        }
+        
+        .auth-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+            margin-bottom: var(--space-lg);
+            position: relative;
+        }
+        
+        .auth-image::before {
+            content: 'Authentication Illustration';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Role Selection Styles */
+        .role-selection {
+            margin-bottom: var(--space-lg);
+        }
+        
+        .role-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-sm);
+        }
+        
+        .role-option {
+            display: flex;
+            align-items: center;
+            padding: var(--space-sm);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .role-option:hover {
+            border-color: var(--primary-blue);
+        }
+        
+        .role-option input {
+            margin-right: var(--space-sm);
+        }
+        
+        .role-option.active {
+            border-color: var(--primary-blue);
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .hero-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .hero-buttons {
+                justify-content: center;
+            }
+            
+            .contact-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+            
+            .pricing-card.featured:hover {
+                transform: translateY(-5px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                flex-direction: column;
+                background-color: var(--dark-card);
+                width: 100%;
+                text-align: center;
+                transition: 0.3s;
+                box-shadow: var(--shadow-lg);
+                padding: var(--space-lg) 0;
+            }
+            
+            .nav-menu.active {
+                right: 0;
+            }
+            
+            .nav-item {
+                margin: var(--space-md) 0;
+            }
+            
+            .hero {
+                padding-top: 6rem;
+            }
+            
+            .section {
+                padding: var(--space-xl) 0;
+            }
+            
+            .role-options {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: var(--space-sm);
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .auth-card {
+                padding: var(--space-lg);
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm py-3">
-    <div class="container">
-      <a class="navbar-brand text-primary" href="#">
-        <i class="fas fa-graduation-cap me-2"></i>EDU LMS
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-          <li class="nav-item"><a class="nav-link" href="#solutions">Solutions</a></li>
-          <li class="nav-item"><a class="nav-link" href="#testimonials">Testimonials</a></li>
-          <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
-          <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
-          <li class="nav-item ms-lg-3 mt-2 mt-lg-0"><a class="btn btn-primary" href="/auth/login">Login</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="hero-section">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-lg-6 hero-content">
-          <h1 class="hero-title">Transform Your Learning Journey with EDU LMS</h1>
-          <p class="lead mb-4">An enterprise-grade learning management platform trusted by 5,000+ institutions worldwide to deliver engaging educational experiences.</p>
-          <div class="d-flex flex-wrap gap-3">
-            <a href="/auth/register" class="btn btn-light btn-lg px-4 py-3 fw-semibold">
-              <i class="fas fa-user-plus me-2"></i> Start Free Trial
-            </a>
-            <a href="#pricing" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">
-              <i class="fas fa-chart-line me-2"></i> View Plans
-            </a>
-          </div>
-          <p class="mt-3 small">No credit card required • 14-day free trial • Setup in minutes</p>
-        </div>
-        <div class="col-lg-6 text-center mt-5 mt-lg-0">
-          <img src="https://via.placeholder.com/600x400/4361ee/ffffff?text=EDU+LMS+Dashboard" alt="EDU LMS Dashboard" class="img-fluid rounded shadow-lg" style="max-height: 400px;">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Stats -->
-  <section class="stats-section">
-    <div class="container">
-      <div class="row text-center">
-        <div class="col-md-3 col-6 stat-item">
-          <div class="stat-number">5,000+</div>
-          <p>Educational Institutions</p>
-        </div>
-        <div class="col-md-3 col-6 stat-item">
-          <div class="stat-number">2M+</div>
-          <p>Active Learners</p>
-        </div>
-        <div class="col-md-3 col-6 stat-item">
-          <div class="stat-number">98%</div>
-          <p>Customer Satisfaction</p>
-        </div>
-        <div class="col-md-3 col-6 stat-item">
-          <div class="stat-number">24/7</div>
-          <p>Support Available</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features -->
-  <section id="features" class="py-5 bg-white">
-    <div class="container">
-      <h2 class="text-center section-title">Powerful Features</h2>
-      <p class="text-center text-muted mb-5">Designed to meet the needs of modern educational institutions and corporate training programs</p>
-      
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-chalkboard-teacher"></i>
-            </div>
-            <h5>Advanced Course Builder</h5>
-            <p>Create engaging courses with multimedia content, interactive quizzes, assignments, and SCORM compliance.</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-chart-line"></i>
-            </div>
-            <h5>Comprehensive Analytics</h5>
-            <p>Track student progress, engagement metrics, and performance data with customizable reporting dashboards.</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-mobile-alt"></i>
-            </div>
-            <h5>Mobile-First Design</h5>
-            <p>Native mobile apps for iOS and Android with offline access capabilities and push notifications.</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-users"></i>
-            </div>
-            <h5>Collaboration Tools</h5>
-            <p>Integrated discussion forums, group projects, and real-time communication features for enhanced engagement.</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-shield-alt"></i>
-            </div>
-            <h5>Enterprise Security</h5>
-            <p>SOC 2 Type II certified, GDPR compliant, single sign-on (SSO), and advanced data encryption.</p>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="feature-card">
-            <div class="feature-icon">
-              <i class="fas fa-plug"></i>
-            </div>
-            <h5>Integration Ecosystem</h5>
-            <p>Seamlessly connect with popular tools like Zoom, Salesforce, Google Workspace, and Microsoft 365.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Solutions -->
-  <section id="solutions" class="py-5 bg-light">
-    <div class="container">
-      <h2 class="text-center section-title">Solutions for Every Need</h2>
-      <p class="text-center text-muted mb-5">Tailored learning management solutions for different educational contexts</p>
-      
-      <div class="row g-4">
-        <div class="col-md-6">
-          <div class="feature-card">
-            <h4><i class="fas fa-university text-primary me-2"></i> Higher Education</h4>
-            <p>Comprehensive tools for universities and colleges including degree tracking, accreditation management, and research collaboration features.</p>
-            <ul class="mt-3">
-              <li>Academic program management</li>
-              <li>Faculty development tools</li>
-              <li>Research and publication tracking</li>
+    <!-- Header & Navigation -->
+    <header>
+        <nav class="navbar container" aria-label="Main navigation">
+            <a href="#" class="logo">Edu<span>LMS</span></a>
+            
+            <button class="hamburger" aria-expanded="false" aria-controls="nav-menu">
+                ☰
+            </button>
+            
+            <ul class="nav-menu" id="nav-menu" role="menubar">
+                <li class="nav-item" role="none">
+                    <a href="#features" class="nav-link" role="menuitem">Features</a>
+                </li>
+                <li class="nav-item" role="none">
+                    <a href="#roles" class="nav-link" role="menuitem">Roles</a>
+                </li>
+                <li class="nav-item" role="none">
+                    <a href="#demo" class="nav-link" role="menuitem">Demo</a>
+                </li>
+                <li class="nav-item" role="none">
+                    <a href="#pricing" class="nav-link" role="menuitem">Pricing</a>
+                </li>
+                <li class="nav-item" role="none">
+                    <a href="#contact" class="nav-link" role="menuitem">Contact</a>
+                </li>
+                <li class="nav-item" role="none">
+                    <a href="/auth/login" class="btn btn-primary" role="menuitem">Login</a>
+                </li>
             </ul>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="feature-card">
-            <h4><i class="fas fa-school text-primary me-2"></i> K-12 Schools</h4>
-            <p>Age-appropriate interfaces, parent portals, and curriculum alignment tools designed specifically for primary and secondary education.</p>
-            <ul class="mt-3">
-              <li>Parent-teacher communication</li>
-              <li>Standardized test preparation</li>
-              <li>Curriculum mapping</li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="feature-card">
-            <h4><i class="fas fa-briefcase text-primary me-2"></i> Corporate Training</h4>
-            <p>Scalable solutions for employee onboarding, compliance training, skill development, and performance tracking.</p>
-            <ul class="mt-3">
-              <li>Certification and compliance tracking</li>
-              <li>Skills gap analysis</li>
-              <li>ROI measurement tools</li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="feature-card">
-            <h4><i class="fas fa-globe text-primary me-2"></i> Online Academies</h4>
-            <p>Monetization features, multi-language support, and marketing tools for creating and selling online courses.</p>
-            <ul class="mt-3">
-              <li>E-commerce integration</li>
-              <li>Multi-currency support</li>
-              <li>Affiliate marketing tools</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+        </nav>
+    </header>
 
-  <!-- Testimonials -->
-  <section id="testimonials" class="py-5 bg-white">
-    <div class="container">
-      <h2 class="text-center section-title">Trusted by Leading Institutions</h2>
-      <p class="text-center text-muted mb-5">Hear from educators and administrators who have transformed their learning programs</p>
-      
-      <div class="row">
-        <div class="col-md-4">
-          <div class="testimonial-card">
-            <p>"EDU LMS has revolutionized how we deliver courses. The analytics dashboard helps us identify at-risk students early and provide targeted support, improving our retention rates by 23%."</p>
-            <div class="d-flex align-items-center mt-4">
-              <img src="https://via.placeholder.com/60/4361ee/ffffff?text=SJ" alt="Sarah Johnson" class="testimonial-avatar">
-              <div>
-                <p class="fw-bold mb-0">Sarah Johnson</p>
-                <p class="text-muted small">Professor of Computer Science, Stanford University</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="testimonial-card">
-            <p>"As a student, I love the intuitive interface and mobile app. It keeps all my course materials organized and sends reminders for assignments. The collaborative features make group projects much easier."</p>
-            <div class="d-flex align-items-center mt-4">
-              <img src="https://via.placeholder.com/60/7209b7/ffffff?text=MC" alt="Michael Chen" class="testimonial-avatar">
-              <div>
-                <p class="fw-bold mb-0">Michael Chen</p>
-                <p class="text-muted small">MBA Student, Harvard Business School</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="testimonial-card">
-            <p>"Implementing EDU LMS across our district was seamless. The training resources and customer support were exceptional. Teachers adopted it quickly, and we've seen a significant improvement in student engagement."</p>
-            <div class="d-flex align-items-center mt-4">
-              <img src="https://via.placeholder.com/60/3a0ca3/ffffff?text=RW" alt="Robert Williams" class="testimonial-avatar">
-              <div>
-                <p class="fw-bold mb-0">Dr. Robert Williams</p>
-                <p class="text-muted small">Superintendent, Chicago Public Schools</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="text-center mt-5">
-        <h4 class="mb-4">Trusted by 5,000+ institutions worldwide</h4>
-        <div class="d-flex flex-wrap justify-content-center align-items-center">
-          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=Stanford" alt="Stanford" class="client-logo">
-          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=Microsoft" alt="Microsoft" class="client-logo">
-          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=MIT" alt="MIT" class="client-logo">
-          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=Google" alt="Google" class="client-logo">
-          <img src="https://via.placeholder.com/150x50/ffffff/000000?text=Harvard" alt="Harvard" class="client-logo">
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Pricing -->
-  <section id="pricing" class="py-5 bg-light">
-    <div class="container">
-      <h2 class="text-center section-title">Flexible Pricing Plans</h2>
-      <p class="text-center text-muted mb-5">Choose the plan that fits your institution's needs</p>
-      
-      <div class="row g-4 justify-content-center">
-        <div class="col-lg-4 col-md-6">
-          <div class="pricing-card">
-            <h4>Basic</h4>
-            <p class="text-muted">For small institutions and individual instructors</p>
-            <div class="price">$29<span class="fs-6">/month</span></div>
-            <ul class="list-unstyled mb-4">
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Up to 100 students</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 10GB storage</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Basic analytics</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Email support</li>
-              <li class="mb-2 text-muted"><i class="fas fa-times me-2"></i> Advanced integrations</li>
-              <li class="mb-2 text-muted"><i class="fas fa-times me-2"></i> Custom branding</li>
-            </ul>
-            <a href="#" class="btn btn-outline-primary w-100">Choose Plan</a>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="pricing-card popular">
-            <h4>Professional</h4>
-            <p class="text-muted">For growing institutions and departments</p>
-            <div class="price">$79<span class="fs-6">/month</span></div>
-            <ul class="list-unstyled mb-4">
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Up to 500 students</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 50GB storage</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced analytics</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Priority support</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> API access</li>
-              <li class="mb-2 text-muted"><i class="fas fa-times me-2"></i> Custom branding</li>
-            </ul>
-            <a href="#" class="btn btn-primary w-100">Choose Plan</a>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6">
-          <div class="pricing-card">
-            <h4>Enterprise</h4>
-            <p class="text-muted">For large institutions and corporations</p>
-            <div class="price">Custom</div>
-            <ul class="list-unstyled mb-4">
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Unlimited students</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Custom storage</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Advanced analytics</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> 24/7 dedicated support</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Full customization</li>
-              <li class="mb-2"><i class="fas fa-check text-success me-2"></i> Custom branding</li>
-            </ul>
-            <a href="#" class="btn btn-outline-primary w-100">Contact Sales</a>
-          </div>
-        </div>
-      </div>
-      
-      <div class="text-center mt-5">
-        <p class="text-muted">All plans include a 14-day free trial with full feature access. No credit card required.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FAQ -->
-  <section id="faq" class="py-5 bg-white">
-    <div class="container">
-      <h2 class="text-center section-title">Frequently Asked Questions</h2>
-      <p class="text-center text-muted mb-5">Find answers to common questions about EDU LMS</p>
-      
-      <div class="row justify-content-center">
-        <div class="col-lg-8">
-          <div class="accordion" id="faqAccordion">
-            <div class="accordion-item border-0 mb-3 shadow-sm">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
-                  What is EDU LMS and who is it for?
-                </button>
-              </h2>
-              <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  EDU LMS is a comprehensive learning management system designed for educational institutions, corporate training departments, and individual educators. It provides tools for course creation, delivery, tracking, and assessment. Our platform serves K-12 schools, higher education institutions, corporations, and online academies.
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Transform Education with Modern LMS</h1>
+                    <p>Edu-LMS is a comprehensive learning management system designed to streamline educational processes for institutions of all sizes. Manage courses, assignments, attendance, and more in one unified platform.</p>
+                    <div class="hero-buttons">
+                        <a href="register.html" class="btn btn-primary btn-large">Get Started</a>
+                        <a href="#demo" class="btn btn-secondary btn-large">View Demo</a>
+                    </div>
                 </div>
-              </div>
+                <div class="hero-image">
+                    <div class="demo-image"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Powerful Features</h2>
+                <p>Discover the comprehensive set of tools designed to enhance the learning experience for everyone involved.</p>
             </div>
             
-            <div class="accordion-item border-0 mb-3 shadow-sm">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
-                  Is there a free trial available?
-                </button>
-              </h2>
-              <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  Yes, we offer a 14-day free trial with full access to all features of the Professional plan. No credit card is required to start your trial. You can upgrade, downgrade, or cancel at any time during the trial period.
-                </div>
-              </div>
+            <div class="features-grid">
+                <article class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Course Management</h3>
+                    <p>Easily create, organize, and manage courses with intuitive tools. Upload materials, set prerequisites, and track progress.</p>
+                </article>
+                
+                <article class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>Assignments & Grading</h3>
+                    <p>Create assignments, set due dates, and provide feedback. Automated grading saves time and ensures consistency.</p>
+                </article>
+                
+                <article class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Attendance Tracking</h3>
+                    <p>Monitor student attendance with QR codes or manual entry. Generate reports for administrators and parents.</p>
+                </article>
+                
+                <article class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Analytics & Reports</h3>
+                    <p>Gain insights with detailed analytics on student performance, engagement, and course effectiveness.</p>
+                </article>
+                
+                <article class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3>Payment Processing</h3>
+                    <p>Handle tuition fees, course payments, and other transactions securely with integrated payment gateways.</p>
+                </article>
+                
+                <article class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <h3>Audit Logs & Security</h3>
+                    <p>Maintain comprehensive audit trails and ensure data security with role-based access controls.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roles Section -->
+    <section class="section" id="roles">
+        <div class="container">
+            <div class="section-title">
+                <h2>Designed for Every Role</h2>
+                <p>Edu-LMS provides tailored experiences for each user role within your educational institution.</p>
             </div>
             
-            <div class="accordion-item border-0 mb-3 shadow-sm">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
-                  Can I integrate EDU LMS with my existing systems?
-                </button>
-              </h2>
-              <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  Absolutely. EDU LMS offers robust API access and pre-built integrations with popular systems including:
-                  <ul>
-                    <li>Student Information Systems (SIS)</li>
-                    <li>Single Sign-On (SSO) providers</li>
-                    <li>Video conferencing tools (Zoom, Microsoft Teams)</li>
-                    <li>Content repositories and libraries</li>
-                    <li>Payment gateways for course monetization</li>
-                  </ul>
-                  Our technical team can assist with custom integrations for enterprise clients.
-                </div>
-              </div>
+            <div class="roles-grid">
+                <article class="role-card">
+                    <div class="role-icon">👨‍💼</div>
+                    <h3>Administrator</h3>
+                    <p>Full system control with user management, course oversight, and comprehensive reporting capabilities.</p>
+                </article>
+                
+                <article class="role-card">
+                    <div class="role-icon">👩‍🏫</div>
+                    <h3>Teacher</h3>
+                    <p>Create courses, manage assignments, track student progress, and communicate with students and parents.</p>
+                </article>
+                
+                <article class="role-card">
+                    <div class="role-icon">👨‍🎓</div>
+                    <h3>Student</h3>
+                    <p>Access course materials, submit assignments, track progress, and engage with learning content.</p>
+                </article>
+                
+                <article class="role-card">
+                    <div class="role-icon">👩‍💼</div>
+                    <h3>Finance</h3>
+                    <p>Manage payments, invoices, and financial reports with integrated accounting tools.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section class="section" id="demo">
+        <div class="container">
+            <div class="section-title">
+                <h2>Platform Preview</h2>
+                <p>See how Edu-LMS can transform your educational institution with our interactive demo.</p>
             </div>
             
-            <div class="accordion-item border-0 mb-3 shadow-sm">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
-                  What kind of support do you provide?
-                </button>
-              </h2>
-              <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  We offer multiple support tiers:
-                  <ul>
-                    <li><strong>Basic:</strong> Email support with 24-hour response time</li>
-                    <li><strong>Professional:</strong> Priority email and chat support with 4-hour response time</li>
-                    <li><strong>Enterprise:</strong> 24/7 dedicated phone support, account manager, and custom training</li>
-                  </ul>
-                  All plans include access to our comprehensive knowledge base, video tutorials, and community forums.
+            <div class="demo-container">
+                <div class="demo-image">
+                    <!-- Placeholder for dashboard screenshot -->
                 </div>
-              </div>
             </div>
             
-            <div class="accordion-item border-0 mb-3 shadow-sm">
-              <h2 class="accordion-header">
-                <button class="accordion-button collapsed rounded" type="button" data-bs-toggle="collapse" data-bs-target="#faq5">
-                  Is my data secure with EDU LMS?
-                </button>
-              </h2>
-              <div id="faq5" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
-                <div class="accordion-body">
-                  Security is our top priority. EDU LMS is SOC 2 Type II certified and compliant with GDPR, FERPA, and other data protection regulations. We employ:
-                  <ul>
-                    <li>End-to-end encryption for data in transit and at rest</li>
-                    <li>Regular security audits and penetration testing</li>
-                    <li>Role-based access controls</li>
-                    <li>Advanced threat detection systems</li>
-                    <li>Regular data backups with geo-redundancy</li>
-                  </ul>
-                  Enterprise clients can choose their data residency options for additional compliance.
-                </div>
-              </div>
+            <div style="text-align: center; margin-top: var(--space-lg);">
+                <a href="#" class="btn btn-primary">Request Live Demo</a>
             </div>
-          </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- CTA -->
-  <section class="cta-section">
-    <div class="container">
-      <div class="row justify-content-center text-center">
-        <div class="col-lg-8">
-          <h2 class="mb-4">Ready to Transform Your Learning Experience?</h2>
-          <p class="lead mb-5">Join thousands of institutions using EDU LMS to deliver exceptional educational experiences.</p>
-          <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
-            <a href="/auth/register" class="btn btn-light btn-lg px-4 py-3 fw-semibold">
-              <i class="fas fa-rocket me-2"></i> Start Free Trial
-            </a>
-            <a href="#" class="btn btn-outline-light btn-lg px-4 py-3 fw-semibold">
-              <i class="fas fa-calendar me-2"></i> Schedule a Demo
-            </a>
-          </div>
+    <!-- Testimonials Section -->
+    <section class="section" id="testimonials">
+        <div class="container">
+            <div class="section-title">
+                <h2>What Our Clients Say</h2>
+                <p>Hear from educational institutions that have transformed their operations with Edu-LMS.</p>
+            </div>
+            
+            <div class="testimonials-container">
+                <article class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"Edu-LMS has revolutionized how we manage our courses and track student progress. The intuitive interface reduced our training time by 60%."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JS</div>
+                        <div class="author-info">
+                            <h4>Dr. Jane Smith</h4>
+                            <p>Principal, Lincoln High School</p>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"The analytics and reporting features have given us insights we never had before. We've improved student retention by 25% since implementation."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MJ</div>
+                        <div class="author-info">
+                            <h4>Michael Johnson</h4>
+                            <p>IT Director, Global University</p>
+                        </div>
+                    </div>
+                </article>
+                
+                <article class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"As a teacher, I appreciate how Edu-LMS simplifies assignment management and grading. It's saved me hours each week on administrative tasks."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SD</div>
+                        <div class="author-info">
+                            <h4>Sarah Davis</h4>
+                            <p>Mathematics Teacher, Oakwood Academy</p>
+                        </div>
+                    </div>
+                </article>
+            </div>
         </div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-4 mb-4 mb-lg-0">
-          <h5><i class="fas fa-graduation-cap me-2"></i> EDU LMS</h5>
-          <p class="mt-3">The leading learning management platform for educational institutions and corporate training programs worldwide.</p>
-          <div class="social-icons mt-4">
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-linkedin-in"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
-          </div>
+    <!-- Pricing Section -->
+    <section class="section" id="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>Simple, Transparent Pricing</h2>
+                <p>Choose the plan that fits your institution's needs. All plans include core features with scalable options.</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <article class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Starter</h3>
+                        <div class="pricing-price">$29<span class="pricing-period">/month</span></div>
+                        <p>Perfect for small schools and individual instructors</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Up to 100 students</li>
+                        <li>5 teacher accounts</li>
+                        <li>Basic course management</li>
+                        <li>Assignment tracking</li>
+                        <li>Email support</li>
+                    </ul>
+                    <a href="register.html" class="btn btn-secondary">Get Started</a>
+                </article>
+                
+                <article class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Pro</h3>
+                        <div class="pricing-price">$79<span class="pricing-period">/month</span></div>
+                        <p>Ideal for growing institutions</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Up to 500 students</li>
+                        <li>20 teacher accounts</li>
+                        <li>Advanced analytics</li>
+                        <li>Attendance tracking</li>
+                        <li>Priority support</li>
+                        <li>Custom branding</li>
+                    </ul>
+                    <a href="register.html" class="btn btn-primary">Get Started</a>
+                </article>
+                
+                <article class="pricing-card">
+                    <div class="pricing-header">
+                        <h3 class="pricing-name">Enterprise</h3>
+                        <div class="pricing-price">Custom</div>
+                        <p>For large institutions with specific needs</p>
+                    </div>
+                    <ul class="pricing-features">
+                        <li>Unlimited students</li>
+                        <li>Unlimited teachers</li>
+                        <li>Full feature access</li>
+                        <li>Advanced security</li>
+                        <li>Dedicated account manager</li>
+                        <li>Custom integrations</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-secondary">Contact Sales</a>
+                </article>
+            </div>
         </div>
-        <div class="col-lg-2 col-md-3 mb-4 mb-md-0">
-          <h5>Product</h5>
-          <ul>
-            <li><a href="#">Features</a></li>
-            <li><a href="#">Solutions</a></li>
-            <li><a href="#">Pricing</a></li>
-            <li><a href="#">Demo</a></li>
-            <li><a href="#">Updates</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-2 col-md-3 mb-4 mb-md-0">
-          <h5>Resources</h5>
-          <ul>
-            <li><a href="#">Documentation</a></li>
-            <li><a href="#">Blog</a></li>
-            <li><a href="#">Webinars</a></li>
-            <li><a href="#">Community</a></li>
-            <li><a href="#">Support</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-2 col-md-3 mb-4 mb-md-0">
-          <h5>Company</h5>
-          <ul>
-            <li><a href="#">About Us</a></li>
-            <li><a href="#">Careers</a></li>
-            <li><a href="#">Partners</a></li>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Press</a></li>
-          </ul>
-        </div>
-        <div class="col-lg-2 col-md-3">
-          <h5>Legal</h5>
-          <ul>
-            <li><a href="#">Privacy Policy</a></li>
-            <li><a href="#">Terms of Service</a></li>
-            <li><a href="#">Cookie Policy</a></li>
-            <li><a href="#">GDPR</a></li>
-            <li><a href="#">Security</a></li>
-          </ul>
-        </div>
-      </div>
-      <hr class="my-5" style="border-color: #444;">
-      <div class="row align-items-center">
-        <div class="col-md-6 text-center text-md-start">
-          <p>&copy; 2025 EDU LMS. All Rights Reserved.</p>
-        </div>
-        <div class="col-md-6 text-center text-md-end">
-          <p>Designed with <i class="fas fa-heart text-danger"></i> for educators worldwide</p>
-        </div>
-      </div>
-    </div>
-  </footer>
+    </section>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- FAQ Section -->
+    <section class="section" id="faq">
+        <div class="container">
+            <div class="section-title">
+                <h2>Frequently Asked Questions</h2>
+                <p>Find answers to common questions about Edu-LMS implementation and features.</p>
+            </div>
+            
+            <div class="faq-container">
+                <article class="faq-item">
+                    <div class="faq-question">How long does it take to implement Edu-LMS?</div>
+                    <div class="faq-answer">
+                        <p>Implementation time varies based on your institution's size and requirements. For most schools, the basic setup takes 2-4 weeks. Our team provides dedicated support throughout the process to ensure a smooth transition.</p>
+                    </div>
+                </article>
+                
+                <article class="faq-item">
+                    <div class="faq-question">Can we integrate Edu-LMS with our existing systems?</div>
+                    <div class="faq-answer">
+                        <p>Yes, Edu-LMS offers API access and pre-built integrations for popular student information systems, payment gateways, and authentication providers. Our Enterprise plan includes custom integration services.</p>
+                    </div>
+                </article>
+                
+                <article class="faq-item">
+                    <div class="faq-question">Is training provided for our staff?</div>
+                    <div class="faq-answer">
+                        <p>Absolutely. We provide comprehensive training materials, video tutorials, and live training sessions for administrators and teachers. Ongoing support is available through our help center and dedicated support team.</p>
+                    </div>
+                </article>
+                
+                <article class="faq-item">
+                    <div class="faq-question">How secure is our data with Edu-LMS?</div>
+                    <div class="faq-answer">
+                        <p>Security is our top priority. We employ industry-standard encryption, regular security audits, and comply with data protection regulations. Role-based access controls ensure that users only see information relevant to their responsibilities.</p>
+                    </div>
+                </article>
+                
+                <article class="faq-item">
+                    <div class="faq-question">Can we customize the platform to match our branding?</div>
+                    <div class="faq-answer">
+                        <p>Yes, both Pro and Enterprise plans include branding customization options. You can add your logo, colors, and domain to create a seamless experience for your users.</p>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section" id="contact">
+        <div class="container">
+            <div class="section-title">
+                <h2>Get In Touch</h2>
+                <p>Have questions or ready to get started? Contact our team for a personalized demo or consultation.</p>
+            </div>
+            
+            <div class="contact-container">
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name" class="form-label">Full Name</label>
+                            <input type="text" id="name" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email" class="form-label">Email Address</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="institution" class="form-label">Institution Name</label>
+                            <input type="text" id="institution" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea id="message" class="form-control" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+                
+                <div class="contact-info">
+                    <div class="info-item">
+                        <div class="info-icon">📍</div>
+                        <div>
+                            <h3>Our Office</h3>
+                            <p>123 Education Street<br>Learning City, LC 12345</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">📞</div>
+                        <div>
+                            <h3>Phone Number</h3>
+                            <p>+1 (555) 123-4567<br>Mon-Fri from 8am to 6pm</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon">✉️</div>
+                        <div>
+                            <h3>Email Address</h3>
+                            <p>info@edu-lms.com<br>We reply within 24 hours</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>Edu-LMS</h3>
+                    <p>Transforming education through innovative technology solutions designed for modern learning environments.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">f</a>
+                        <a href="#" class="social-link" aria-label="Twitter">t</a>
+                        <a href="#" class="social-link" aria-label="LinkedIn">in</a>
+                        <a href="#" class="social-link" aria-label="Instagram">ig</a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Product</h3>
+                    <ul class="footer-links">
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#demo">Demo</a></li>
+                        <li><a href="#">Updates</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Company</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Press</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Documentation</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2023 Edu-LMS. All rights reserved. | <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        hamburger.addEventListener('click', () => {
+            hamburger.setAttribute('aria-expanded', 
+                hamburger.getAttribute('aria-expanded') === 'false' ? 'true' : 'false');
+            navMenu.classList.toggle('active');
+        });
+        
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+            });
+        });
+        
+        // FAQ Accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentNode;
+                item.classList.toggle('active');
+            });
+        });
+        
+        // Form Submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Basic form validation
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            if (name && email && message) {
+                // In a real application, you would send this data to a server
+                alert('Thank you for your message! We will get back to you soon.');
+                this.reset();
+            } else {
+                alert('Please fill in all required fields.');
+            }
+        });
+        
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
