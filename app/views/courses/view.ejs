@@ -302,8 +302,8 @@
 
                     <h6>Instructor</h6>
                     <div class="d-flex align-items-center mb-3">
-                        <img src="<%= course.instructorImage || 'https://via.placeholder.com/50' %>" 
-                             class="rounded-circle me-3" width="50" height="50" alt="Instructor">
+                        <img src="<%= course.instructorImage || '/public/images/placeholder/avatar-50.svg' %>" 
+                             class="rounded-circle me-3" width="50" height="50" alt="Instructor" loading="lazy">
                         <div>
                             <strong><%= course.instructor %></strong>
                             <br>

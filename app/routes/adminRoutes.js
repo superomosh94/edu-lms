@@ -7,7 +7,7 @@ const validationMiddleware = require('../middlewares/validationMiddleware');
 
 // All admin routes require admin role
 router.use(authMiddleware.authenticate);
-router.use(roleMiddleware.restrictTo('admin'));
+router.use(authMiddleware.requireRole(['Admin', 'Super Admin']));
 
 // System management
 router.get('/stats', adminController.getSystemStats);

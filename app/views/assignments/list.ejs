@@ -1,3 +1,48 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navigation') %>
+
+<div class="container py-4">
+  <div class="page-header border-bottom">
+    <div>
+      <h1 class="h2 title">Assignments</h1>
+      <p class="subtitle">Track upcoming, submitted, and graded assignments in one place.</p>
+    </div>
+    <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
+    <a href="/assignments/create" class="btn btn-primary">
+      <i class="fas fa-plus me-2"></i>Create Assignment
+    </a>
+    <% } %>
+  </div>
+
+  <% if (!assignments || assignments.length === 0) { %>
+    <div class="empty-state">
+      <div class="icon">📝</div>
+      <p>No assignments yet. Check back later.</p>
+    </div>
+  <% } else { %>
+    <div class="row g-3">
+      <% assignments.forEach(a => { %>
+      <div class="col-lg-6">
+        <div class="card card-soft">
+          <div class="card-body">
+            <div class="d-flex justify-content-between">
+              <h5 class="mb-1"><%= a.title %></h5>
+              <span class="badge <%= a.status==='graded' ? 'bg-success' : a.status==='submitted' ? 'bg-info' : 'bg-warning' %>"><%= a.status %></span>
+            </div>
+            <p class="text-muted mb-2"><%= (a.description||'').substring(0,120) %>...</p>
+            <small class="text-muted">Due: <%= a.due_date || a.dueDate %></small>
+          </div>
+          <div class="card-footer bg-transparent d-flex justify-content-end">
+            <a href="/assignments/view/<%= a.id %>" class="btn btn-sm btn-outline-primary">View</a>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>
 <% const safeStats = stats || { pending: 0, submitted: 0, overdue: 0, averageGrade: 'N/A' }; %>
 <% const safeAssignments = assignments || []; %>
 <% const safeUser = user || { role: 'student' }; %>

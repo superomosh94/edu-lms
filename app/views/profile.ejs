@@ -1,0 +1,18 @@
+<%- include('partials/header') %>
+
+<div class="container" style="max-width: 720px; margin: 2rem auto; color:#f1f5f9;">
+  <h1>Your Profile</h1>
+  <% if (user) { %>
+    <div style="background:#1e293b; padding:1rem; border-radius:8px;">
+      <p><strong>Name:</strong> <%= user.name %></p>
+      <p><strong>Email:</strong> <%= user.email %></p>
+      <p><strong>Role:</strong> <%= user.roleName %></p>
+    </div>
+  <% } else { %>
+    <p>You are not logged in.</p>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>
+
+

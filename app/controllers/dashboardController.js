@@ -51,7 +51,7 @@ exports.getDashboard = async (req, res) => {
 // Admin dashboard page
 exports.showAdminDashboard = async (req, res) => {
   const data = await fetchAdminDashboard();
-  res.render('dashboard/admin', { title: 'Admin Dashboard', data });
+  res.render('dashboard/admin', { title: 'Admin Dashboard', data, stats: data.stats });
 };
 
 // Teacher dashboard page
@@ -101,6 +101,7 @@ async function fetchAdminDashboard() {
   const [[teacherCount]] = await pool.query('SELECT COUNT(*) AS count FROM users WHERE role_id = ?', [teacherRoleId]);
   const [[studentCount]] = await pool.query('SELECT COUNT(*) AS count FROM users WHERE role_id = ?', [studentRoleId]);
   const [[courseCount]] = await pool.query('SELECT COUNT(*) AS count FROM courses');
+  const [[totalUsers]] = await pool.query('SELECT COUNT(*) AS count FROM users');
   const [recentEnrollments] = await pool.query(`
     SELECT e.enrolled_at, u.name AS student_name, c.title AS course_name
     FROM enrollments e
@@ -112,6 +113,7 @@ async function fetchAdminDashboard() {
 
   return {
     stats: {
+      totalUsers: totalUsers.count || 0,
       teachers: teacherCount.count || 0,
       students: studentCount.count || 0,
       courses: courseCount.count || 0

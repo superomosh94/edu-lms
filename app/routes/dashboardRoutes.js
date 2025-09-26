@@ -12,7 +12,7 @@ router.get('/', dashboardController.getDashboard);
 
 // Admin dashboard (admin only)
 router.get('/admin', 
-    roleMiddleware.restrictTo('Admin'),
+    authMiddleware.requireRole(['Admin', 'Super Admin']),
     dashboardController.showAdminDashboard
 );
 

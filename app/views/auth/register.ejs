@@ -136,26 +136,29 @@
         <p>Join Edu-LMS and manage your institution with ease</p>
       </div>
 
-      <form id="registerForm">
+      <form id="registerForm" action="/auth/register" method="POST" novalidate>
+        <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <% } %>
         <div class="form-group">
           <label for="fullName" class="form-label">Full Name</label>
-          <input type="text" id="fullName" class="form-control" required>
+          <input type="text" id="fullName" name="name" class="form-control" required placeholder="Jane Doe">
         </div>
 
         <div class="form-group">
           <label for="email" class="form-label">Email Address</label>
-          <input type="email" id="email" class="form-control" required>
+          <input type="email" id="email" name="email" class="form-control" required placeholder="you@example.com" autocomplete="email">
         </div>
 
         <div class="form-group">
           <label for="password" class="form-label">Password</label>
-          <input type="password" id="password" class="form-control" required>
+          <input type="password" id="password" name="password" class="form-control" required placeholder="••••••••" autocomplete="new-password">
           <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="password">👁</button>
         </div>
 
         <div class="form-group">
           <label for="confirmPassword" class="form-label">Confirm Password</label>
-          <input type="password" id="confirmPassword" class="form-control" required>
+          <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required placeholder="••••••••" autocomplete="new-password">
           <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="confirmPassword">👁</button>
         </div>
 
@@ -163,7 +166,7 @@
       </form>
 
       <div class="auth-footer">
-        <p>Already have an account? <a href="login.html">Login</a></p>
+        <p>Already have an account? <a href="/auth/login">Login</a></p>
       </div>
     </div>
   </div>

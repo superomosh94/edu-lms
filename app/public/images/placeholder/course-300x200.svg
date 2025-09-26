@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="200" viewBox="0 0 300 200">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#667eea" offset="0%"/>
+      <stop stop-color="#764ba2" offset="100%"/>
+    </linearGradient>
+  </defs>
+  <rect width="300" height="200" fill="url(#g)"/>
+  <g fill="#ffffff" opacity="0.9">
+    <circle cx="150" cy="85" r="28"/>
+    <rect x="90" y="125" width="120" height="12" rx="6"/>
+  </g>
+  <text x="150" y="185" font-family="Inter, Arial, sans-serif" font-size="12" fill="#ffffff" opacity="0.8" text-anchor="middle">Course image</text>
+</svg>
+
