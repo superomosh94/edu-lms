@@ -1,5 +1,5 @@
 // app/middlewares/authMiddleware.js
-const { query } = require('../controllers/config/db'); // Ensure path is correct
+const pool = require('../controllers/config/db');
 const crypto = require('crypto');
 
 // Ensure user is authenticated
@@ -45,10 +45,7 @@ exports.requireRole = (roles) => {
 // Require active user
 exports.requireActiveUser = async (req, res, next) => {
   try {
-    const users = await query(
-      'SELECT is_active FROM users WHERE id = ?',
-      [req.session.userId]
-    );
+    const [users] = await pool.query('SELECT is_active FROM users WHERE id = ?', [req.session.userId]);
 
     if (!users.length || !users[0].is_active) {
       req.session.destroy(() => {});

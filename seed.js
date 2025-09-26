@@ -32,7 +32,7 @@ async function recreateTables(connection) {
       email VARCHAR(100) NOT NULL,
       password VARCHAR(255) NOT NULL,
       role_id INT NOT NULL,
-      active TINYINT(1) DEFAULT 1,
+      is_active TINYINT(1) DEFAULT 1,
       created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
       PRIMARY KEY (id),
       UNIQUE KEY email (email),
@@ -93,7 +93,7 @@ async function recreateTables(connection) {
       KEY course_id (course_id),
       KEY teacher_id (teacher_id),
       CONSTRAINT assignments_ibfk_1 FOREIGN KEY (course_id) REFERENCES courses(id),
-      CONSTRAINT assignments_ibfk_2 FOREIGN KEY (teacher_id) REFERENCES teachers(id)
+      CONSTRAINT assignments_ibfk_2 FOREIGN KEY (teacher_id) REFERENCES users(id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
     CREATE TABLE subjects (
@@ -105,7 +105,7 @@ async function recreateTables(connection) {
       KEY course_id (course_id),
       KEY teacher_id (teacher_id),
       CONSTRAINT subjects_ibfk_1 FOREIGN KEY (course_id) REFERENCES courses(id),
-      CONSTRAINT subjects_ibfk_2 FOREIGN KEY (teacher_id) REFERENCES teachers(id)
+      CONSTRAINT subjects_ibfk_2 FOREIGN KEY (teacher_id) REFERENCES users(id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
     CREATE TABLE submissions (
@@ -158,7 +158,7 @@ async function seedData() {
   const connection = await mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
+    password: process.env.DB_PASSWORD||'root',
     database: process.env.DB_NAME,
     port: process.env.DB_PORT || 3306,
     multipleStatements: true
@@ -171,10 +171,10 @@ async function seedData() {
     await connection.query("INSERT INTO roles (name) VALUES ('Admin'), ('Teacher'), ('Student')");
     console.log('Roles inserted');
 
-    // Users
+    // Users (hash passwords)
     const usersData = [];
-    for (let i = 0; i < 5; i++) usersData.push([faker.person.fullName(), faker.internet.email(), 'password', 2]);
-    for (let i = 0; i < 10; i++) usersData.push([faker.person.fullName(), faker.internet.email(), 'password', 3]);
+    for (let i = 0; i < 5; i++) usersData.push([faker.person.fullName(), faker.internet.email(), '$2b$12$Jwz9v8l8ZJ0iQ2Tq6Q0GYe6qk2xgJk2w7v3m5C0U0t8m8iTq0o2Me', 2]);
+    for (let i = 0; i < 10; i++) usersData.push([faker.person.fullName(), faker.internet.email(), '$2b$12$Jwz9v8l8ZJ0iQ2Tq6Q0GYe6qk2xgJk2w7v3m5C0U0t8m8iTq0o2Me', 3]);
 
     await connection.query('INSERT INTO users (name,email,password,role_id) VALUES ?', [usersData]);
     console.log('Users inserted');

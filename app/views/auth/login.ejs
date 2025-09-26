@@ -1,145 +1,123 @@
 <%- include('../partials/header') %>
 
 <style>
-  :root {
-    --primary-blue: #2563eb;
-    --primary-blue-dark: #1d4ed8;
-    --dark-bg: #0f172a;
-    --dark-card: #1e293b;
-    --dark-text: #f1f5f9;
-    --light-text: #94a3b8;
-    --white: #ffffff;
-    --radius-md: 0.5rem;
-    --radius-lg: 0.75rem;
-    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1),
-                 0 4px 6px -2px rgba(0,0,0,0.05);
-  }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background-color: var(--dark-bg);
-    color: var(--dark-text);
-    margin: 0;
-  }
-
-  .auth-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
-
-  .auth-card {
-    background: var(--dark-card);
-    padding: 2rem;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-lg);
-    width: 100%;
-    max-width: 420px;
-  }
-
-  .auth-header {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .auth-header h2 {
-    margin: 0;
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--white);
-  }
-
-  .auth-header p {
-    color: var(--light-text);
-    font-size: 0.95rem;
-    margin-top: 0.5rem;
-  }
-
-  .form-group {
-    margin-bottom: 1.25rem;
-  }
-
-  .form-label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--light-text);
-  }
-
-  .form-control {
-    width: 100%;
-    padding: 0.75rem;
-    border-radius: var(--radius-md);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.05);
-    color: var(--dark-text);
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.3s ease;
-  }
-
-  .form-control:focus {
-    border-color: var(--primary-blue);
-  }
-
-  .password-wrapper {
-    position: relative;
-  }
-
-  .toggle-password {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--light-text);
-    display: flex;
-    align-items: center;
-  }
-
-  .toggle-password svg {
-    width: 20px;
-    height: 20px;
-  }
-
-  .btn-primary {
-    display: inline-block;
-    width: 100%;
-    padding: 0.75rem;
-    border-radius: var(--radius-md);
-    background: var(--primary-blue);
-    color: var(--white);
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-  }
-
-  .btn-primary:hover {
-    background: var(--primary-blue-dark);
-    transform: translateY(-2px);
-  }
-
-  .auth-footer {
-    text-align: center;
-    margin-top: 1.5rem;
-    font-size: 0.9rem;
-    color: var(--light-text);
-  }
-
-  .auth-footer a {
-    color: var(--primary-blue);
-    font-weight: 500;
-    text-decoration: none;
-  }
-
-  .auth-footer a:hover {
-    color: var(--primary-blue-dark);
-  }
+:root {
+  --primary-blue: #2563eb;
+  --primary-blue-dark: #1d4ed8;
+  --dark-bg: #0f172a;
+  --dark-card: #1e293b;
+  --dark-text: #f1f5f9;
+  --light-text: #94a3b8;
+  --white: #ffffff;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1),
+               0 4px 6px -2px rgba(0,0,0,0.05);
+}
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+  margin: 0;
+}
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.auth-card {
+  background: var(--dark-card);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+}
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.auth-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--white);
+}
+.auth-header p {
+  color: var(--light-text);
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+.form-group {
+  margin-bottom: 1.25rem;
+}
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--light-text);
+}
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--dark-text);
+  font-size: 1rem;
+}
+.form-control:focus {
+  border-color: var(--primary-blue);
+}
+.password-wrapper {
+  position: relative;
+}
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--light-text);
+  display: flex;
+  align-items: center;
+}
+.toggle-password svg {
+  width: 20px;
+  height: 20px;
+}
+.btn-primary {
+  display: inline-block;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--primary-blue);
+  color: var(--white);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--primary-blue-dark);
+}
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--light-text);
+}
+.auth-footer a {
+  color: var(--primary-blue);
+  font-weight: 500;
+  text-decoration: none;
+}
+.auth-footer a:hover {
+  color: var(--primary-blue-dark);
+}
 </style>
 
 <div class="auth-container">
@@ -182,19 +160,19 @@
 </div>
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const togglePassword = document.getElementById("togglePassword");
-    const passwordInput = document.getElementById("password");
-    const eyeOpen = document.getElementById("eyeOpen");
-    const eyeClosed = document.getElementById("eyeClosed");
+document.addEventListener("DOMContentLoaded", function() {
+  const togglePassword = document.getElementById("togglePassword");
+  const passwordInput = document.getElementById("password");
+  const eyeOpen = document.getElementById("eyeOpen");
+  const eyeClosed = document.getElementById("eyeClosed");
 
-    togglePassword.addEventListener("click", () => {
-      const isPassword = passwordInput.type === "password";
-      passwordInput.type = isPassword ? "text" : "password";
-      eyeOpen.style.display = isPassword ? "none" : "block";
-      eyeClosed.style.display = isPassword ? "block" : "none";
-    });
+  togglePassword.addEventListener("click", () => {
+    const isPassword = passwordInput.type === "password";
+    passwordInput.type = isPassword ? "text" : "password";
+    eyeOpen.style.display = isPassword ? "none" : "block";
+    eyeClosed.style.display = isPassword ? "block" : "none";
   });
+});
 </script>
 
 <%- include('../partials/footer') %>

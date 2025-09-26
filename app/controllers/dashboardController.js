@@ -100,7 +100,7 @@ async function fetchAdminDashboard() {
 
   const [[teacherCount]] = await pool.query('SELECT COUNT(*) AS count FROM users WHERE role_id = ?', [teacherRoleId]);
   const [[studentCount]] = await pool.query('SELECT COUNT(*) AS count FROM users WHERE role_id = ?', [studentRoleId]);
-  const [[courseCount]] = await pool.query('SELECT COUNT(*) AS count FROM courses WHERE is_active = 1');
+  const [[courseCount]] = await pool.query('SELECT COUNT(*) AS count FROM courses');
   const [recentEnrollments] = await pool.query(`
     SELECT e.enrolled_at, u.name AS student_name, c.title AS course_name
     FROM enrollments e
