@@ -12,7 +12,6 @@ const validationMiddleware = {
 
 // Public routes
 router.get('/', courseController.getAllCourses);
-router.get('/:id', courseController.getCourse);
 
 // Protected routes
 router.use(authMiddleware.authenticate);
@@ -30,5 +29,8 @@ router.get('/student/my-courses', roleMiddleware.restrictTo('student'), courseCo
 
 // Teacher view their courses
 router.get('/teacher/my-courses', roleMiddleware.restrictTo('teacher', 'admin'), courseController.getTeacherCourses);
+
+// Must be last, so it doesn’t swallow other routes
+router.get('/:id', courseController.getCourse);
 
 module.exports = router;

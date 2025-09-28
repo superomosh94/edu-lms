@@ -26,7 +26,12 @@ exports.requireRole = (roles) => {
       roles = [roles];
     }
 
-    if (!roles.includes(req.session.roleName)) {
+    const userRole = req.session.roleName ? req.session.roleName.toLowerCase() : null;
+
+    // Debugging - remove in production
+    console.log("User ID:", req.session.userId, "Role:", userRole);
+
+    if (!roles.map(r => r.toLowerCase()).includes(userRole)) {
       if (req.xhr || req.headers.accept.indexOf('json') > -1) {
         return res.status(403).json({ error: 'Insufficient permissions' });
       }

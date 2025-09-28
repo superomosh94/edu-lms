@@ -2,27 +2,31 @@
 <%- include('../partials/navigation') %>
 
 <div class="container py-4">
-    <h2><%= title %></h2>
+    <h2 class="mb-4"><%= title %></h2>
 
     <% if (grades && grades.length > 0) { %>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Course</th>
-                    <th>Grade</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% grades.forEach(g => { %>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <thead class="table-dark">
                     <tr>
-                        <td><%= g.course %></td>
-                        <td><%= g.grade %></td>
+                        <th>Course</th>
+                        <th>Grade</th>
                     </tr>
-                <% }) %>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <% grades.forEach(grade => { %>
+                        <tr>
+                            <td><%= grade.course %></td>
+                            <td><%= grade.grade %></td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        </div>
     <% } else { %>
-        <p>No grades available.</p>
+        <div class="alert alert-info" role="alert">
+            No grades available for this student.
+        </div>
     <% } %>
 </div>
 
