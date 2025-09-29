@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title><%= title %></title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #000;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            margin-top: 0;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 0;
+        }
+
+        .sidebar a:hover {
+            background-color: #333;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #f4f4f4;
+            overflow-y: auto;
+        }
+
+        .main-content h1 {
+            margin-top: 0;
+        }
+
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        .grades-table th,
+        .grades-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .grades-table th {
+            background-color: #000;
+            color: white;
+        }
+
+        .grades-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .grades-table tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <a href="/dashboard">Home</a>
+            <a href="/grades">Grades</a>
+            <a href="/students">Students</a>
+            <a href="/logout">Logout</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1><%= title %></h1>
+
+            <% if (grades.length > 0) { %>
+                <table class="grades-table">
+                    <thead>
+                        <tr>
+                            <% if (!singleStudent) { %>
+                                <th>Student Name</th>
+                            <% } %>
+                            <th>Course</th>
+                            <th>Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% grades.forEach(g => { %>
+                            <tr>
+                                <% if (!singleStudent) { %>
+                                    <td><%= g.student_name %></td>
+                                <% } %>
+                                <td><%= g.course %></td>
+                                <td><%= g.grade %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <p>No grades available.</p>
+            <% } %>
+        </div>
+    </div>
+</body>
+</html>

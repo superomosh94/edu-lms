@@ -1,0 +1,180 @@
+<style>
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    background: #000;
+    color: #fff;
+    border-right: 1px solid rgba(255,255,255,0.08);
+    padding: 18px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #fff;
+    text-decoration: none;
+    margin-bottom: 14px;
+  }
+
+  .sidebar .brand i {
+    font-size: 1.25rem;
+  }
+
+  .sidebar hr {
+    border-color: rgba(255,255,255,0.08);
+    margin: 12px 0 18px;
+  }
+
+  .sidebar .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(255,255,255,0.9);
+    padding: 10px 12px;
+    border-radius: 6px;
+    margin-bottom: 6px;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .sidebar .nav-link i {
+    width: 20px;
+    text-align: center;
+  }
+
+  .sidebar .nav-link:hover {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+  }
+
+  .sidebar .nav-link.active {
+    background: #1f6feb;
+    color: #fff;
+  }
+
+  .sidebar .section {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    margin: 14px 0 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .sidebar .user-wrap {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sidebar .avatar {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.08);
+  }
+
+  .sidebar .avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .sidebar .online-dot {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 10px;
+    height: 10px;
+    background: #28a745;
+    border: 2px solid #000;
+    border-radius: 50%;
+  }
+
+  .sidebar .user-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .sidebar .user-role {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.6);
+    margin-top: -2px;
+  }
+
+  @media (max-width: 768px) {
+    .sidebar {
+      width: 100%;
+      height: auto;
+      padding-bottom: 12px;
+    }
+  }
+</style>
+
+<div class="sidebar">
+  <!-- Brand -->
+  <a href="/" class="brand">
+    <i class="fas fa-graduation-cap"></i>
+    EDU LMS
+  </a>
+
+  <hr>
+
+  <!-- Role based menu -->
+  <ul class="nav nav-pills flex-column mb-auto">
+    <% if (user && user.role === 'Admin') { %>
+      <li><a href="/dashboard/admin" class="nav-link <%= activePage==='dashboard'?'active':'' %>"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="/users" class="nav-link <%= activePage==='users'?'active':'' %>"><i class="fas fa-users"></i> User Management</a></li>
+      <li><a href="/courses" class="nav-link <%= activePage==='courses'?'active':'' %>"><i class="fas fa-book"></i> Course Management</a></li>
+      <li><a href="/reports" class="nav-link <%= activePage==='reports'?'active':'' %>"><i class="fas fa-chart-bar"></i> Reports</a></li>
+      <li><a href="/system" class="nav-link <%= activePage==='system'?'active':'' %>"><i class="fas fa-cogs"></i> System Settings</a></li>
+
+    <% } else if (user && user.role === 'Teacher') { %>
+      <li><a href="/teacher" class="nav-link <%= activePage==='dashboard'?'active':'' %>"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="/courses" class="nav-link <%= activePage==='courses'?'active':'' %>"><i class="fas fa-chalkboard-teacher"></i> My Courses</a></li>
+      <li><a href="/assignments" class="nav-link <%= activePage==='assignments'?'active':'' %>"><i class="fas fa-tasks"></i> Assignments</a></li>
+      <li><a href="/grades" class="nav-link <%= activePage==='grades'?'active':'' %>"><i class="fas fa-clipboard-check"></i> Gradebook</a></li>
+
+    <% } else if (user && user.role === 'Student') { %>
+      <li><a href="/student" class="nav-link <%= activePage==='dashboard'?'active':'' %>"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="/courses" class="nav-link <%= activePage==='courses'?'active':'' %>"><i class="fas fa-book-open"></i> Enrolled Courses</a></li>
+      <li><a href="/assignments" class="nav-link <%= activePage==='assignments'?'active':'' %>"><i class="fas fa-pencil-alt"></i> Assignments</a></li>
+      <li><a href="/grades" class="nav-link <%= activePage==='grades'?'active':'' %>"><i class="fas fa-chart-line"></i> My Grades</a></li>
+
+    <% } else if (user && (user.role==='Finance' || user.role==='Finance Officer')) { %>
+      <li><a href="/dashboard/finance" class="nav-link <%= activePage==='dashboard'?'active':'' %>"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+      <li><a href="/finance/payments" class="nav-link <%= activePage==='payments'?'active':'' %>"><i class="fas fa-credit-card"></i> Payments</a></li>
+      <li><a href="/finance/invoices" class="nav-link <%= activePage==='invoices'?'active':'' %>"><i class="fas fa-file-invoice-dollar"></i> Invoices</a></li>
+      <li><a href="/finance/reports" class="nav-link <%= activePage==='reports'?'active':'' %>"><i class="fas fa-receipt"></i> Financial Reports</a></li>
+    <% } %>
+  </ul>
+
+  <hr>
+
+ <!-- User info -->
+<div class="user-wrap">
+  <a href="/settings/profile" class="avatar">
+    <img 
+      src="https://www.gravatar.com/avatar/EMAIL_MD5?d=https%3A%2F%2Fui-avatars.com%2Fapi%2F/Lasse+Rafn/128/007bff/fff" 
+      alt="<%= user && user.name ? user.name : 'User' %> avatar">
+    <span class="online-dot"></span>
+  </a>
+  <div style="display:flex;flex-direction:column;">
+    <a href="/settings/profile" class="user-name"><%= user && user.name ? user.name : 'User' %></a>
+    <span class="user-role"><%= user && (user.roleName || user.role) ? (user.roleName || user.role) : 'Member' %></span>
+  </div>
+</div>
+
+</div>

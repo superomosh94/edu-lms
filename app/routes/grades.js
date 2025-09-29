@@ -1,19 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../controllers/config/db'); // correct path
+const db = require('../controllers/config/db');
 
 // Route: List all grades
 router.get('/', async (req, res) => {
     try {
         const [results] = await db.query(`
-            SELECT grades.id, students.name AS student_name, grades.course, grades.grade
+            SELECT grades.id, users.name AS student_name, grades.course, grades.grade
             FROM grades
             JOIN students ON grades.student_id = students.id
+            JOIN users ON students.user_id = users.id
         `);
 
-        res.render('grades', {
+        res.render('grades/grades', { // fixed path
             title: 'All Grades',
-            grades: results
+            grades: results,
+            singleStudent: false
         });
     } catch (err) {
         console.error(err);
@@ -39,9 +41,10 @@ router.get('/:studentId', async (req, res) => {
             });
         }
 
-        res.render('grades', {
+        res.render('grades/grades', { // fixed path
             title: `Grades for Student ${studentId}`,
-            grades: results
+            grades: results,
+            singleStudent: true
         });
     } catch (err) {
         console.error(err);

@@ -5,6 +5,8 @@ exports.getDashboard = async (req, res) => {
   try {
     const userId = req.session.userId;
     const roleName = req.session.roleName;
+    const userName = req.session.userName || 'User';
+    const userAvatar = req.session.userAvatar || '/images/default-avatar.png';
 
     let dashboardData = {};
 
@@ -31,12 +33,14 @@ exports.getDashboard = async (req, res) => {
     res.render('dashboard/index', {
       title: 'Dashboard',
       role: roleName,
-      data: {
-        stats: dashboardData.stats || {},
-        recentActivity: dashboardData.recentActivity || [],
-        recentEnrollments: dashboardData.recentEnrollments || [],
-        recentPayments: dashboardData.recentPayments || []
-      }
+      user: {
+        id: userId,
+        name: userName,
+        role: roleName,
+        avatar: userAvatar
+      },
+      activePage: 'dashboard',
+      data: dashboardData
     });
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -50,20 +54,41 @@ exports.getDashboard = async (req, res) => {
 
 // Admin dashboard page
 exports.showAdminDashboard = async (req, res) => {
-  const data = await fetchAdminDashboard();
-  res.render('dashboard/admin', { title: 'Admin Dashboard', data, stats: data.stats });
+  try {
+    const data = await fetchAdminDashboard();
+
+    res.render('dashboard/admin', { 
+      title: 'Admin Dashboard',
+      stats: data.stats,
+      recentEnrollments: data.recentEnrollments || [],
+      recentUsers: data.recentUsers || []  // <-- now passed to EJS
+    });
+  } catch (error) {
+    console.error('Admin dashboard error:', error);
+    res.status(500).render('error', { 
+      title: 'Server Error', 
+      message: 'Unable to load admin dashboard.', 
+      error: process.env.NODE_ENV === 'development' ? error : null 
+    });
+  }
 };
 
 // Teacher dashboard page
 exports.showTeacherDashboard = async (req, res) => {
   const data = await fetchTeacherDashboard(req.session.userId);
-  res.render('dashboard/teacher', { title: 'Teacher Dashboard', data });
+  res.render('dashboard/teacher', { 
+    title: 'Teacher Dashboard', 
+    stats: data.stats 
+  });
 };
 
 // Student dashboard page
 exports.showStudentDashboard = async (req, res) => {
   const data = await fetchStudentDashboard(req.session.userId);
-  res.render('dashboard/student', { title: 'Student Dashboard', data });
+  res.render('dashboard/student', { 
+    title: 'Student Dashboard', 
+    stats: data.stats 
+  });
 };
 
 /* ------------------------------
@@ -110,6 +135,12 @@ async function fetchAdminDashboard() {
     ORDER BY e.enrolled_at DESC
     LIMIT 10
   `);
+  const [recentUsers] = await pool.query(`
+    SELECT id, name, email, created_at
+    FROM users
+    ORDER BY created_at DESC
+    LIMIT 10
+  `);
 
   return {
     stats: {
@@ -118,7 +149,8 @@ async function fetchAdminDashboard() {
       students: studentCount.count || 0,
       courses: courseCount.count || 0
     },
-    recentEnrollments: recentEnrollments || []
+    recentEnrollments: recentEnrollments || [],
+    recentUsers: recentUsers || []
   };
 }
 
@@ -144,14 +176,20 @@ async function fetchTeacherDashboard(userId) {
 
 // Student
 async function fetchStudentDashboard(userId) {
-  const [[enrollmentCount]] = await pool.query('SELECT COUNT(*) AS count FROM enrollments WHERE student_id = ? AND status = "active"', [userId]);
+  const [[enrollmentCount]] = await pool.query(
+    'SELECT COUNT(*) AS count FROM enrollments WHERE student_id = ? AND status = "active"', 
+    [userId]
+  );
   const [[assignmentCount]] = await pool.query(`
     SELECT COUNT(*) AS count
     FROM assignments a
     JOIN enrollments e ON a.course_id = e.course_id
     WHERE e.student_id = ?
   `, [userId]);
-  const [[completedAssignments]] = await pool.query('SELECT COUNT(*) AS count FROM submissions WHERE student_id = ? AND grade IS NOT NULL', [userId]);
+  const [[completedAssignments]] = await pool.query(
+    'SELECT COUNT(*) AS count FROM submissions WHERE student_id = ? AND grade IS NOT NULL', 
+    [userId]
+  );
 
   return {
     stats: {
@@ -164,8 +202,12 @@ async function fetchStudentDashboard(userId) {
 
 // Finance Officer
 async function fetchFinanceDashboard() {
-  const [[totalRevenue]] = await pool.query('SELECT SUM(amount) AS total FROM payments WHERE status = "completed"');
-  const [[pendingPayments]] = await pool.query('SELECT COUNT(*) AS count FROM payments WHERE status = "pending"');
+  const [[totalRevenue]] = await pool.query(
+    'SELECT SUM(amount) AS total FROM payments WHERE status = "completed"'
+  );
+  const [[pendingPayments]] = await pool.query(
+    'SELECT COUNT(*) AS count FROM payments WHERE status = "pending"'
+  );
   const [recentPayments] = await pool.query(`
     SELECT p.amount, p.paid_at, u.name AS student_name, p.method
     FROM payments p
