@@ -11,16 +11,13 @@
     <meta property="og:description" content="Streamline educational processes with our comprehensive LMS solution.">
     <meta property="og:type" content="website">
     
-    <!-- Favicon -->
-    <link rel="icon" href="/public/images/favicon/favicon.ico" sizes="any">
-    <link rel="icon" type="image/svg+xml" href="/public/images/favicon/favicon.svg">
-    <link rel="apple-touch-icon" href="/public/images/favicon/apple-touch-icon.png">
-    <link rel="manifest" href="/public/images/favicon/site.webmanifest">
-    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         /* CSS Variables for consistent theming */
@@ -37,6 +34,9 @@
             --accent-green: #10b981;
             --accent-red: #ef4444;
             --white: #ffffff;
+            --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-purple), var(--primary-blue));
+            --gradient-hover: linear-gradient(135deg, var(--primary-blue-dark), var(--secondary-purple-dark));
             
             /* Typography */
             --font-primary: 'Inter', sans-serif;
@@ -107,18 +107,19 @@
         }
         
         a {
-            color: var(--primary-blue);
+            color: black;
             text-decoration: none;
             transition: color 0.3s ease;
         }
         
         a:hover {
-            color: var(--primary-blue-dark);
+            color: var(white);
         }
         
         img {
             max-width: 100%;
             height: auto;
+            border-radius: var(--radius-md);
         }
         
         .container {
@@ -151,7 +152,7 @@
             transform: translateX(-50%);
             width: 60px;
             height: 4px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple));
+            background: var(--gradient-primary);
             border-radius: 2px;
         }
         
@@ -172,16 +173,39 @@
             border: none;
             font-family: inherit;
             font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            transition: all 0.3s ease;
         }
         
         .btn-primary {
-            background-color: var(--primary-blue);
+            background: var(--gradient-primary);
             color: var(--white);
         }
         
+        .btn-primary::before {
+            background: var(--gradient-hover);
+            opacity: 0;
+        }
+        
+        .btn-primary:hover::before {
+            opacity: 1;
+        }
+        
         .btn-primary:hover {
-            background-color: var(--primary-blue-dark);
-            transform: translateY(-2px);
+            color: var(--white);
+            transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
         }
         
@@ -195,6 +219,7 @@
             background-color: rgba(255, 255, 255, 0.05);
             border-color: var(--primary-blue);
             transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
         
         .btn-large {
@@ -230,7 +255,10 @@
         }
         
         .logo span {
-            color: var(--primary-blue);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
         .nav-menu {
@@ -246,10 +274,26 @@
             color: var(--dark-text);
             font-weight: 500;
             transition: color 0.3s ease;
+            position: relative;
         }
         
         .nav-link:hover {
             color: var(--primary-blue);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-primary);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
         }
         
         .hamburger {
@@ -279,7 +323,7 @@
         .hero-text h1 {
             font-size: 3rem;
             margin-bottom: var(--space-md);
-            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple));
+            background: var(--gradient-primary);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
@@ -308,7 +352,7 @@
             width: 400px;
             height: 400px;
             border-radius: 50%;
-            background: linear-gradient(45deg, var(--primary-blue), var(--secondary-purple));
+            background: var(--gradient-primary);
             opacity: 0.1;
             filter: blur(60px);
             z-index: -1;
@@ -333,6 +377,18 @@
             padding: var(--space-lg);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
         }
         
         .feature-card:hover {
@@ -348,7 +404,7 @@
             align-items: center;
             justify-content: center;
             margin-bottom: var(--space-md);
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            background: var(--gradient-primary);
             color: var(--white);
             font-size: 1.5rem;
         }
@@ -367,6 +423,18 @@
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
         }
         
         .role-card:hover {
@@ -382,7 +450,7 @@
             align-items: center;
             justify-content: center;
             margin: 0 auto var(--space-md);
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            background: var(--gradient-primary);
             color: var(--white);
             font-size: 2rem;
         }
@@ -394,6 +462,7 @@
             padding: var(--space-lg);
             box-shadow: var(--shadow-lg);
             overflow: hidden;
+            position: relative;
         }
         
         .demo-image {
@@ -407,14 +476,13 @@
             color: var(--light-text);
             font-size: 1.2rem;
             position: relative;
+            overflow: hidden;
         }
         
-        .demo-image::before {
-            content: 'Edu-LMS Dashboard Preview';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .demo-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
         
         /* Testimonials Section */
@@ -429,11 +497,26 @@
             border-radius: var(--radius-lg);
             padding: var(--space-lg);
             box-shadow: var(--shadow-md);
+            position: relative;
+        }
+        
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--primary-blue);
+            opacity: 0.2;
+            font-family: serif;
+            line-height: 1;
         }
         
         .testimonial-content {
             margin-bottom: var(--space-md);
             font-style: italic;
+            position: relative;
+            z-index: 1;
         }
         
         .testimonial-author {
@@ -445,7 +528,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            background: var(--gradient-primary);
             margin-right: var(--space-md);
             display: flex;
             align-items: center;
@@ -508,6 +591,10 @@
             font-size: 3rem;
             font-weight: 700;
             margin-bottom: var(--space-sm);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
         
         .pricing-period {
@@ -523,6 +610,13 @@
         .pricing-features li {
             padding: var(--space-xs) 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        
+        .pricing-features li i {
+            color: var(--accent-green);
+            margin-right: var(--space-xs);
         }
         
         .pricing-features li:last-child {
@@ -533,7 +627,7 @@
             position: absolute;
             top: -10px;
             right: 20px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            background: var(--gradient-primary);
             color: var(--white);
             padding: 0.5rem 1rem;
             border-radius: var(--radius-md);
@@ -562,6 +656,11 @@
             justify-content: space-between;
             align-items: center;
             font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+        
+        .faq-question:hover {
+            background-color: rgba(255, 255, 255, 0.05);
         }
         
         .faq-question::after {
@@ -648,7 +747,7 @@
             width: 50px;
             height: 50px;
             border-radius: var(--radius-md);
-            background: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -684,7 +783,7 @@
             left: 0;
             width: 30px;
             height: 2px;
-            background: linear-gradient(90deg, var(--primary-blue), var(--secondary-purple));
+            background: var(--gradient-primary);
         }
         
         .footer-links {
@@ -718,11 +817,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background-color 0.3s ease, transform 0.3s ease;
+            transition: all 0.3s ease;
         }
         
         .social-link:hover {
-            background-color: var(--primary-blue);
+            background: var(--gradient-primary);
             transform: translateY(-3px);
         }
         
@@ -732,162 +831,6 @@
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--light-text);
             font-size: 0.9rem;
-        }
-        
-        /* Auth Pages Styles */
-        .auth-container {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: var(--space-xxl) 0;
-            background-color: var(--dark-bg);
-        }
-        
-        .auth-card {
-            background-color: var(--dark-card);
-            border-radius: var(--radius-xl);
-            box-shadow: var(--shadow-xl);
-            width: 100%;
-            max-width: 450px;
-            padding: var(--space-xl);
-            margin: var(--space-md);
-        }
-        
-        .auth-header {
-            text-align: center;
-            margin-bottom: var(--space-lg);
-        }
-        
-        .auth-logo {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: var(--space-sm);
-            color: var(--white);
-        }
-        
-        .auth-logo span {
-            color: var(--primary-blue);
-        }
-        
-        .auth-title {
-            font-size: 1.5rem;
-            margin-bottom: var(--space-xs);
-        }
-        
-        .auth-subtitle {
-            color: var(--light-text);
-            font-size: 0.9rem;
-        }
-        
-        .auth-form .form-group {
-            margin-bottom: var(--space-md);
-        }
-        
-        .auth-form .form-label {
-            margin-bottom: var(--space-xs);
-            font-weight: 500;
-        }
-        
-        .auth-form .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: var(--radius-md);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--dark-text);
-            font-family: inherit;
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-        
-        .auth-form .form-control:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-        }
-        
-        .auth-options {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: var(--space-lg);
-            font-size: 0.9rem;
-        }
-        
-        .remember-me {
-            display: flex;
-            align-items: center;
-        }
-        
-        .remember-me input {
-            margin-right: var(--space-xs);
-        }
-        
-        .auth-footer {
-            text-align: center;
-            margin-top: var(--space-lg);
-            font-size: 0.9rem;
-            color: var(--light-text);
-        }
-        
-        .auth-footer a {
-            color: var(--primary-blue);
-            font-weight: 500;
-        }
-        
-        .auth-image {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #1e293b, #334155);
-            border-radius: var(--radius-md);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--light-text);
-            margin-bottom: var(--space-lg);
-            position: relative;
-        }
-        
-        .auth-image::before {
-            content: 'Authentication Illustration';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        
-        /* Role Selection Styles */
-        .role-selection {
-            margin-bottom: var(--space-lg);
-        }
-        
-        .role-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: var(--space-sm);
-        }
-        
-        .role-option {
-            display: flex;
-            align-items: center;
-            padding: var(--space-sm);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .role-option:hover {
-            border-color: var(--primary-blue);
-        }
-        
-        .role-option input {
-            margin-right: var(--space-sm);
-        }
-        
-        .role-option.active {
-            border-color: var(--primary-blue);
-            background-color: rgba(37, 99, 235, 0.1);
         }
         
         /* Responsive Design */
@@ -955,10 +898,6 @@
             .section {
                 padding: var(--space-xl) 0;
             }
-            
-            .role-options {
-                grid-template-columns: 1fr;
-            }
         }
         
         @media (max-width: 576px) {
@@ -978,10 +917,6 @@
             .btn {
                 width: 100%;
             }
-            
-            .auth-card {
-                padding: var(--space-lg);
-            }
         }
     </style>
 </head>
@@ -992,7 +927,7 @@
             <a href="#" class="logo">Edu<span>LMS</span></a>
             
             <button class="hamburger" aria-expanded="false" aria-controls="nav-menu">
-                ☰
+                <i class="fas fa-bars"></i>
             </button>
             
             <ul class="nav-menu" id="nav-menu" role="menubar">
@@ -1031,8 +966,7 @@
                     </div>
                 </div>
                 <div class="hero-image">
-                    <img src="https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8Y2xhc3Nyb29tfGVufDB8fDB8fHww" alt="Classroom Image">
-
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Students collaborating in a modern classroom">
                 </div>
             </div>
         </div>
@@ -1048,37 +982,37 @@
             
             <div class="features-grid">
                 <article class="feature-card">
-                    <div class="feature-icon">📚</div>
+                    <div class="feature-icon"><i class="fas fa-book"></i></div>
                     <h3>Course Management</h3>
                     <p>Easily create, organize, and manage courses with intuitive tools. Upload materials, set prerequisites, and track progress.</p>
                 </article>
                 
                 <article class="feature-card">
-                    <div class="feature-icon">📝</div>
+                    <div class="feature-icon"><i class="fas fa-tasks"></i></div>
                     <h3>Assignments & Grading</h3>
                     <p>Create assignments, set due dates, and provide feedback. Automated grading saves time and ensures consistency.</p>
                 </article>
                 
                 <article class="feature-card">
-                    <div class="feature-icon">👥</div>
+                    <div class="feature-icon"><i class="fas fa-users"></i></div>
                     <h3>Attendance Tracking</h3>
                     <p>Monitor student attendance with QR codes or manual entry. Generate reports for administrators and parents.</p>
                 </article>
                 
                 <article class="feature-card">
-                    <div class="feature-icon">📊</div>
+                    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
                     <h3>Analytics & Reports</h3>
                     <p>Gain insights with detailed analytics on student performance, engagement, and course effectiveness.</p>
                 </article>
                 
                 <article class="feature-card">
-                    <div class="feature-icon">💳</div>
+                    <div class="feature-icon"><i class="fas fa-credit-card"></i></div>
                     <h3>Payment Processing</h3>
                     <p>Handle tuition fees, course payments, and other transactions securely with integrated payment gateways.</p>
                 </article>
                 
                 <article class="feature-card">
-                    <div class="feature-icon">🔒</div>
+                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
                     <h3>Audit Logs & Security</h3>
                     <p>Maintain comprehensive audit trails and ensure data security with role-based access controls.</p>
                 </article>
@@ -1096,25 +1030,25 @@
             
             <div class="roles-grid">
                 <article class="role-card">
-                    <div class="role-icon">👨‍💼</div>
+                    <div class="role-icon"><i class="fas fa-user-tie"></i></div>
                     <h3>Administrator</h3>
                     <p>Full system control with user management, course oversight, and comprehensive reporting capabilities.</p>
                 </article>
                 
                 <article class="role-card">
-                    <div class="role-icon">👩‍🏫</div>
+                    <div class="role-icon"><i class="fas fa-chalkboard-teacher"></i></div>
                     <h3>Teacher</h3>
                     <p>Create courses, manage assignments, track student progress, and communicate with students and parents.</p>
                 </article>
                 
                 <article class="role-card">
-                    <div class="role-icon">👨‍🎓</div>
+                    <div class="role-icon"><i class="fas fa-user-graduate"></i></div>
                     <h3>Student</h3>
                     <p>Access course materials, submit assignments, track progress, and engage with learning content.</p>
                 </article>
                 
                 <article class="role-card">
-                    <div class="role-icon">👩‍💼</div>
+                    <div class="role-icon"><i class="fas fa-file-invoice-dollar"></i></div>
                     <h3>Finance</h3>
                     <p>Manage payments, invoices, and financial reports with integrated accounting tools.</p>
                 </article>
@@ -1131,7 +1065,9 @@
             </div>
             
             <div class="demo-container">
-                <img src="https://picsum.photos/1200/400?random=learning" alt="Dashboard preview" style="width:100%;height:auto;border-radius:12px;" loading="lazy">
+                <div class="demo-image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Dashboard preview showing analytics and course management">
+                </div>
             </div>
             
             <div style="text-align: center; margin-top: var(--space-lg);">
@@ -1207,11 +1143,11 @@
                         <p>Perfect for small schools and individual instructors</p>
                     </div>
                     <ul class="pricing-features">
-                        <li>Up to 100 students</li>
-                        <li>5 teacher accounts</li>
-                        <li>Basic course management</li>
-                        <li>Assignment tracking</li>
-                        <li>Email support</li>
+                        <li><i class="fas fa-check"></i> Up to 100 students</li>
+                        <li><i class="fas fa-check"></i> 5 teacher accounts</li>
+                        <li><i class="fas fa-check"></i> Basic course management</li>
+                        <li><i class="fas fa-check"></i> Assignment tracking</li>
+                        <li><i class="fas fa-check"></i> Email support</li>
                     </ul>
                     <a href="/auth/register" class="btn btn-secondary">Get Started</a>
                 </article>
@@ -1224,12 +1160,12 @@
                         <p>Ideal for growing institutions</p>
                     </div>
                     <ul class="pricing-features">
-                        <li>Up to 500 students</li>
-                        <li>20 teacher accounts</li>
-                        <li>Advanced analytics</li>
-                        <li>Attendance tracking</li>
-                        <li>Priority support</li>
-                        <li>Custom branding</li>
+                        <li><i class="fas fa-check"></i> Up to 500 students</li>
+                        <li><i class="fas fa-check"></i> 20 teacher accounts</li>
+                        <li><i class="fas fa-check"></i> Advanced analytics</li>
+                        <li><i class="fas fa-check"></i> Attendance tracking</li>
+                        <li><i class="fas fa-check"></i> Priority support</li>
+                        <li><i class="fas fa-check"></i> Custom branding</li>
                     </ul>
                     <a href="/auth/register" class="btn btn-primary">Get Started</a>
                 </article>
@@ -1241,12 +1177,12 @@
                         <p>For large institutions with specific needs</p>
                     </div>
                     <ul class="pricing-features">
-                        <li>Unlimited students</li>
-                        <li>Unlimited teachers</li>
-                        <li>Full feature access</li>
-                        <li>Advanced security</li>
-                        <li>Dedicated account manager</li>
-                        <li>Custom integrations</li>
+                        <li><i class="fas fa-check"></i> Unlimited students</li>
+                        <li><i class="fas fa-check"></i> Unlimited teachers</li>
+                        <li><i class="fas fa-check"></i> Full feature access</li>
+                        <li><i class="fas fa-check"></i> Advanced security</li>
+                        <li><i class="fas fa-check"></i> Dedicated account manager</li>
+                        <li><i class="fas fa-check"></i> Custom integrations</li>
                     </ul>
                     <a href="#contact" class="btn btn-secondary">Contact Sales</a>
                 </article>
@@ -1338,7 +1274,7 @@
                 
                 <div class="contact-info">
                     <div class="info-item">
-                        <div class="info-icon">📍</div>
+                        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
                         <div>
                             <h3>Our Office</h3>
                             <p>123 Education Street<br>Learning City, LC 12345</p>
@@ -1346,7 +1282,7 @@
                     </div>
                     
                     <div class="info-item">
-                        <div class="info-icon">📞</div>
+                        <div class="info-icon"><i class="fas fa-phone"></i></div>
                         <div>
                             <h3>Phone Number</h3>
                             <p>+1 (555) 123-4567<br>Mon-Fri from 8am to 6pm</p>
@@ -1354,7 +1290,7 @@
                     </div>
                     
                     <div class="info-item">
-                        <div class="info-icon">✉️</div>
+                        <div class="info-icon"><i class="fas fa-envelope"></i></div>
                         <div>
                             <h3>Email Address</h3>
                             <p>info@edu-lms.com<br>We reply within 24 hours</p>
@@ -1373,10 +1309,10 @@
                     <h3>Edu-LMS</h3>
                     <p>Transforming education through innovative technology solutions designed for modern learning environments.</p>
                     <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Facebook">f</a>
-                        <a href="#" class="social-link" aria-label="Twitter">t</a>
-                        <a href="#" class="social-link" aria-label="LinkedIn">in</a>
-                        <a href="#" class="social-link" aria-label="Instagram">ig</a>
+                        <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 
