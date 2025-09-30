@@ -24,7 +24,7 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      padding: 2rem;
+      padding: 1rem;
     }
 
     .auth-card {
@@ -34,6 +34,7 @@
       max-width: 420px;
       width: 100%;
       box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+      box-sizing: border-box;
     }
 
     .auth-header {
@@ -70,6 +71,8 @@
       background: rgba(255,255,255,0.05);
       color: #f1f5f9;
       font-size: 1rem;
+      box-sizing: border-box;
+      display: block;
     }
 
     .form-control:focus {
@@ -87,6 +90,7 @@
       color: #94a3b8;
       background: none;
       border: none;
+      padding: 0;
     }
 
     .btn {
@@ -99,6 +103,7 @@
       cursor: pointer;
       transition: background 0.2s;
       font-size: 1rem;
+      box-sizing: border-box;
     }
 
     .btn-primary {
@@ -174,3 +179,4 @@
   <script src="/public/js/auth.js"></script>
 </body>
 </html>
+ 
