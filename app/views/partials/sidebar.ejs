@@ -136,8 +136,8 @@
   <ul class="nav nav-pills flex-column mb-auto">
     <% if (user && user.role === 'Admin') { %>
       <li><a href="/dashboard/admin" class="nav-link <%= activePage==='dashboard'?'active':'' %>"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-      <li><a href="/users" class="nav-link <%= activePage==='users'?'active':'' %>"><i class="fas fa-users"></i> User Management</a></li>
-      <li><a href="/courses" class="nav-link <%= activePage==='courses'?'active':'' %>"><i class="fas fa-book"></i> Course Management</a></li>
+      <li><a href="/admin/users" class="nav-link <%= activePage==='users'?'active':'' %>"><i class="fas fa-users"></i> User Management</a></li>
+      <li><a href="/admin/courses" class="nav-link <%= activePage==='courses'?'active':'' %>"><i class="fas fa-book"></i> Course Management</a></li>
       <li><a href="/reports" class="nav-link <%= activePage==='reports'?'active':'' %>"><i class="fas fa-chart-bar"></i> Reports</a></li>
       <li><a href="/system" class="nav-link <%= activePage==='system'?'active':'' %>"><i class="fas fa-cogs"></i> System Settings</a></li>
 

@@ -2,23 +2,36 @@ const pool = require('./config/db');
 const auditHelper = require('../helpers/auditHelper');
 
 const adminController = {
-    // Get system statistics
-    getSystemStats: async (req, res) => {
+    getDashboard: async (req, res) => {
         try {
             const [[{ count: totalUsers }]] = await pool.query('SELECT COUNT(*) AS count FROM users');
-            const [[{ count: admins }]] = await pool.query(`SELECT COUNT(*) AS count FROM users u JOIN roles r ON u.role_id = r.id WHERE r.name = 'Admin'`);
-            const [[{ count: teachers }]] = await pool.query(`SELECT COUNT(*) AS count FROM users u JOIN roles r ON u.role_id = r.id WHERE r.name = 'Teacher'`);
-            const [[{ count: students }]] = await pool.query(`SELECT COUNT(*) AS count FROM users u JOIN roles r ON u.role_id = r.id WHERE r.name = 'Student'`);
+            const [[{ count: admins }]] = await pool.query(`
+                SELECT COUNT(*) AS count 
+                FROM users u 
+                JOIN roles r ON u.role_id = r.id 
+                WHERE r.name = 'Admin'
+            `);
+            const [[{ count: teachers }]] = await pool.query(`
+                SELECT COUNT(*) AS count 
+                FROM users u 
+                JOIN roles r ON u.role_id = r.id 
+                WHERE r.name = 'Teacher'
+            `);
+            const [[{ count: students }]] = await pool.query(`
+                SELECT COUNT(*) AS count 
+                FROM users u 
+                JOIN roles r ON u.role_id = r.id 
+                WHERE r.name = 'Student'
+            `);
             const [[{ count: activeUsers }]] = await pool.query('SELECT COUNT(*) AS count FROM users WHERE is_active = 1');
             const [[{ count: inactiveUsers }]] = await pool.query('SELECT COUNT(*) AS count FROM users WHERE is_active = 0');
-
             const [[{ count: totalCourses }]] = await pool.query('SELECT COUNT(*) AS count FROM courses');
-
             const [[{ count: totalPayments }]] = await pool.query('SELECT COUNT(*) AS count FROM payments');
-            const [[{ total: totalRevenue }]] = await pool.query(`SELECT COALESCE(SUM(amount),0) AS total FROM payments WHERE status = 'completed'`);
-            const [[{ count: completedPayments }]] = await pool.query(`SELECT COUNT(*) AS count FROM payments WHERE status = 'completed'`);
-            const [[{ count: failedPayments }]] = await pool.query(`SELECT COUNT(*) AS count FROM payments WHERE status = 'failed'`);
-            const [[{ count: pendingPayments }]] = await pool.query(`SELECT COUNT(*) AS count FROM payments WHERE status = 'pending'`);
+            const [[{ total: totalRevenue }]] = await pool.query(`
+                SELECT COALESCE(SUM(amount),0) AS total 
+                FROM payments 
+                WHERE status = 'completed'
+            `);
 
             const stats = {
                 users: {
@@ -27,216 +40,193 @@ const adminController = {
                     byStatus: { active: activeUsers || 0, inactive: inactiveUsers || 0 }
                 },
                 courses: { total: totalCourses || 0 },
-                payments: {
-                    total: totalPayments || 0,
-                    totalRevenue: totalRevenue || 0,
-                    byStatus: { completed: completedPayments || 0, failed: failedPayments || 0, pending: pendingPayments || 0 }
-                }
+                payments: { total: totalPayments || 0, totalRevenue: totalRevenue || 0 }
             };
 
-            res.json({ stats });
+            res.render('admin/dashboard', { stats });
         } catch (error) {
-            console.error('Get system stats error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            console.error('Dashboard error:', error);
+            res.status(500).send('Internal server error');
         }
     },
 
-    // Get all users with pagination and filtering
-    getAllUsers: async (req, res) => {
+    getSystemStats: async (req, res) => {
         try {
-            const page = parseInt(req.query.page || '1', 10);
-            const limit = parseInt(req.query.limit || '10', 10);
-            const offset = (page - 1) * limit;
-            const role = req.query.role; // role name e.g., 'Admin'
-            const status = req.query.status; // 'active' | 'inactive'
-
-            let where = [];
-            let params = [];
-            if (role) {
-                where.push('r.name = ?');
-                params.push(role);
-            }
-            if (status) {
-                where.push('u.is_active = ?');
-                params.push(status === 'active' ? 1 : 0);
-            }
-            const whereSql = where.length ? 'WHERE ' + where.join(' AND ') : '';
-
-            const [rows] = await pool.query(
-                `SELECT u.id, u.name, u.email, u.is_active, r.name AS role
-                 FROM users u JOIN roles r ON u.role_id = r.id
-                 ${whereSql}
-                 ORDER BY u.id DESC
-                 LIMIT ? OFFSET ?`,
-                [...params, limit, offset]
-            );
-
-            const [[{ count: total }]] = await pool.query(
-                `SELECT COUNT(*) AS count
-                 FROM users u JOIN roles r ON u.role_id = r.id
-                 ${whereSql}`,
-                params
-            );
-
-            res.json({ users: rows, pagination: { page, limit, total } });
+            const [[{ count: totalUsers }]] = await pool.query('SELECT COUNT(*) AS count FROM users');
+            res.render('admin/stats', { totalUsers });
         } catch (error) {
-            console.error('Get all users error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            console.error(error);
+            res.status(500).send('Error loading system stats');
         }
     },
 
-    // Update user status or role
-    updateUser: async (req, res) => {
-        try {
-            const userId = req.params.id;
-            const { status, role } = req.body;
-
-            const [[user]] = await pool.query('SELECT id FROM users WHERE id = ?', [userId]);
-            if (!user) {
-                return res.status(404).json({ error: 'User not found' });
-            }
-
-            const updateData = {};
-            if (status) updateData.is_active = status === 'active' ? 1 : 0;
-            if (role) {
-                const [[roleRow]] = await pool.query('SELECT id FROM roles WHERE name = ?', [role]);
-                if (roleRow) updateData.role_id = roleRow.id;
-            }
-
-            const fields = Object.keys(updateData);
-            if (fields.length) {
-                const setSql = fields.map(f => `${f} = ?`).join(', ');
-                await pool.query(`UPDATE users SET ${setSql} WHERE id = ?`, [...fields.map(f => updateData[f]), userId]);
-            }
-
-            // Log audit trail
-            await auditHelper.logAction(req.userId, 'ADMIN_UPDATE_USER', 
-                `Updated user ${userId}`, userId);
-
-            const [[updated]] = await pool.query('SELECT u.id, u.name, u.email, u.is_active, r.name AS role FROM users u JOIN roles r ON u.role_id = r.id WHERE u.id = ?', [userId]);
-            res.json({ message: 'User updated successfully', user: updated });
-        } catch (error) {
-            console.error('Update user error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    },
-
-    // Delete user
-    deleteUser: async (req, res) => {
-        try {
-            const userId = req.params.id;
-
-            const [[user]] = await pool.query('SELECT id FROM users WHERE id = ?', [userId]);
-            if (!user) {
-                return res.status(404).json({ error: 'User not found' });
-            }
-
-            // Prevent self-deletion
-            if (userId === req.userId) {
-                return res.status(400).json({ error: 'Cannot delete your own account' });
-            }
-
-            await pool.query('DELETE FROM users WHERE id = ?', [userId]);
-
-            // Log audit trail
-            await auditHelper.logAction(req.userId, 'ADMIN_DELETE_USER', 
-                `Deleted user ${userId}`, userId);
-
-            res.json({ message: 'User deleted successfully' });
-        } catch (error) {
-            console.error('Delete user error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    },
-
-    // Approve/reject course
-    moderateCourse: async (req, res) => {
-        try {
-            const courseId = req.params.id;
-            const { action, reason } = req.body; // action: 'approve' or 'reject'
-
-            const course = await Course.findById(courseId);
-            if (!course) {
-                return res.status(404).json({ error: 'Course not found' });
-            }
-
-            const newStatus = action === 'approve' ? 'active' : 'rejected';
-            await Course.updateStatus(courseId, newStatus);
-
-            // Log audit trail
-            await auditHelper.logAction(req.userId, 'ADMIN_MODERATE_COURSE', 
-                `${action} course: ${course.title}`, courseId);
-
-            res.json({
-                message: `Course ${action}d successfully`,
-                course: await Course.findById(courseId)
-            });
-        } catch (error) {
-            console.error('Moderate course error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    },
-
-    // Get audit logs
     getAuditLogs: async (req, res) => {
         try {
-            const { page = 1, limit = 20, action, userId, startDate, endDate } = req.query;
-            
-            const logs = await auditHelper.getLogs({
-                page: parseInt(page),
-                limit: parseInt(limit),
-                action,
-                userId,
-                startDate,
-                endDate
-            });
-
-            res.json({
-                logs,
-                pagination: {
-                    page: parseInt(page),
-                    limit: parseInt(limit),
-                    total: await auditHelper.getLogsCount({ action, userId, startDate, endDate })
-                }
-            });
+            const [logs] = await pool.query('SELECT * FROM audit_logs ORDER BY created_at DESC');
+            res.render('admin/auditLogs', { logs });
         } catch (error) {
-            console.error('Get audit logs error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            console.error(error);
+            res.status(500).send('Error loading audit logs');
         }
     },
 
-    // Generate report
     generateReport: async (req, res) => {
         try {
-            const { type, startDate, endDate } = req.query;
-            
-            let report;
-            switch (type) {
-                case 'user-registration':
-                    report = (await pool.query(
-                        `SELECT DATE(created_at) AS day, COUNT(*) AS count FROM users
-                         WHERE created_at BETWEEN ? AND ? GROUP BY DATE(created_at) ORDER BY day`
-                    , [startDate, endDate]))[0];
-                    break;
-                case 'revenue':
-                    report = (await pool.query(
-                        `SELECT DATE(payment_date) AS day, SUM(amount) AS total
-                         FROM payments WHERE status = 'completed' AND payment_date BETWEEN ? AND ?
-                         GROUP BY DATE(payment_date) ORDER BY day`
-                    , [startDate, endDate]))[0];
-                    break;
-                default:
-                    return res.status(400).json({ error: 'Invalid report type' });
+            const [reportData] = await pool.query('SELECT * FROM reports ORDER BY created_at DESC');
+            res.render('admin/reports', { reportData });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error generating report');
+        }
+    },
+
+    getAllUsers: async (req, res) => {
+        try {
+            const [users] = await pool.query(`
+                SELECT u.id, u.name, u.email, r.name AS role, u.is_active 
+                FROM users u 
+                JOIN roles r ON u.role_id = r.id
+            `);
+            res.render('admin/users', { users, activePage: 'users', user: req.session });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error loading users');
+        }
+    },
+
+    showAddUserForm: (req, res) => {
+        res.render('admin/addUser');
+    },
+
+    showEditUserForm: async (req, res) => {
+        try {
+            const { id } = req.params;
+
+            const [[user]] = await pool.query(`
+                SELECT u.id, u.name, u.email, r.name AS role, u.is_active
+                FROM users u
+                JOIN roles r ON u.role_id = r.id
+                WHERE u.id = ?
+            `, [id]);
+
+            if (!user) {
+                return res.status(404).send('User not found');
             }
 
-            // Log audit trail
-            await auditHelper.logAction(req.userId, 'ADMIN_GENERATE_REPORT', 
-                `Generated ${type} report`);
+            const [roles] = await pool.query('SELECT name FROM roles');
 
-            res.json({ report });
+            res.render('admin/editUser', {
+                user,
+                roles,
+                activePage: 'users',
+                userSession: req.session
+            });
         } catch (error) {
-            console.error('Generate report error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            console.error('Show edit user error:', error);
+            res.status(500).send('Internal server error');
+        }
+    },
+
+    addUser: async (req, res) => {
+        try {
+            const { name, email, password, role } = req.body;
+            if (!name || !email || !password || !role) {
+                return res.status(400).send('Missing fields');
+            }
+
+            const [[roleRow]] = await pool.query('SELECT id FROM roles WHERE name = ?', [role]);
+            if (!roleRow) return res.status(400).send('Invalid role');
+
+            const [result] = await pool.query(
+                'INSERT INTO users (name, email, password, role_id, is_active) VALUES (?, ?, ?, ?, 1)',
+                [name, email, password, roleRow.id]
+            );
+
+            await auditHelper.logAction(req.userId, 'ADMIN_CREATE_USER', `Created user ${email}`, result.insertId);
+            res.redirect('/admin/users');
+        } catch (error) {
+            console.error('Add user error:', error);
+            res.status(500).send('Internal server error');
+        }
+    },
+
+    updateUser: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { name, email, role } = req.body;
+            const [[roleRow]] = await pool.query('SELECT id FROM roles WHERE name = ?', [role]);
+            if (!roleRow) return res.status(400).send('Invalid role');
+
+            await pool.query(
+                'UPDATE users SET name = ?, email = ?, role_id = ? WHERE id = ?',
+                [name, email, roleRow.id, id]
+            );
+            res.redirect('/admin/users');
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error updating user');
+        }
+    },
+
+    deleteUser: async (req, res) => {
+        try {
+            const { id } = req.params;
+            await pool.query('DELETE FROM users WHERE id = ?', [id]);
+            res.redirect('/admin/users');
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error deleting user');
+        }
+    },
+
+    showAddCourseForm: (req, res) => {
+        res.render('admin/addCourse');
+    },
+
+    addCourse: async (req, res) => {
+        try {
+            const { title, description, teacher_id } = req.body;
+            if (!title || !description || !teacher_id) {
+                return res.status(400).send('Missing fields');
+            }
+
+            const [result] = await pool.query(
+                'INSERT INTO courses (title, description, teacher_id, status) VALUES (?, ?, ?, ?)',
+                [title, description, teacher_id, 'pending']
+            );
+
+            await auditHelper.logAction(req.userId, 'ADMIN_CREATE_COURSE', `Created course ${title}`, result.insertId);
+            res.redirect('/admin/courses');
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Internal server error');
+        }
+    },
+
+    moderateCourse: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { status } = req.body;
+            await pool.query('UPDATE courses SET status = ? WHERE id = ?', [status, id]);
+            res.redirect('/admin/courses');
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error moderating course');
+        }
+    },
+
+    getAllCourses: async (req, res) => {
+        try {
+            const [courses] = await pool.query(`
+                SELECT c.id, c.title, c.description, c.status, u.name AS teacher
+                FROM courses c
+                JOIN users u ON c.teacher_id = u.id
+                ORDER BY c.id DESC
+            `);
+            res.render('admin/courses', { courses, activePage: 'courses', userSession: req.session });
+        } catch (error) {
+            console.error('Error loading courses:', error);
+            res.status(500).send('Error loading courses');
         }
     }
 };

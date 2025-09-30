@@ -38,12 +38,13 @@ CREATE TABLE `users` (
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create courses table
+-- Create courses table with status column
 CREATE TABLE `courses` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
   `description` text,
   `teacher_id` int NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'pending',
   `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `teacher_id` (`teacher_id`),
@@ -104,9 +105,9 @@ INSERT INTO `users` (`name`, `email`, `password`, `role_id`) VALUES
 ('Teacher One', 'teacher1@example.com', '$2b$10$YKwlvko52wAoOZzWpf0hH.uTA93hmRFyoV0heeHKfLAZKoVTePeq.', 2),
 ('Student One', 'student1@example.com', '$2b$10$ju6Akc2NtVAca6tuhkrQseiGJL0Lya38t8UlhfgTMCA5SKHoxRSHW', 3);
 
-INSERT INTO `courses` (`title`, `description`, `teacher_id`) VALUES
-('Mathematics 101', 'Basic Mathematics Course', 2),
-('History 101', 'Introduction to World History', 2);
+INSERT INTO `courses` (`title`, `description`, `teacher_id`, `status`) VALUES
+('Mathematics 101', 'Basic Mathematics Course', 2, 'pending'),
+('History 101', 'Introduction to World History', 2, 'pending');
 
 INSERT INTO `assignments` (`course_id`, `title`, `description`, `due_date`, `teacher_id`) VALUES
 (1, 'Algebra Homework', 'Solve the following algebraic equations', '2025-10-15 23:59:59', 2),

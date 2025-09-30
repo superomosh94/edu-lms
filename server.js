@@ -2,6 +2,8 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const dotenv = require('dotenv');
+const adminRoutes = require('./app/routes/adminRoutes');
+const methodOverride = require('method-override');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const db = require('./app/controllers/config/db'); // Loads MySQL connection
@@ -55,6 +57,7 @@ const authLimiter = rateLimit({
 });
 
 // Body parsing
+app.use(methodOverride('_method'));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
@@ -108,6 +111,9 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/courses', courseRoutes);
 app.use('/assignments', assignmentRoutes);
 app.use('/settings', settingsRoutes);
+
+// Mount admin routes at /admin
+app.use('/admin', adminRoutes);
 
 // Home route
 app.get('/', (req, res) => {

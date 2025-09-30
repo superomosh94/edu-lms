@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        a { text-decoration: none; color: blue; }
+        .menu { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <div class="menu">
+        <a href="/admin/users">Manage Users</a> |
+        <a href="/admin/create-user">Add User</a> |
+        <a href="/admin/create-course">Add Course</a>
+    </div>
+    <div id="stats">
+        <h2>System Stats</h2>
+        <div id="statsData">
+            <p>Total Users: <%= stats.users.total %></p>
+            <p>Admins: <%= stats.users.byRole.admin %></p>
+            <p>Teachers: <%= stats.users.byRole.teacher %></p>
+            <p>Students: <%= stats.users.byRole.student %></p>
+            <p>Total Courses: <%= stats.courses.total %></p>
+            <p>Total Payments: <%= stats.payments.total %></p>
+            <p>Total Revenue: <%= stats.payments.totalRevenue %></p>
+        </div>
+    </div>
+</body>
+</html>

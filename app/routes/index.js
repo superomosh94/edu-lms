@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// Import all route files
+// Import route modules
 const authRoutes = require('./authRoutes');
 const dashboardRoutes = require('./dashboardRoutes');
 const courseRoutes = require('./courseRoutes');
@@ -30,7 +30,7 @@ router.get('/health', (req, res) => {
     });
 });
 
-// 404 handler for API routes
+// Catch-all route for undefined API endpoints
 router.use('*', (req, res) => {
     res.status(404).json({ 
         error: 'API endpoint not found',

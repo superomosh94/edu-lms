@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Create User</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        form { display: flex; flex-direction: column; max-width: 400px; }
+        input, select { margin: 5px 0; padding: 8px; }
+    </style>
+</head>
+<body>
+    <h1>Create New User</h1>
+    <form id="createUserForm">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <select name="role" required>
+            <option value="">Select Role</option>
+            <option value="Admin">Admin</option>
+            <option value="Teacher">Teacher</option>
+            <option value="Student">Student</option>
+        </select>
+        <button type="submit">Create User</button>
+    </form>
+    <div id="message"></div>
+    <script>
+        document.getElementById('createUserForm').addEventListener('submit', async function(e){
+            e.preventDefault();
+            const form = e.target;
+            const data = {
+                name: form.name.value,
+                email: form.email.value,
+                password: form.password.value,
+                role: form.role.value
+            };
+            const res = await fetch('/admin/create-user', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            document.getElementById('message').innerText = result.message || result.error;
+            if (res.status === 201) form.reset();
+        });
+    </script>
+</body>
+</html>
