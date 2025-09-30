@@ -45,6 +45,7 @@
     .auth-header h1 {
       margin: 0;
       font-size: 1.8rem;
+      font-weight: 600;
     }
 
     .auth-header p {
@@ -72,7 +73,6 @@
       color: #f1f5f9;
       font-size: 1rem;
       box-sizing: border-box;
-      display: block;
     }
 
     .form-control:focus {
@@ -90,7 +90,6 @@
       color: #94a3b8;
       background: none;
       border: none;
-      padding: 0;
     }
 
     .btn {
@@ -101,7 +100,6 @@
       border-radius: 0.5rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
       font-size: 1rem;
       box-sizing: border-box;
     }
@@ -138,16 +136,17 @@
     <div class="auth-card">
       <div class="auth-header">
         <h1>Create Account</h1>
-        <p>Join Edu-LMS and manage your institution with ease</p>
+        <p>Join Edu-LMS and manage your institution</p>
       </div>
 
-      <form id="registerForm" action="/auth/register" method="POST" novalidate>
+      <form id="registerForm" action="/auth/register" method="POST">
         <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <% } %>
+
         <div class="form-group">
-          <label for="fullName" class="form-label">Full Name</label>
-          <input type="text" id="fullName" name="name" class="form-control" required placeholder="Jane Doe">
+          <label for="name" class="form-label">Full Name</label>
+          <input type="text" id="name" name="name" class="form-control" required placeholder="Jane Doe">
         </div>
 
         <div class="form-group">
@@ -158,13 +157,13 @@
         <div class="form-group">
           <label for="password" class="form-label">Password</label>
           <input type="password" id="password" name="password" class="form-control" required placeholder="••••••••" autocomplete="new-password">
-          <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="password">👁</button>
+          <button type="button" class="toggle-password" data-target="password">👁</button>
         </div>
 
         <div class="form-group">
           <label for="confirmPassword" class="form-label">Confirm Password</label>
           <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required placeholder="••••••••" autocomplete="new-password">
-          <button type="button" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="confirmPassword">👁</button>
+          <button type="button" class="toggle-password" data-target="confirmPassword">👁</button>
         </div>
 
         <button type="submit" class="btn btn-primary">Register</button>
@@ -176,7 +175,14 @@
     </div>
   </div>
 
-  <script src="/public/js/auth.js"></script>
+  <script>
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = document.getElementById(btn.dataset.target);
+        const isPassword = target.type === 'password';
+        target.type = isPassword ? 'text' : 'password';
+      });
+    });
+  </script>
 </body>
 </html>
- 
