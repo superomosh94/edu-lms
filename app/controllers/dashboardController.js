@@ -174,22 +174,20 @@ async function fetchTeacherDashboard(userId) {
   };
 }
 
-// Student (FIXED)
+// Student (FIXED: removed 'status' check)
 async function fetchStudentDashboard(userId) {
   const [[enrollmentCount]] = await pool.query(
-    "SELECT COUNT(*) AS count FROM enrollments WHERE student_id = ? AND status = ?",
-    [userId, "active"]
+    "SELECT COUNT(*) AS count FROM enrollments WHERE student_id = ?", 
+    [userId]
   );
-
   const [[assignmentCount]] = await pool.query(`
     SELECT COUNT(*) AS count
     FROM assignments a
     JOIN enrollments e ON a.course_id = e.course_id
     WHERE e.student_id = ?
   `, [userId]);
-
   const [[completedAssignments]] = await pool.query(
-    "SELECT COUNT(*) AS count FROM submissions WHERE student_id = ? AND grade IS NOT NULL",
+    "SELECT COUNT(*) AS count FROM submissions WHERE student_id = ? AND grade IS NOT NULL", 
     [userId]
   );
 
