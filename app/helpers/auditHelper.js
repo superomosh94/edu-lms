@@ -64,3 +64,4 @@ exports.getAuditLogs = async (page = 1, limit = 50, filters = {}) => {
     throw error;
   }
 };
+exports.logAction = exports.logAudit;

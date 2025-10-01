@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Course | Admin Panel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        form {
+            max-width: 500px;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            padding: 8px;
+            margin-top: 5px;
+            font-size: 16px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: red;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Add Course</h1>
+
+    <form method="POST" action="/admin/courses/add">
+        <label for="title">Course Title</label>
+        <input type="text" id="title" name="title" placeholder="Enter course title" required>
+
+        <label for="description">Course Description</label>
+        <textarea id="description" name="description" placeholder="Enter course description" required></textarea>
+
+        <label for="teacher_id">Teacher</label>
+        <select id="teacher_id" name="teacher_id" required>
+            <% if (teachers && teachers.length > 0) { %>
+                <% teachers.forEach(teacher => { %>
+                    <option value="<%= teacher.id %>"><%= teacher.name %></option>
+                <% }) %>
+            <% } else { %>
+                <option value="">No teachers found</option>
+            <% } %>
+        </select>
+
+        <label for="status">Status</label>
+        <select id="status" name="status" required>
+            <option value="pending" selected>Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+        </select>
+
+        <button type="submit">Create Course</button>
+    </form>
+
+</body>
+</html>

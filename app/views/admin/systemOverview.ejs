@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>System Overview | Admin Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f4f6f8; }
+        h1 { margin-bottom: 20px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h2 { margin-top: 0; font-size: 18px; }
+        .card p { font-size: 24px; font-weight: bold; margin: 10px 0 0; }
+    </style>
+</head>
+<body>
+    <h1>System Overview</h1>
+    <div class="stats-grid">
+        <div class="card">
+            <h2>Total Users</h2>
+            <p><%= stats.totalUsers %></p>
+        </div>
+        <div class="card">
+            <h2>Admins</h2>
+            <p><%= stats.admins %></p>
+        </div>
+        <div class="card">
+            <h2>Teachers</h2>
+            <p><%= stats.teachers %></p>
+        </div>
+        <div class="card">
+            <h2>Students</h2>
+            <p><%= stats.students %></p>
+        </div>
+        <div class="card">
+            <h2>Active Users</h2>
+            <p><%= stats.activeUsers %></p>
+        </div>
+        <div class="card">
+            <h2>Inactive Users</h2>
+            <p><%= stats.inactiveUsers %></p>
+        </div>
+        <div class="card">
+            <h2>Total Courses</h2>
+            <p><%= stats.totalCourses %></p>
+        </div>
+        <div class="card">
+            <h2>Total Payments</h2>
+            <p><%= stats.totalPayments %></p>
+        </div>
+        <div class="card">
+            <h2>Total Revenue</h2>
+            <p>$<%= stats.totalRevenue %></p>
+        </div>
+    </div>
+</body>
+</html>

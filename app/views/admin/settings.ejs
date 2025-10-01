@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Settings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f4f6f8;
+            color: #333;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        form {
+            background: #fff;
+            padding: 25px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 500px;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        button {
+            margin-top: 25px;
+            padding: 12px 20px;
+            background: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .form-section {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Admin Settings</h1>
+    <form method="POST" action="/admin/settings">
+        <div class="form-section">
+            <label for="siteName">Site Name</label>
+            <input type="text" id="siteName" name="siteName" value="Edu LMS" required>
+        </div>
+
+        <div class="form-section">
+            <label for="siteEmail">Site Email</label>
+            <input type="email" id="siteEmail" name="siteEmail" value="admin@example.com" required>
+        </div>
+
+        <div class="form-section">
+            <label for="siteStatus">Site Status</label>
+            <select id="siteStatus" name="siteStatus" required>
+                <option value="online">Online</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="offline">Offline</option>
+            </select>
+        </div>
+
+        <div class="form-section">
+            <label for="siteDescription">Site Description</label>
+            <input type="text" id="siteDescription" name="siteDescription" value="Learning Management System">
+        </div>
+
+        <button type="submit">Save Settings</button>
+    </form>
+</body>
+</html>

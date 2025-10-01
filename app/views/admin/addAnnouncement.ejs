@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Announcement</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f9f9f9; }
+        form { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 5px; }
+        label { display: block; margin-top: 10px; }
+        input, textarea { width: 100%; padding: 8px; margin-top: 5px; }
+        button { margin-top: 15px; padding: 10px 20px; background: #007BFF; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <h2>Add Announcement</h2>
+    <form action="/admin/announcements/add" method="POST">
+        <label for="title">Title</label>
+        <input type="text" name="title" id="title" required>
+
+        <label for="message">Message</label>
+        <textarea name="message" id="message" rows="5" required></textarea>
+
+        <button type="submit">Create Announcement</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audit Logs</title>
+</head>
+<body>
+    <h1>Audit Logs</h1>
+    <ul>
+        <% logs.forEach(log => { %>
+            <li><%= log.created_at %> - <%= log.action %> - <%= log.details %></li>
+        <% }) %>
+    </ul>
+</body>
+</html>

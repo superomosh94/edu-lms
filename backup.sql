@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS `audit_logs`;
 DROP TABLE IF EXISTS `courses`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `roles`;
+DROP TABLE IF EXISTS `reports`;
 
 -- Re-enable foreign key checks
 SET FOREIGN_KEY_CHECKS = 1;
@@ -38,7 +39,7 @@ CREATE TABLE `users` (
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create courses table with status column
+-- Create courses table
 CREATE TABLE `courses` (
   `id` int NOT NULL AUTO_INCREMENT,
   `title` varchar(255) NOT NULL,
@@ -99,6 +100,27 @@ CREATE TABLE `audit_logs` (
   CONSTRAINT `audit_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Create reports table
+CREATE TABLE `reports` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `description` text,
+  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE announcements (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+ 
+
+ insert into announcements (title, message) values
+('Welcome to the LMS', 'This is the first announcement in the system. Stay tuned for more updates!');
+
 -- Insert sample data
 INSERT INTO `users` (`name`, `email`, `password`, `role_id`) VALUES
 ('Admin User', 'admin@example.com', '$2b$10$Ws/hBCP.V.KWe0gGLanaCOC3fKtpZ/I7pKSSnaDHL9BNdMhdxQ8EW', 1),
@@ -120,3 +142,8 @@ INSERT INTO `enrollments` (`student_id`, `course_id`, `status`) VALUES
 INSERT INTO `audit_logs` (`user_id`, `action`, `ip`, `user_agent`) VALUES
 (1, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'),
 (3, 'course_enrollment', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+
+INSERT INTO `reports` (`title`, `description`) VALUES
+('Monthly User Report', 'Summary of user registrations and activity for the month.'),
+('Course Enrollment Report', 'Details of course enrollments and statuses.');
+-- End of backup.sql

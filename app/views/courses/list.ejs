@@ -5,43 +5,106 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Courses - EDU LMS</title>
     <%- include('../partials/header') %>
+
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
     <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
         .course-card {
             transition: all 0.3s ease;
             border: none;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+
         .course-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
+
         .course-image {
             height: 200px;
             object-fit: cover;
             border-top-left-radius: 10px;
             border-top-right-radius: 10px;
         }
+
         .progress {
             height: 6px;
         }
+
         .filter-section {
             background: #f8f9fa;
             border-radius: 10px;
             padding: 20px;
         }
+
         .search-box {
             position: relative;
         }
+
         .search-box .form-control {
             padding-left: 40px;
         }
+
         .search-box i {
             position: absolute;
             left: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: #6c757d;
+        }
+
+        /* Sidebar styling */
+        .sidebar {
+            background: #111;
+            color: #fff;
+            height: 100vh;
+            padding-top: 1rem;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 5px;
+        }
+
+        .nav-link.active {
+            background: #1f6feb;
+            color: #fff;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-heading {
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .user-wrap {
+            padding: 15px 0;
+        }
+
+        .avatar {
+            position: relative;
+        }
+
+        .online-dot {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background: #28a745;
+            border: 2px solid #111;
+            border-radius: 50%;
         }
     </style>
 </head>
@@ -52,50 +115,54 @@
     <% const safeUser = user || { role: 'student' }; %>
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+        <div class="col-md-3 col-lg-2 d-md-block sidebar">
             <div class="position-sticky pt-3">
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
+                        <a class="nav-link <%= activePage==='dashboard'?'active':'' %>" href="/dashboard">
+                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="/courses">
-                            <i class="fas fa-book me-2"></i>Courses
+                        <a class="nav-link <%= activePage==='courses'?'active':'' %>" href="/courses">
+                            <i class="fas fa-book me-2"></i> Courses
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/assignments">
-                            <i class="fas fa-tasks me-2"></i>Assignments
+                        <a class="nav-link <%= activePage==='assignments'?'active':'' %>" href="/assignments">
+                            <i class="fas fa-tasks me-2"></i> Assignments
                         </a>
                     </li>
                     <% if (safeUser.role === 'teacher' || safeUser.role === 'admin') { %>
                         <li class="nav-item">
                             <a class="nav-link" href="/courses/create">
-                                <i class="fas fa-plus-circle me-2"></i>Create Course
+                                <i class="fas fa-plus-circle me-2"></i> Create Course
                             </a>
                         </li>
                     <% } %>
                 </ul>
 
                 <!-- Filters -->
-                <div class="mt-4">
-                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
-                        <span>Filters</span>
-                    </h6>
+                <div class="mt-4 px-3">
+                    <h6 class="sidebar-heading text-muted mb-2">Filters</h6>
                     <div class="nav flex-column">
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="checkbox" id="filter-enrolled">
-                            <label class="form-check-label" for="filter-enrolled">My Courses</label>
+                            <label class="form-check-label text-light" for="filter-enrolled">
+                                <i class="fas fa-user-graduate me-1"></i> My Courses
+                            </label>
                         </div>
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="checkbox" id="filter-available">
-                            <label class="form-check-label" for="filter-available">Available</label>
+                            <label class="form-check-label text-light" for="filter-available">
+                                <i class="fas fa-book-open me-1"></i> Available
+                            </label>
                         </div>
                         <div class="form-check mb-2">
                             <input class="form-check-input" type="checkbox" id="filter-completed">
-                            <label class="form-check-label" for="filter-completed">Completed</label>
+                            <label class="form-check-label text-light" for="filter-completed">
+                                <i class="fas fa-check-circle me-1"></i> Completed
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -123,23 +190,25 @@
                 <div class="col-md-8">
                     <div class="search-box">
                         <i class="fas fa-search"></i>
-                        <input type="text" class="form-control" placeholder="Search courses...">
+                        <input type="text" class="form-control" id="course-search" placeholder="Search courses...">
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <select class="form-select">
-                        <option>Sort by: Newest</option>
-                        <option>Sort by: Popular</option>
-                        <option>Sort by: Alphabetical</option>
+                    <select class="form-select" id="course-sort">
+                        <option value="newest">Sort by: Newest</option>
+                        <option value="popular">Sort by: Popular</option>
+                        <option value="alphabetical">Sort by: Alphabetical</option>
                     </select>
                 </div>
             </div>
 
             <!-- Courses Grid -->
-            <div class="row">
+            <div class="row" id="courses-grid">
                 <% if (courses && courses.length > 0) { %>
                     <% courses.forEach(course => { %>
-                        <div class="col-xl-4 col-lg-6 mb-4">
+                        <div class="col-xl-4 col-lg-6 mb-4 course-item" 
+                             data-enrolled="<%= course.isEnrolled ? 'true' : 'false' %>" 
+                             data-completed="<%= course.completed ? 'true' : 'false' %>">
                             <div class="card course-card h-100">
                                 <img src="<%= course.image || '/public/images/placeholder/course-300x200.svg' %>" 
                                      class="course-image" alt="<%= course.title || 'Course' %>" loading="lazy">
@@ -225,17 +294,32 @@
 <%- include('../partials/footer') %>
 
 <script>
-    document.querySelector('.search-box input').addEventListener('input', function(e) {
-        const searchTerm = e.target.value.toLowerCase();
-        const courseCards = document.querySelectorAll('.course-card');
+    const searchInput = document.getElementById('course-search');
+    const filterEnrolled = document.getElementById('filter-enrolled');
+    const filterAvailable = document.getElementById('filter-available');
+    const filterCompleted = document.getElementById('filter-completed');
 
-        courseCards.forEach(card => {
-            const title = card.querySelector('.card-title').textContent.toLowerCase();
-            const description = card.querySelector('.card-text').textContent.toLowerCase();
+    function filterCourses() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const courseItems = document.querySelectorAll('.course-item');
 
-            card.parentElement.style.display = (title.includes(searchTerm) || description.includes(searchTerm)) ? 'block' : 'none';
+        courseItems.forEach(item => {
+            const title = item.querySelector('.card-title').textContent.toLowerCase();
+            const description = item.querySelector('.card-text').textContent.toLowerCase();
+
+            let matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+            let matchesEnrolled = !filterEnrolled.checked || item.dataset.enrolled === 'true';
+            let matchesCompleted = !filterCompleted.checked || item.dataset.completed === 'true';
+            let matchesAvailable = !filterAvailable.checked || item.dataset.enrolled !== 'true';
+
+            item.style.display = (matchesSearch && matchesEnrolled && matchesCompleted && matchesAvailable) ? 'block' : 'none';
         });
-    });
+    }
+
+    searchInput.addEventListener('input', filterCourses);
+    filterEnrolled.addEventListener('change', filterCourses);
+    filterAvailable.addEventListener('change', filterCourses);
+    filterCompleted.addEventListener('change', filterCourses);
 </script>
 </body>
 </html>

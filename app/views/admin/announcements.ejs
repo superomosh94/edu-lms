@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Announcements</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            background-color: #f5f5f5;
+        }
+        /* Sidebar */
+        .sidebar {
+            width: 220px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px;
+            flex-shrink: 0;
+        }
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 10px 0;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        /* Main content */
+        .main-content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        header, footer {
+            background-color: #34495e;
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background: white;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+
+        .create-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            background-color: #2980b9;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .create-btn:hover {
+            background-color: #3498db;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Admin Panel</h2>
+        <a href="/admin/dashboard">Dashboard</a>
+        <a href="/admin/users">Users</a>
+        <a href="/admin/courses">Courses</a>
+        <a href="/admin/announcements">Announcements</a>
+        <a href="/admin/settings">Settings</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- Main content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header>
+            <h1>Announcements</h1>
+        </header>
+
+        <a href="/admin/announcements/add" class="create-btn">Create Announcement</a>
+
+        <ul>
+            <% announcements.forEach(announcement => { %>
+                <li>
+                    <strong><%= announcement.title %></strong><br>
+                    <p><%= announcement.content %></p>
+                    <small>Posted on <%= new Date(announcement.created_at).toLocaleString() %></small>
+                </li>
+            <% }) %>
+        </ul>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; <%= new Date().getFullYear() %> Edu-LMS Admin</p>
+        </footer>
+    </div>
+
+</body>
+</html>
