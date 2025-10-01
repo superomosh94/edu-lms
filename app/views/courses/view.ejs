@@ -2,172 +2,36 @@
 <%- include('../partials/navigation') %>
 
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f8f9fa;
-    margin: 0;
-    padding: 0;
-  }
-
-  .container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 20px;
-  }
-
-  /* Course Creation Form */
-  .course-create {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-  }
-
-  .course-create h4 {
-    margin-bottom: 15px;
-    color: #333;
-  }
-
-  .form-label {
-    font-weight: bold;
-    margin-bottom: 5px;
-    display: block;
-  }
-
-  input.form-control, textarea.form-control {
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    padding: 10px;
-  }
-
-  .btn-primary {
-    background: #667eea;
-    border: none;
-    padding: 10px 20px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-
-  .btn-primary:hover {
-    background: #556cd6;
-  }
-
-  /* Course Hero */
-  .course-hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 30px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  }
-
-  .course-hero h1 {
-    font-size: 2.2em;
-    margin-bottom: 10px;
-  }
-
-  .course-hero p {
-    font-size: 1.1em;
-    margin-bottom: 15px;
-  }
-
-  .badge {
-    margin-right: 5px;
-    font-size: 0.9em;
-  }
-
-  .btn-light {
-    color: #333;
-    background: white;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-weight: bold;
-  }
-
-  .btn-light:hover {
-    background: #eee;
-  }
-
-  .btn-success {
-    background: #28a745;
-    border: none;
-    padding: 8px 15px;
-    border-radius: 5px;
-    font-weight: bold;
-  }
-
-  .btn-success:hover {
-    background: #218838;
-  }
-
-  /* Course Modules */
-  .card {
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-bottom: 20px;
-  }
-
-  .card-header {
-    background: #f4f4f4;
-    font-weight: bold;
-    font-size: 1.1em;
-  }
-
-  .lesson-item {
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 5px;
-    background: #fff;
-    border-left: 4px solid #667eea;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background 0.2s ease;
-    cursor: pointer;
-  }
-
-  .lesson-item:hover {
-    background: #f1f1f1;
-  }
-
-  .badge-success {
-    background: #28a745;
-    color: white;
-    font-size: 0.8em;
-  }
-
-  /* Sidebar */
-  .course-sidebar {
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    margin-top: 20px;
-  }
-
-  .course-sidebar h5 {
-    margin-bottom: 15px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 5px;
-  }
-
-  .course-sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  .course-sidebar li {
-    padding: 8px 0;
-    border-bottom: 1px solid #eee;
-  }
+  body { font-family: Arial, sans-serif; background: #f8f9fa; margin: 0; padding: 0; }
+  .container { max-width: 1200px; margin: auto; padding: 20px; }
+  .course-create, .course-hero, .course-sidebar { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); margin-bottom: 30px; }
+  .course-create h4, .course-hero h1 { margin-bottom: 15px; }
+  .form-label { font-weight: bold; margin-bottom: 5px; display: block; }
+  input.form-control, textarea.form-control { border-radius: 5px; border: 1px solid #ddd; padding: 10px; width: 100%; }
+  .btn-primary { background: #667eea; border: none; padding: 10px 20px; border-radius: 5px; color: white; font-weight: bold; cursor: pointer; }
+  .btn-primary:hover { background: #556cd6; }
+  .btn-danger { background: #dc3545; color: white; padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; }
+  .btn-danger:hover { background: #c82333; }
+  .btn-light { background: white; color: #333; padding: 8px 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+  .btn-light:hover { background: #eee; }
+  .btn-success { background: #28a745; color: white; padding: 8px 15px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; }
+  .btn-success:hover { background: #218838; }
+  .course-hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; border-radius: 10px; margin-bottom: 30px; }
+  .course-hero p { font-size: 1.1em; margin-bottom: 15px; }
+  .badge { margin-right: 5px; font-size: 0.9em; }
+  .card { border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; }
+  .card-header { background: #f4f4f4; font-weight: bold; font-size: 1.1em; padding: 10px; }
+  .lesson-item { padding: 10px; margin-bottom: 8px; border-radius: 5px; background: #fff; border-left: 4px solid #667eea; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .lesson-item:hover { background: #f1f1f1; }
+  .course-sidebar h5 { margin-bottom: 15px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+  .course-sidebar ul { list-style: none; padding: 0; }
+  .course-sidebar li { padding: 8px 0; border-bottom: 1px solid #eee; }
 </style>
 
 <div class="container">
-  <% if (user.role === 'Admin' || user.role === 'Teacher') { %>
+
+  <!-- Create Course Form -->
+  <% if (user && (user.role === 'admin' || user.role === 'teacher')) { %>
     <div class="course-create">
       <h4>Create New Course</h4>
       <form action="/courses/create" method="POST">
@@ -188,6 +52,7 @@
     </div>
   <% } %>
 
+  <!-- Course Details -->
   <% if (course) { %>
     <div class="course-hero">
       <h1><%= course.title %></h1>
@@ -200,12 +65,15 @@
         <% } %>
       </div>
 
-      <% if (user.role === 'Student' && !course.isEnrolled) { %>
-        <form action="/courses/<%= course.id %>/enroll" method="POST" class="mt-3">
-          <button type="submit" class="btn-light">Enroll Now</button>
-        </form>
-      <% } else if (user.role === 'Student' && course.isEnrolled) { %>
-        <button class="btn-success mt-3">Continue Learning</button>
+      <!-- Enrollment Button -->
+      <% if (user && user.role === 'student') { %>
+        <% if (!course.isEnrolled) { %>
+          <form action="/courses/<%= course.id %>/enroll" method="POST" class="mt-3">
+            <button type="submit" class="btn-light">Enroll Now</button>
+          </form>
+        <% } else { %>
+          <button class="btn-success mt-3">Continue Learning</button>
+        <% } %>
       <% } %>
     </div>
 
@@ -238,6 +106,13 @@
             <li><strong>Duration:</strong> <%= course.duration %> weeks</li>
             <li><strong>Students Enrolled:</strong> <%= course.studentCount || 0 %></li>
           </ul>
+
+          <!-- Admin Delete Button -->
+          <% if (user && user.role === 'admin') { %>
+            <form action="/courses/<%= course.id %>/delete" method="POST" style="margin-top: 15px;">
+              <button type="submit" class="btn-danger">Delete Course</button>
+            </form>
+          <% } %>
         </div>
       </div>
     </div>

@@ -15,13 +15,16 @@ router.get('/', courseController.getAllCourses);
 
 // Protected routes
 router.use(authMiddleware.authenticate);
+router.get('/view/:id', courseController.getCourse);
 
 // Teacher/Admin routes
 router.get('/create', roleMiddleware.restrictTo('teacher', 'admin'), courseController.showCreateForm);
 router.post('/create', roleMiddleware.restrictTo('teacher', 'admin'), validationMiddleware.validateCourseCreation, courseController.createCourse);
 router.get('/:id/edit', roleMiddleware.restrictTo('teacher', 'admin'), courseController.showEditForm);
 router.post('/:id/edit', roleMiddleware.restrictTo('teacher', 'admin'), validationMiddleware.validateCourseUpdate, courseController.updateCourse);
-router.post('/:id/delete', roleMiddleware.restrictTo('teacher', 'admin'), courseController.deleteCourse);
+
+// Only Admin can delete
+router.post('/:id/delete', roleMiddleware.restrictTo('admin'), courseController.deleteCourse);
 
 // Student routes
 router.post('/:id/enroll', roleMiddleware.restrictTo('student'), courseController.enrollInCourse);
@@ -30,7 +33,7 @@ router.get('/student/my-courses', roleMiddleware.restrictTo('student'), courseCo
 // Teacher view their courses
 router.get('/teacher/my-courses', roleMiddleware.restrictTo('teacher', 'admin'), courseController.getTeacherCourses);
 
-// Must be last, so it doesn’t swallow other routes
+// This must be last
 router.get('/:id', courseController.getCourse);
 
 module.exports = router;

@@ -4,7 +4,7 @@ const validationHelper = require('../helpers/validationHelper');
 
 const courseController = {
 
-  // List all courses page
+  // List all courses
   getAllCourses: async (req, res) => {
     try {
       const { page = 1, limit = 10, status, category } = req.query;
@@ -31,18 +31,20 @@ const courseController = {
     }
   },
 
-  // Show single course page
+  // View single course
   getCourse: async (req, res) => {
     try {
       const course = await Course.findById(req.params.id);
-      if (!course) return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      if (!course) {
+        return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      }
 
-      if (req.userRole === 'teacher' || req.userRole === 'admin') {
+      if (req.user && (req.user.role === 'teacher' || req.user.role === 'admin')) {
         course.enrolledStudents = await Course.getEnrolledStudents(req.params.id);
       }
 
       res.render('courses/view', {
-        title: course.title,
+        title: course.title || "Course",
         course,
         activePage: 'courses',
         user: req.user || null
@@ -66,22 +68,24 @@ const courseController = {
   createCourse: async (req, res) => {
     try {
       const validation = validationHelper.validateCourseCreation(req.body);
-      if (!validation.isValid) return res.render('courses/create', {
-        title: 'Create Course',
-        errors: validation.errors,
-        activePage: 'courses',
-        user: req.user || null
-      });
+      if (!validation.isValid) {
+        return res.render('courses/create', {
+          title: 'Create Course',
+          errors: validation.errors,
+          activePage: 'courses',
+          user: req.user || null
+        });
+      }
 
       const courseData = {
         ...req.body,
-        teacherId: req.userRole === 'admin' ? req.body.teacherId : req.userId,
+        teacherId: req.user.role === 'admin' ? req.body.teacherId : req.user.id,
         status: 'active',
         image: req.file ? `/uploads/${req.file.filename}` : '/public/images/placeholder/course-300x200.svg'
       };
 
       const course = await Course.create(courseData);
-      await auditHelper.logAction(req.userId, 'COURSE_CREATE', `Created course: ${course.title}`, course.id);
+      await auditHelper.logAction(req.user.id, 'COURSE_CREATE', `Created course: ${course.title}`, course.id);
 
       res.redirect('/courses');
     } catch (error) {
@@ -90,11 +94,13 @@ const courseController = {
     }
   },
 
-  // Show edit form
+  // Show course edit form
   showEditForm: async (req, res) => {
     try {
       const course = await Course.findById(req.params.id);
-      if (!course) return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      if (!course) {
+        return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      }
 
       res.render('courses/edit', {
         title: `Edit Course - ${course.title}`,
@@ -112,26 +118,34 @@ const courseController = {
   updateCourse: async (req, res) => {
     try {
       const course = await Course.findById(req.params.id);
-      if (!course) return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      if (!course) {
+        return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      }
 
       await Course.update(req.params.id, req.body);
-      await auditHelper.logAction(req.userId, 'COURSE_UPDATE', `Updated course: ${course.title}`, req.params.id);
+      await auditHelper.logAction(req.user.id, 'COURSE_UPDATE', `Updated course: ${course.title}`, req.params.id);
 
-      res.redirect('/courses');
+      res.redirect(`/courses/view/${req.params.id}`);
     } catch (error) {
       console.error('Update course error:', error);
       res.status(500).render('error', { title: 'Error', message: 'Unable to update course.' });
     }
   },
 
-  // Handle course deletion
+  // Handle course deletion — Admin only
   deleteCourse: async (req, res) => {
     try {
+      if (!req.user || req.user.role !== 'admin') {
+        return res.status(403).render('error', { title: 'Forbidden', message: 'Only admins can delete courses.' });
+      }
+
       const course = await Course.findById(req.params.id);
-      if (!course) return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      if (!course) {
+        return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      }
 
       await Course.delete(req.params.id);
-      await auditHelper.logAction(req.userId, 'COURSE_DELETE', `Deleted course: ${course.title}`, req.params.id);
+      await auditHelper.logAction(req.user.id, 'COURSE_DELETE', `Deleted course: ${course.title}`, req.params.id);
 
       res.redirect('/courses');
     } catch (error) {
@@ -144,10 +158,12 @@ const courseController = {
   enrollInCourse: async (req, res) => {
     try {
       const course = await Course.findById(req.params.id);
-      if (!course) return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      if (!course) {
+        return res.status(404).render('error', { title: 'Not Found', message: 'Course not found' });
+      }
 
-      await Course.enroll(req.userId, req.params.id);
-      await auditHelper.logAction(req.userId, 'COURSE_ENROLL', `Enrolled in course: ${course.title}`, course.id);
+      await Course.enroll(req.user.id, req.params.id);
+      await auditHelper.logAction(req.user.id, 'COURSE_ENROLL', `Enrolled in course: ${course.title}`, course.id);
 
       res.redirect(`/courses/view/${req.params.id}`);
     } catch (error) {
@@ -156,10 +172,10 @@ const courseController = {
     }
   },
 
-  // List courses for a student
+  // Get courses for current student
   getMyCourses: async (req, res) => {
     try {
-      const courses = await Course.getStudentCourses(req.userId);
+      const courses = await Course.getStudentCourses(req.user.id);
 
       res.render('courses/list', {
         title: 'My Courses',
@@ -173,10 +189,10 @@ const courseController = {
     }
   },
 
-  // List courses for a teacher
+  // Get courses for current teacher
   getTeacherCourses: async (req, res) => {
     try {
-      const courses = await Course.getTeacherCourses(req.userId);
+      const courses = await Course.getTeacherCourses(req.user.id);
 
       res.render('courses/list', {
         title: 'My Courses',
@@ -189,7 +205,6 @@ const courseController = {
       res.status(500).render('error', { title: 'Error', message: 'Unable to load your courses.' });
     }
   }
-
 };
 
 module.exports = courseController;
