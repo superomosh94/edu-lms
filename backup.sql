@@ -75,7 +75,7 @@ CREATE TABLE `enrollments` (
   `student_id` int NOT NULL,
   `course_id` int NOT NULL,
   `enrolled_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `status` ENUM('active','inactive') DEFAULT 'active',
+  `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_enrollment` (`student_id`, `course_id`),
   KEY `student_id` (`student_id`),
@@ -147,4 +147,3 @@ INSERT INTO `audit_logs` (`user_id`, `action`, `ip`, `user_agent`) VALUES
 INSERT INTO `reports` (`title`, `description`) VALUES
 ('Monthly User Report', 'Summary of user registrations and activity for the month.'),
 ('Course Enrollment Report', 'Details of course enrollments and statuses.');
--- End of backup.sql
