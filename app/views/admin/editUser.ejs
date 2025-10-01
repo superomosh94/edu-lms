@@ -26,6 +26,13 @@
             <option value="Finance" <%= user.role === 'Finance' ? 'selected' : '' %>>Finance</option>
         </select>
 
+        <label for="permissions">Permissions</label>
+        <select id="permissions" name="permissions" required>
+            <option value="basic" <%= user.permissions === 'basic' ? 'selected' : '' %>>Basic</option>
+            <option value="premium" <%= user.permissions === 'premium' ? 'selected' : '' %>>Premium</option>
+            <option value="full" <%= user.permissions === 'full' ? 'selected' : '' %>>Full</option>
+        </select>
+
         <button type="submit">Update User</button>
     </form>
 </body>

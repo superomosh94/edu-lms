@@ -20,7 +20,7 @@ router.post(
     adminController.updateSettings
 );
 
-router.get('/stats', adminController.getSystemStatsPage); // fixed route reference
+router.get('/stats', adminController.getSystemStatsPage);
 router.get('/audit-logs', adminController.getAuditLogs);
 router.get('/reports', adminController.generateReport);
 
@@ -32,12 +32,15 @@ router.post(
     validationMiddleware.validateUserCreate || ((req, res, next) => next()),
     adminController.addUser
 );
-router.get('/users/edit/:id', adminController.showEditUserForm);
-router.post(
-    '/users/edit/:id',
+router.get('/users/:id/edit', adminController.showEditUserForm); // Edit form
+
+// PUT route for updating user
+router.put(
+    '/users/:id',
     validationMiddleware.validateUserUpdate || ((req, res, next) => next()),
     adminController.updateUser
 );
+
 router.post('/users/delete/:id', adminController.deleteUser);
 
 // Course management

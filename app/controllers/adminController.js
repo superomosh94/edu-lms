@@ -123,7 +123,7 @@ const adminController = {
     getAllUsers: async (req, res) => {
         try {
             const [users] = await pool.query(`
-                SELECT u.id, u.name, u.email, r.name AS role, u.is_active 
+                SELECT u.id, u.name, u.email, r.name AS role, u.is_active
                 FROM users u 
                 JOIN roles r ON u.role_id = r.id
             `);

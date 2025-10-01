@@ -122,6 +122,17 @@ ALTER TABLE enrollments
 ADD COLUMN status ENUM('active','inactive') NOT NULL DEFAULT 'active';
 
 
+CREATE TABLE submissions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    assignment_id INT NOT NULL,
+    student_id INT NOT NULL,
+    grade VARCHAR(50),
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (assignment_id) REFERENCES assignments(id),
+    FOREIGN KEY (student_id) REFERENCES users(id)
+);
+  
+
 -- Insert sample announcements
 INSERT INTO `announcements` (`title`, `message`) VALUES
 ('Welcome to the LMS', 'This is the first announcement in the system. Stay tuned for more updates!');
