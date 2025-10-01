@@ -140,10 +140,6 @@
       </div>
 
       <form id="registerForm" action="/auth/register" method="POST">
-        <% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
-          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <% } %>
-
         <div class="form-group">
           <label for="name" class="form-label">Full Name</label>
           <input type="text" id="name" name="name" class="form-control" required placeholder="Jane Doe">
@@ -181,6 +177,7 @@
         const target = document.getElementById(btn.dataset.target);
         const isPassword = target.type === 'password';
         target.type = isPassword ? 'text' : 'password';
+        btn.textContent = isPassword ? '🙈' : '👁'; // switch between eye open and eye closed
       });
     });
   </script>

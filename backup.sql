@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS `courses`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `roles`;
 DROP TABLE IF EXISTS `reports`;
+DROP TABLE IF EXISTS `announcements`;
 
 -- Re-enable foreign key checks
 SET FOREIGN_KEY_CHECKS = 1;
@@ -109,16 +110,16 @@ CREATE TABLE `reports` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Create announcements table
+CREATE TABLE `announcements` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` VARCHAR(255) NOT NULL,
+  `message` TEXT NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE announcements (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
- 
-
- insert into announcements (title, message) values
+-- Insert sample announcements
+INSERT INTO `announcements` (`title`, `message`) VALUES
 ('Welcome to the LMS', 'This is the first announcement in the system. Stay tuned for more updates!');
 
 -- Insert sample data
