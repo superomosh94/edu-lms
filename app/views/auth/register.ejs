@@ -1,185 +1,263 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register | Edu-LMS</title>
-  <meta name="description" content="Create your Edu-LMS account and manage your institution.">
+<%- include('../partials/header') %>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary-blue: #2563eb;
+  --primary-blue-dark: #1d4ed8;
+  --dark-bg: #0f172a;
+  --dark-card: #1e293b;
+  --dark-text: #f1f5f9;
+  --light-text: #94a3b8;
+  --white: #ffffff;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1),
+               0 4px 6px -2px rgba(0,0,0,0.05);
+}
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+  margin: 0;
+}
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+.auth-card {
+  background: var(--dark-card);
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+}
+.auth-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.auth-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--white);
+}
+.auth-header p {
+  color: var(--light-text);
+  font-size: 0.95rem;
+  margin-top: 0.5rem;
+}
+.form-group {
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--light-text);
+}
+.form-control {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--dark-text);
+  font-size: 1rem;
+}
+.form-control:focus {
+  border-color: var(--primary-blue);
+  outline: none;
+}
+.password-wrapper {
+  position: relative;
+}
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--light-text);
+  display: flex;
+  align-items: center;
+}
+.toggle-password svg {
+  width: 20px;
+  height: 20px;
+}
+.password-rules {
+  font-size: 0.85rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+  color: var(--light-text);
+}
+.password-rules span {
+  display: block;
+  margin: 2px 0;
+}
+.password-rules .valid {
+  color: #22c55e;
+}
+.password-rules .invalid {
+  color: #ef4444;
+}
+.btn-primary {
+  display: inline-block;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  background: var(--primary-blue);
+  color: var(--white);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: var(--primary-blue-dark);
+}
+.auth-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--light-text);
+}
+.auth-footer a {
+  color: var(--primary-blue);
+  font-weight: 500;
+  text-decoration: none;
+}
+.auth-footer a:hover {
+  color: var(--primary-blue-dark);
+}
+.error {
+  color: #ef4444;
+  text-align: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+</style>
 
-  <style>
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: #0f172a;
-      color: #f1f5f9;
-      margin: 0;
-      padding: 0;
-    }
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Create Account</h2>
+      <p>Fill in the details below to register</p>
+    </div>
 
-    .auth-container {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 1rem;
-    }
+    <% if (error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
 
-    .auth-card {
-      background: #1e293b;
-      border-radius: 1rem;
-      padding: 2rem;
-      max-width: 420px;
-      width: 100%;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-      box-sizing: border-box;
-    }
-
-    .auth-header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .auth-header h1 {
-      margin: 0;
-      font-size: 1.8rem;
-      font-weight: 600;
-    }
-
-    .auth-header p {
-      color: #94a3b8;
-      font-size: 0.9rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.2rem;
-      position: relative;
-    }
-
-    .form-label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-weight: 500;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 0.75rem 2.5rem 0.75rem 0.75rem;
-      border-radius: 0.5rem;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: rgba(255,255,255,0.05);
-      color: #f1f5f9;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: #2563eb;
-    }
-
-    .toggle-password {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      font-size: 0.9rem;
-      color: #94a3b8;
-      background: none;
-      border: none;
-    }
-
-    .btn {
-      display: block;
-      width: 100%;
-      padding: 0.75rem;
-      border: none;
-      border-radius: 0.5rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 1rem;
-      box-sizing: border-box;
-    }
-
-    .btn-primary {
-      background: #2563eb;
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background: #1d4ed8;
-    }
-
-    .auth-footer {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #94a3b8;
-    }
-
-    .auth-footer a {
-      color: #2563eb;
-      font-weight: 500;
-      text-decoration: none;
-    }
-
-    .auth-footer a:hover {
-      text-decoration: underline;
-    }
-  </style>
-</head>
-<body>
-  <div class="auth-container">
-    <div class="auth-card">
-      <div class="auth-header">
-        <h1>Create Account</h1>
-        <p>Join Edu-LMS and manage your institution</p>
+    <form action="/auth/register" method="POST" class="auth-form">
+      <div class="form-group">
+        <label for="name" class="form-label">Full Name</label>
+        <input type="text" id="name" name="name" value="<%= name %>" placeholder="John Doe" required class="form-control">
       </div>
 
-      <form id="registerForm" action="/auth/register" method="POST">
-        <div class="form-group">
-          <label for="name" class="form-label">Full Name</label>
-          <input type="text" id="name" name="name" class="form-control" required placeholder="Jane Doe">
-        </div>
-
-        <div class="form-group">
-          <label for="email" class="form-label">Email Address</label>
-          <input type="email" id="email" name="email" class="form-control" required placeholder="you@example.com" autocomplete="email">
-        </div>
-
-        <div class="form-group">
-          <label for="password" class="form-label">Password</label>
-          <input type="password" id="password" name="password" class="form-control" required placeholder="••••••••" autocomplete="new-password">
-          <button type="button" class="toggle-password" data-target="password">👁</button>
-        </div>
-
-        <div class="form-group">
-          <label for="confirmPassword" class="form-label">Confirm Password</label>
-          <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required placeholder="••••••••" autocomplete="new-password">
-          <button type="button" class="toggle-password" data-target="confirmPassword">👁</button>
-        </div>
-
-        <button type="submit" class="btn btn-primary">Register</button>
-      </form>
-
-      <div class="auth-footer">
-        <p>Already have an account? <a href="/auth/login">Login</a></p>
+      <div class="form-group">
+        <label for="email" class="form-label">Email Address</label>
+        <input type="email" id="email" name="email" value="<%= email %>" placeholder="you@example.com" required class="form-control">
       </div>
+
+      <div class="form-group password-wrapper">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" placeholder="Enter password" required class="form-control">
+        <button type="button" id="togglePassword" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="password">
+          <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.57-4.362M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="password-rules" id="passwordRules">
+        <span id="length" class="invalid">• At least 8 characters</span>
+        <span id="uppercase" class="invalid">• One uppercase letter</span>
+        <span id="lowercase" class="invalid">• One lowercase letter</span>
+        <span id="number" class="invalid">• One number</span>
+        <span id="symbol" class="invalid">• One special character</span>
+      </div>
+
+      <div class="form-group password-wrapper">
+        <label for="confirmPassword" class="form-label">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" required class="form-control">
+        <button type="button" id="toggleConfirmPassword" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="confirmPassword">
+          <svg id="eyeOpenConfirm" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+          <svg id="eyeClosedConfirm" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.57-4.362M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />
+          </svg>
+        </button>
+      </div>
+
+      <button type="submit" class="btn-primary">Register</button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a href="/auth/login">Login</a></p>
     </div>
   </div>
+</div>
 
-  <script>
-    document.querySelectorAll('.toggle-password').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const target = document.getElementById(btn.dataset.target);
-        const isPassword = target.type === 'password';
-        target.type = isPassword ? 'text' : 'password';
-        btn.textContent = isPassword ? '🙈' : '👁'; // switch between eye open and eye closed
-      });
+<script>
+  // Toggle password view
+  function setupToggle(btnId, inputId, openId, closedId) {
+    const btn = document.getElementById(btnId);
+    const input = document.getElementById(inputId);
+    const eyeOpen = document.getElementById(openId);
+    const eyeClosed = document.getElementById(closedId);
+
+    btn.addEventListener('click', () => {
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      eyeOpen.style.display = isPassword ? 'none' : 'block';
+      eyeClosed.style.display = isPassword ? 'block' : 'none';
     });
-  </script>
-</body>
-</html>
+  }
+
+  setupToggle('togglePassword', 'password', 'eyeOpen', 'eyeClosed');
+  setupToggle('toggleConfirmPassword', 'confirmPassword', 'eyeOpenConfirm', 'eyeClosedConfirm');
+
+  // Password strength check
+  const passwordInput = document.getElementById('password');
+  const rules = {
+    length: /.{8,}/,
+    uppercase: /[A-Z]/,
+    lowercase: /[a-z]/,
+    number: /[0-9]/,
+    symbol: /[^A-Za-z0-9]/
+  };
+
+  passwordInput.addEventListener('input', () => {
+    for (const [rule, regex] of Object.entries(rules)) {
+      const el = document.getElementById(rule);
+      if (regex.test(passwordInput.value)) {
+        el.classList.add('valid');
+        el.classList.remove('invalid');
+      } else {
+        el.classList.add('invalid');
+        el.classList.remove('valid');
+      }
+    }
+  });
+</script>
+
+<%- include('../partials/footer') %>
