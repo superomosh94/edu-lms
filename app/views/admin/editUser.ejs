@@ -1,39 +1,50 @@
 ﻿<!DOCTYPE html>
 <html>
-<head>
-    <title>Edit User</title>
-    <style>
-        body { font-family: Arial; margin: 20px; }
-        label { display: block; margin: 10px 0 5px; }
-        input, select { width: 300px; padding: 8px; }
-        button { margin-top: 15px; padding: 10px 20px; }
-    </style>
-</head>
-<body>
-    <h1>Edit User</h1>
-    <form method="POST" action="/admin/users/<%= user.id %>?_method=PUT">
-        <label for="name">Name</label>
-        <input type="text" id="name" name="name" value="<%= user.name %>" required>
+<%- include('../partials/header', { title: "Edit User", headerTitle: "Edit User", adminName: "Admin" }) %>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email" value="<%= user.email %>" required>
+<body style="display:flex; margin:0; font-family:'Segoe UI', Arial, sans-serif; background:#57bebc; height:100vh;">
+    <%- include('../partials/sidebar') %>
 
-        <label for="role">Role</label>
-        <select id="role" name="role" required>
-            <option value="Admin" <%= user.role === 'Admin' ? 'selected' : '' %>>Admin</option>
-            <option value="Teacher" <%= user.role === 'Teacher' ? 'selected' : '' %>>Teacher</option>
-            <option value="Student" <%= user.role === 'Student' ? 'selected' : '' %>>Student</option>
-            <option value="Finance" <%= user.role === 'Finance' ? 'selected' : '' %>>Finance</option>
-        </select>
+    <div class="main" style="flex:1; display:flex; flex-direction:column; overflow:auto;">
+        <div style="flex:1; display:flex; justify-content:center; align-items:flex-start; padding:30px;">
+            <div class="container" style="background:linear-gradient(135deg,#da9494,#5eb1ec); padding:30px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.1); width:420px;">
+                <form method="POST" action="/admin/users/<%= user.id %>?_method=PUT">
+                    
+                    <h2 style="text-align:center; color:#1a73e8; margin-bottom:20px;">Edit User</h2>
 
-        <label for="permissions">Permissions</label>
-        <select id="permissions" name="permissions" required>
-            <option value="basic" <%= user.permissions === 'basic' ? 'selected' : '' %>>Basic</option>
-            <option value="premium" <%= user.permissions === 'premium' ? 'selected' : '' %>>Premium</option>
-            <option value="full" <%= user.permissions === 'full' ? 'selected' : '' %>>Full</option>
-        </select>
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label for="name" style="display:block; font-weight:600; margin-bottom:5px;">Name</label>
+                        <input type="text" id="name" name="name" value="<%= user.name %>" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:14px;">
+                    </div>
 
-        <button type="submit">Update User</button>
-    </form>
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label for="email" style="display:block; font-weight:600; margin-bottom:5px;">Email</label>
+                        <input type="email" id="email" name="email" value="<%= user.email %>" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:14px;">
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label for="role" style="display:block; font-weight:600; margin-bottom:5px;">Role</label>
+                        <select id="role" name="role" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:14px;">
+                            <option value="Admin" <%= user.role === 'Admin' ? 'selected' : '' %>>Admin</option>
+                            <option value="Teacher" <%= user.role === 'Teacher' ? 'selected' : '' %>>Teacher</option>
+                            <option value="Student" <%= user.role === 'Student' ? 'selected' : '' %>>Student</option>
+                            <option value="Finance" <%= user.role === 'Finance' ? 'selected' : '' %>>Finance</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom:15px;">
+                        <label for="permissions" style="display:block; font-weight:600; margin-bottom:5px;">Permissions</label>
+                        <select id="permissions" name="permissions" required style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px; font-size:14px;">
+                            <option value="basic" <%= user.permissions === 'basic' ? 'selected' : '' %>>Basic</option>
+                            <option value="premium" <%= user.permissions === 'premium' ? 'selected' : '' %>>Premium</option>
+                            <option value="full" <%= user.permissions === 'full' ? 'selected' : '' %>>Full</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" style="width:100%; padding:12px; background:linear-gradient(90deg,#1a73e8,#2ab7ca); color:white; border:none; border-radius:6px; font-size:16px; font-weight:bold; margin-top:20px; cursor:pointer;">Update User</button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

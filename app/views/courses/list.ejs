@@ -6,13 +6,46 @@
     <title>Courses - EDU LMS</title>
     <%- include('../partials/header') %>
 
-    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
+            background: #f8f9fa;
+        }
+
+        .sidebar {
+            background: #111;
+            color: #fff;
+            height: 100vh;
+            padding-top: 1rem;
+            position: sticky;
+            top: 0;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9);
+            padding: 10px 15px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-link.active {
+            background: #1f6feb;
+            color: #fff;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar-heading {
+            font-size: 0.85rem;
+            font-weight: bold;
+            padding-left: 15px;
+            margin-top: 20px;
         }
 
         .course-card {
@@ -20,6 +53,7 @@
             border: none;
             border-radius: 10px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: #fff;
         }
 
         .course-card:hover {
@@ -36,6 +70,12 @@
 
         .progress {
             height: 6px;
+            border-radius: 3px;
+            background: #e9ecef;
+        }
+
+        .progress-bar {
+            background: #667eea;
         }
 
         .filter-section {
@@ -60,51 +100,64 @@
             color: #6c757d;
         }
 
-        /* Sidebar styling */
-        .sidebar {
-            background: #111;
-            color: #fff;
-            height: 100vh;
-            padding-top: 1rem;
-        }
-
-        .nav-link {
-            color: rgba(255, 255, 255, 0.9);
-            padding: 10px 15px;
-            border-radius: 5px;
-        }
-
-        .nav-link.active {
-            background: #1f6feb;
-            color: #fff;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-heading {
-            font-size: 0.85rem;
+        .title {
+            font-size: 1.8rem;
             font-weight: bold;
         }
 
-        .user-wrap {
-            padding: 15px 0;
+        .subtitle {
+            font-size: 1rem;
+            color: #6c757d;
         }
 
-        .avatar {
-            position: relative;
+        .btn-primary {
+            background: #667eea;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
         }
 
-        .online-dot {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 10px;
-            height: 10px;
-            background: #28a745;
-            border: 2px solid #111;
-            border-radius: 50%;
+        .btn-primary:hover {
+            background: #556cd6;
+        }
+
+        .btn {
+            font-weight: bold;
+        }
+
+        .page-header {
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .course-sidebar {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .pagination {
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                height: auto;
+                padding-bottom: 20px;
+            }
+
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -115,7 +168,7 @@
     <% const safeUser = user || { role: 'student' }; %>
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 d-md-block sidebar">
+        <div class="col-md-3 col-lg-2 sidebar">
             <div class="position-sticky pt-3">
                 <ul class="nav flex-column">
                     <li class="nav-item">
@@ -142,28 +195,25 @@
                     <% } %>
                 </ul>
 
-                <!-- Filters -->
-                <div class="mt-4 px-3">
-                    <h6 class="sidebar-heading text-muted mb-2">Filters</h6>
-                    <div class="nav flex-column">
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="filter-enrolled">
-                            <label class="form-check-label text-light" for="filter-enrolled">
-                                <i class="fas fa-user-graduate me-1"></i> My Courses
-                            </label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="filter-available">
-                            <label class="form-check-label text-light" for="filter-available">
-                                <i class="fas fa-book-open me-1"></i> Available
-                            </label>
-                        </div>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" id="filter-completed">
-                            <label class="form-check-label text-light" for="filter-completed">
-                                <i class="fas fa-check-circle me-1"></i> Completed
-                            </label>
-                        </div>
+                <div class="filter-section mt-4">
+                    <h6 class="sidebar-heading">Filters</h6>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="filter-enrolled">
+                        <label class="form-check-label text-light" for="filter-enrolled">
+                            <i class="fas fa-user-graduate me-1"></i> My Courses
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="filter-available">
+                        <label class="form-check-label text-light" for="filter-available">
+                            <i class="fas fa-book-open me-1"></i> Available
+                        </label>
+                    </div>
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" id="filter-completed">
+                        <label class="form-check-label text-light" for="filter-completed">
+                            <i class="fas fa-check-circle me-1"></i> Completed
+                        </label>
                     </div>
                 </div>
             </div>
@@ -171,9 +221,9 @@
 
         <!-- Main Content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom page-header">
+            <div class="d-flex justify-content-between flex-wrap align-items-center page-header">
                 <div>
-                    <h1 class="h2 title">Courses</h1>
+                    <h1 class="title">Courses</h1>
                     <p class="subtitle">Browse available courses, filter by status, or create new ones.</p>
                 </div>
                 <% if (safeUser.role === 'teacher' || safeUser.role === 'admin') { %>
@@ -185,7 +235,7 @@
                 <% } %>
             </div>
 
-            <!-- Search and Filter -->
+            <!-- Search and Sort -->
             <div class="row mb-4">
                 <div class="col-md-8">
                     <div class="search-box">
@@ -195,68 +245,33 @@
                 </div>
                 <div class="col-md-4">
                     <select class="form-select" id="course-sort">
-                        <option value="newest">Sort by: Newest</option>
-                        <option value="popular">Sort by: Popular</option>
-                        <option value="alphabetical">Sort by: Alphabetical</option>
+                        <option value="newest">Newest</option>
+                        <option value="popular">Popular</option>
+                        <option value="alphabetical">Alphabetical</option>
                     </select>
                 </div>
             </div>
 
             <!-- Courses Grid -->
-            <div class="row" id="courses-grid">
+            <div class="course-grid" id="courses-grid">
                 <% if (courses && courses.length > 0) { %>
                     <% courses.forEach(course => { %>
-                        <div class="col-xl-4 col-lg-6 mb-4 course-item" 
-                             data-enrolled="<%= course.isEnrolled ? 'true' : 'false' %>" 
-                             data-completed="<%= course.completed ? 'true' : 'false' %>">
-                            <div class="card course-card h-100">
-                                <img src="<%= course.image || '/public/images/placeholder/course-300x200.svg' %>" 
-                                     class="course-image" alt="<%= course.title || 'Course' %>" loading="lazy">
+                        <div class="course-item" data-enrolled="<%= course.isEnrolled %>" data-completed="<%= course.completed %>">
+                            <div class="card course-card">
+                                <img src="<%= course.image || '/public/images/placeholder/course-300x200.svg' %>" class="course-image" alt="<%= course.title %>">
                                 <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start mb-2">
-                                        <h5 class="card-title"><%= course.title || 'Untitled Course' %></h5>
-                                        <span class="badge bg-<%= course.category === 'Science' ? 'primary' : course.category === 'Math' ? 'success' : course.category === 'Arts' ? 'warning' : 'info' %>">
-                                            <%= course.category || 'General' %>
-                                        </span>
-                                    </div>
+                                    <h5 class="card-title"><%= course.title %></h5>
                                     <p class="card-text text-muted"><%= (course.description || '').substring(0, 100) %>...</p>
-                                    <div class="mb-3">
-                                        <small class="text-muted">
-                                            <i class="fas fa-user-tie me-1"></i>Instructor: <%= course.instructor || 'N/A' %>
-                                        </small>
-                                    </div>
-                                    <div class="mb-3">
-                                        <small class="text-muted">
-                                            <i class="fas fa-users me-1"></i>Enrolled: <%= course.enrolledCount || 0 %> students
-                                        </small>
-                                    </div>
-
-                                    <% if (course.progress !== undefined) { %>
-                                        <div class="mb-2">
-                                            <small>Progress: <%= course.progress %>%</small>
-                                            <div class="progress">
-                                                <div class="progress-bar" style="width: <%= course.progress %>%"></div>
-                                            </div>
-                                        </div>
-                                    <% } %>
-
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <span class="badge bg-<%= course.difficulty === 'Beginner' ? 'success' : course.difficulty === 'Intermediate' ? 'warning' : 'danger' %>">
-                                            <%= course.difficulty || 'Unknown' %>
-                                        </span>
-                                        <span class="text-muted"><%= course.duration || '-' %> weeks</span>
+                                    <small class="text-muted"><i class="fas fa-user-tie"></i> <%= course.instructor || 'N/A' %></small>
+                                    <div class="mt-2">
+                                        <span class="badge bg-info"><%= course.category || 'General' %></span>
+                                        <span class="badge bg-success"><%= course.difficulty || 'Beginner' %></span>
                                     </div>
                                 </div>
                                 <div class="card-footer bg-transparent">
-                                    <div class="d-grid gap-2">
-                                        <a href="/courses/view/<%= course.id || '#' %>" class="btn btn-primary">
-                                            <% if (course.isEnrolled) { %>
-                                                Continue Learning
-                                            <% } else { %>
-                                                View Course
-                                            <% } %>
-                                        </a>
-                                    </div>
+                                    <a href="/courses/view/<%= course.id %>" class="btn btn-primary w-100">
+                                        <%= course.isEnrolled ? 'Continue Learning' : 'View Course' %>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -265,7 +280,6 @@
                     <div class="col-12 text-center py-5">
                         <i class="fas fa-book fa-3x text-muted mb-3"></i>
                         <h4 class="text-muted">No courses available</h4>
-                        <p class="text-muted">Check back later for new courses.</p>
                         <% if (safeUser.role === 'teacher' || safeUser.role === 'admin') { %>
                             <a href="/courses/create" class="btn btn-primary">Create First Course</a>
                         <% } %>
@@ -275,16 +289,12 @@
 
             <!-- Pagination -->
             <nav aria-label="Course pagination">
-                <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link" href="#" tabindex="-1">Previous</a>
-                    </li>
+                <ul class="pagination">
+                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
                     <li class="page-item active"><a class="page-link" href="#">1</a></li>
                     <li class="page-item"><a class="page-link" href="#">2</a></li>
                     <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
-                    </li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
                 </ul>
             </nav>
         </main>

@@ -1,4 +1,4 @@
-<%- include('../partials/header', { title: 'Dashboard - EDU LMS' }) %>
+<%- include('../partials/header', { title: 'Dashboard - EDU LMS', headerTitle: 'Dashboard', adminName: user.name }) %>
 <%- include('../partials/navigation') %>
 
 <div class="dashboard-container">
@@ -9,219 +9,11 @@
 
   <!-- Main Content -->
   <main class="dashboard-main">
-
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
-    color: #222;
-    transition: background 0.3s, color 0.3s;
-  }
-
-  /* Dark Mode */
-  body.dark-mode {
-    background: #1e1e1e;
-    color: #ddd;
-  }
-
-  body.dark-mode .dashboard-main {
-    background: #2a2a2a;
-  }
-
-  body.dark-mode .stat-card,
-  body.dark-mode .action-card,
-  body.dark-mode .recent-activity {
-    background: #333;
-    color: #ddd;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-  }
-
-  body.dark-mode .action-card:hover {
-    box-shadow: 0 5px 12px rgba(0,0,0,0.8);
-  }
-
-  body.dark-mode .activity-icon {
-    background: #444;
-    color: #bbb;
-  }
-
-  .dashboard-container {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  /* Sidebar fixed 20% - always dark */
-  .sidebar {
-    width: 20%;
-    min-width: 200px;
-    max-width: 300px;
-    background: #222; /* dark always */
-    color: #eee;
-    height: 100vh;
-    padding: 10px;
-    overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-  }
-
-  /* Dashboard fixed 80% */
-  .dashboard-main {
-    width: 80%;
-    height: 100vh;
-    overflow-y: auto;
-    padding: 20px;
-    background: #f4f6f9;
-    transition: background 0.3s, color 0.3s;
-  }
-
-  .dashboard-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 6px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .dashboard-header h2 {
-    font-size: 1.6em;
-    margin: 0 0 5px 0;
-  }
-
-  .dashboard-header p {
-    font-size: 0.95em;
-    opacity: 0.9;
-    margin: 0;
-  }
-
-  /* Toggle Button */
-  .toggle-btn {
-    background: #fff;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.9em;
-    color: #333;
-    transition: background 0.3s, color 0.3s;
-  }
-
-  body.dark-mode .toggle-btn {
-    background: #444;
-    color: #ddd;
-  }
-
-  /* Stats - always 3 per row */
-  .stats-grid {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-    margin-bottom: 20px;
-  }
-
-  .stat-card {
-    flex: 1;
-    background: white;
-    padding: 15px;
-    border-radius: 6px;
-    text-align: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: background 0.3s, color 0.3s;
-  }
-
-  .stat-icon {
-    font-size: 1.8em;
-    margin-bottom: 10px;
-  }
-
-  .stat-number {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #667eea;
-  }
-
-  .stat-label {
-    font-size: 0.85em;
-    color: inherit;
-  }
-
-  /* Quick actions - 4 per row */
-  .actions-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin: 20px 0;
-  }
-
-  .action-card {
-    flex: 1 1 calc(25% - 15px);
-    background: white;
-    padding: 15px;
-    border-radius: 6px;
-    text-align: center;
-    text-decoration: none;
-    color: inherit;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: background 0.3s, color 0.3s;
-  }
-
-  .action-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 12px rgba(0,0,0,0.15);
-  }
-
-  .action-icon {
-    font-size: 1.8em;
-    color: #667eea;
-    margin-bottom: 10px;
-  }
-
-  .recent-activity {
-    background: white;
-    padding: 15px;
-    border-radius: 6px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: background 0.3s, color 0.3s;
-  }
-
-  .activity-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-  }
-
-  .activity-item:last-child {
-    border-bottom: none;
-  }
-
-  .activity-icon {
-    background: #f8f9fa;
-    padding: 8px;
-    border-radius: 50%;
-    margin-right: 10px;
-    color: #667eea;
-    transition: background 0.3s, color 0.3s;
-  }
-
-  .activity-time {
-    font-size: 0.8em;
-    color: inherit;
-  }
-</style>
-
     <div class="dashboard-header">
       <div>
         <h2>Welcome back, <%= user.name %>!</h2>
         <p>Here's what's happening in your EDU LMS account today.</p>
       </div>
-      <!-- <button class="toggle-btn" onclick="toggleMode()">Switch Mode</button> -->
     </div>
 
     <!-- Stats -->
@@ -279,14 +71,149 @@
         <p>No recent activity.</p>
       <% } %>
     </div>
-
   </main>
 </div>
 
-<script>
-  function toggleMode() {
-    document.body.classList.toggle('dark-mode');
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f9;
+    color: #222;
   }
-</script>
+
+  .dashboard-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+  }
+
+  .sidebar {
+    width: 240px;
+    background: #1a1a1a;
+    color: #fff;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+  }
+
+  .dashboard-main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+
+  .dashboard-header {
+    background: linear-gradient(135deg,#667eea,#764ba2);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  .dashboard-header h2 {
+    margin: 0;
+    font-size: 1.6em;
+  }
+
+  .dashboard-header p {
+    margin: 5px 0 0;
+    font-size: 0.95em;
+  }
+
+  .stats-grid {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card {
+    flex: 1;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .stat-icon {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+  }
+
+  .stat-number {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #667eea;
+  }
+
+  .stat-label {
+    font-size: 0.85em;
+    color: #555;
+  }
+
+  .actions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 10px;
+  }
+
+  .action-card {
+    flex: 1 1 calc(25% - 15px);
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+  }
+
+  .action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+  }
+
+  .action-icon {
+    font-size: 1.8em;
+    color: #667eea;
+    margin-bottom: 10px;
+  }
+
+  .recent-activity {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    margin-top: 20px;
+  }
+
+  .activity-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .activity-item:last-child {
+    border-bottom: none;
+  }
+
+  .activity-icon {
+    background: #f8f9fa;
+    padding: 8px;
+    border-radius: 50%;
+    margin-right: 10px;
+    font-size: 1.2em;
+    color: #667eea;
+  }
+
+  .activity-time {
+    font-size: 0.85em;
+    color: #888;
+  }
+</style>
 
 <%- include('../partials/footer') %>

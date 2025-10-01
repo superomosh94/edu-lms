@@ -1,371 +1,249 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= course.title %> - EDU LMS</title>
-    <%- include('../partials/header') %>
-    <style>
-        .course-hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 3rem 0;
-            margin-bottom: 2rem;
-        }
-        .course-sidebar {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 1.5rem;
-        }
-        .module-item {
-            border-left: 3px solid #007bff;
-            margin-bottom: 1rem;
-            padding-left: 1rem;
-        }
-        .lesson-item {
-            padding: 0.5rem 1rem;
-            margin: 0.25rem 0;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .lesson-item:hover {
-            background-color: #e9ecef;
-        }
-        .lesson-item.completed {
-            background-color: #d4edda;
-            border-left: 3px solid #28a745;
-        }
-        .lesson-item.active {
-            background-color: #cce5ff;
-            border-left: 3px solid #007bff;
-        }
-        .progress-circle {
-            width: 100px;
-            height: 100px;
-        }
-        .tab-content {
-            min-height: 400px;
-        }
-    </style>
-</head>
-<body>
-    <%- include('../partials/navigation') %>
+<%- include('../partials/header', { title: course ? course.title : 'Course - EDU LMS' }) %>
+<%- include('../partials/navigation') %>
 
-    <!-- Course Hero Section -->
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+  }
+
+  /* Course Creation Form */
+  .course-create {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+  }
+
+  .course-create h4 {
+    margin-bottom: 15px;
+    color: #333;
+  }
+
+  .form-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  input.form-control, textarea.form-control {
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 10px;
+  }
+
+  .btn-primary {
+    background: #667eea;
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  .btn-primary:hover {
+    background: #556cd6;
+  }
+
+  /* Course Hero */
+  .course-hero {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .course-hero h1 {
+    font-size: 2.2em;
+    margin-bottom: 10px;
+  }
+
+  .course-hero p {
+    font-size: 1.1em;
+    margin-bottom: 15px;
+  }
+
+  .badge {
+    margin-right: 5px;
+    font-size: 0.9em;
+  }
+
+  .btn-light {
+    color: #333;
+    background: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
+  .btn-light:hover {
+    background: #eee;
+  }
+
+  .btn-success {
+    background: #28a745;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+
+  .btn-success:hover {
+    background: #218838;
+  }
+
+  /* Course Modules */
+  .card {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 20px;
+  }
+
+  .card-header {
+    background: #f4f4f4;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+
+  .lesson-item {
+    padding: 10px;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    background: #fff;
+    border-left: 4px solid #667eea;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.2s ease;
+    cursor: pointer;
+  }
+
+  .lesson-item:hover {
+    background: #f1f1f1;
+  }
+
+  .badge-success {
+    background: #28a745;
+    color: white;
+    font-size: 0.8em;
+  }
+
+  /* Sidebar */
+  .course-sidebar {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-top: 20px;
+  }
+
+  .course-sidebar h5 {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+  }
+
+  .course-sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .course-sidebar li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+</style>
+
+<div class="container">
+  <% if (user.role === 'Admin' || user.role === 'Teacher') { %>
+    <div class="course-create">
+      <h4>Create New Course</h4>
+      <form action="/courses/create" method="POST">
+        <div class="mb-2">
+          <label class="form-label">Title</label>
+          <input type="text" name="title" class="form-control" required>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Description</label>
+          <textarea name="description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-2">
+          <label class="form-label">Duration (weeks)</label>
+          <input type="number" name="duration" class="form-control" required>
+        </div>
+        <button type="submit" class="btn-primary">Create Course</button>
+      </form>
+    </div>
+  <% } %>
+
+  <% if (course) { %>
     <div class="course-hero">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <nav aria-label="breadcrumb">
-                        <ol class="breadcrumb bg-transparent p-0">
-                            <li class="breadcrumb-item"><a href="/courses" class="text-white">Courses</a></li>
-                            <li class="breadcrumb-item text-white active" aria-current="page"><%= course.title %></li>
-                        </ol>
-                    </nav>
-                    <h1 class="display-5 fw-bold"><%= course.title %></h1>
-                    <p class="lead mb-4"><%= course.description %></p>
-                    <div class="d-flex flex-wrap gap-3">
-                        <span class="badge bg-light text-dark">
-                            <i class="fas fa-user-tie me-1"></i><%= course.instructor %>
-                        </span>
-                        <span class="badge bg-light text-dark">
-                            <i class="fas fa-clock me-1"></i><%= course.duration %> weeks
-                        </span>
-                        <span class="badge bg-light text-dark">
-                            <i class="fas fa-chart-bar me-1"></i><%= course.difficulty %>
-                        </span>
-                        <% if (course.isEnrolled) { %>
-                            <span class="badge bg-success">
-                                <i class="fas fa-check me-1"></i>Enrolled
-                            </span>
-                        <% } %>
-                    </div>
-                </div>
-                <div class="col-md-4 text-center">
-                    <div class="progress-circle position-relative d-inline-block">
-                        <svg width="100" height="100" viewBox="0 0 36 36" class="circular-chart">
-                            <path class="circle-bg"
-                                d="M18 2.0845
-                                  a 15.9155 15.9155 0 0 1 0 31.831
-                                  a 15.9155 15.9155 0 0 1 0 -31.831"
-                                fill="none"
-                                stroke="#eee"
-                                stroke-width="3"/>
-                            <path class="circle"
-                                stroke-dasharray="<%= course.progress || 0 %>, 100"
-                                d="M18 2.0845
-                                  a 15.9155 15.9155 0 0 1 0 31.831
-                                  a 15.9155 15.9155 0 0 1 0 -31.831"
-                                fill="none"
-                                stroke="#007bff"
-                                stroke-width="3"
-                                stroke-linecap="round"/>
-                            <text x="18" y="20.35" class="percentage" fill="#fff" text-anchor="middle" dy="0.3em" font-size="8">
-                                <%= course.progress || 0 %>%
-                            </text>
-                        </svg>
-                    </div>
-                    <div class="mt-3">
-                        <% if (course.isEnrolled) { %>
-                            <button class="btn btn-light me-2">Continue Learning</button>
-                        <% } else { %>
-                            <button class="btn btn-light me-2">Enroll Now</button>
-                        <% } %>
-                        <button class="btn btn-outline-light">Add to Wishlist</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+      <h1><%= course.title %></h1>
+      <p><%= course.description %></p>
+      <div>
+        <span class="badge bg-light text-dark">Instructor: <%= course.instructor %></span>
+        <span class="badge bg-light text-dark">Duration: <%= course.duration %> weeks</span>
+        <% if (course.isEnrolled) { %>
+          <span class="badge bg-success">Enrolled</span>
+        <% } %>
+      </div>
+
+      <% if (user.role === 'Student' && !course.isEnrolled) { %>
+        <form action="/courses/<%= course.id %>/enroll" method="POST" class="mt-3">
+          <button type="submit" class="btn-light">Enroll Now</button>
+        </form>
+      <% } else if (user.role === 'Student' && course.isEnrolled) { %>
+        <button class="btn-success mt-3">Continue Learning</button>
+      <% } %>
     </div>
 
-    <div class="container">
-        <div class="row">
-            <!-- Main Content -->
-            <div class="col-lg-8">
-                <!-- Course Tabs -->
-                <ul class="nav nav-tabs" id="courseTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="content-tab" data-bs-toggle="tab" data-bs-target="#content" type="button" role="tab">
-                            <i class="fas fa-play-circle me-2"></i>Content
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
-                            <i class="fas fa-info-circle me-2"></i>Overview
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="announcements-tab" data-bs-toggle="tab" data-bs-target="#announcements" type="button" role="tab">
-                            <i class="fas fa-bullhorn me-2"></i>Announcements
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="discussions-tab" data-bs-toggle="tab" data-bs-target="#discussions" type="button" role="tab">
-                            <i class="fas fa-comments me-2"></i>Discussions
-                        </button>
-                    </li>
-                </ul>
-
-                <div class="tab-content" id="courseTabsContent">
-                    <!-- Content Tab -->
-                    <div class="tab-pane fade show active" id="content" role="tabpanel">
-                        <div class="card border-top-0">
-                            <div class="card-body">
-                                <h5 class="card-title">Course Content</h5>
-                                <% if (course.modules && course.modules.length > 0) { %>
-                                    <div class="accordion" id="modulesAccordion">
-                                        <% course.modules.forEach((module, index) => { %>
-                                            <div class="accordion-item">
-                                                <h2 class="accordion-header" id="heading<%= index %>">
-                                                    <button class="accordion-button <%= index === 0 ? '' : 'collapsed' %>" 
-                                                            type="button" data-bs-toggle="collapse" 
-                                                            data-bs-target="#collapse<%= index %>">
-                                                        <i class="fas fa-folder me-2"></i>
-                                                        <%= module.title %>
-                                                        <span class="badge bg-secondary ms-2"><%= module.lessons.length %> lessons</span>
-                                                    </button>
-                                                </h2>
-                                                <div id="collapse<%= index %>" 
-                                                     class="accordion-collapse collapse <%= index === 0 ? 'show' : '' %>" 
-                                                     data-bs-parent="#modulesAccordion">
-                                                    <div class="accordion-body">
-                                                        <% module.lessons.forEach((lesson, lessonIndex) => { %>
-                                                            <div class="lesson-item <%= lesson.completed ? 'completed' : '' %> <%= lesson.active ? 'active' : '' %>"
-                                                                 onclick="loadLesson(<%= lesson.id %>)">
-                                                                <div class="d-flex justify-content-between align-items-center">
-                                                                    <div>
-                                                                        <i class="fas fa-<%= lesson.type === 'video' ? 'play-circle' : 'file-alt' %> me-2"></i>
-                                                                        <%= lesson.title %>
-                                                                    </div>
-                                                                    <div>
-                                                                        <% if (lesson.completed) { %>
-                                                                            <i class="fas fa-check text-success"></i>
-                                                                        <% } %>
-                                                                        <small class="text-muted"><%= lesson.duration %></small>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        <% }) %>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <% }) %>
-                                    </div>
-                                <% } else { %>
-                                    <p class="text-muted">No content available yet.</p>
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Overview Tab -->
-                    <div class="tab-pane fade" id="overview" role="tabpanel">
-                        <div class="card border-top-0">
-                            <div class="card-body">
-                                <h5 class="card-title">Course Overview</h5>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <h6>What you'll learn</h6>
-                                        <ul>
-                                            <% if (course.objectives && course.objectives.length > 0) { %>
-                                                <% course.objectives.forEach(objective => { %>
-                                                    <li><%= objective %></li>
-                                                <% }) %>
-                                            <% } else { %>
-                                                <li>No learning objectives specified</li>
-                                            <% } %>
-                                        </ul>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h6>Requirements</h6>
-                                        <ul>
-                                            <% if (course.prerequisites && course.prerequisites.length > 0) { %>
-                                                <% course.prerequisites.forEach(req => { %>
-                                                    <li><%= req %></li>
-                                                <% }) %>
-                                            <% } else { %>
-                                                <li>No prerequisites</li>
-                                            <% } %>
-                                        </ul>
-                                    </div>
-                                </div>
-
-                                <h6 class="mt-4">Description</h6>
-                                <p><%= course.fullDescription || course.description %></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Announcements Tab -->
-                    <div class="tab-pane fade" id="announcements" role="tabpanel">
-                        <div class="card border-top-0">
-                            <div class="card-body">
-                                <h5 class="card-title">Announcements</h5>
-                                <% if (course.announcements && course.announcements.length > 0) { %>
-                                    <% course.announcements.forEach(announcement => { %>
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <h6><%= announcement.title %></h6>
-                                                <p class="text-muted"><small>Posted on <%= announcement.date %> by <%= announcement.author %></small></p>
-                                                <p><%= announcement.content %></p>
-                                            </div>
-                                        </div>
-                                    <% }) %>
-                                <% } else { %>
-                                    <p class="text-muted">No announcements yet.</p>
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Discussions Tab -->
-                    <div class="tab-pane fade" id="discussions" role="tabpanel">
-                        <div class="card border-top-0">
-                            <div class="card-body">
-                                <h5 class="card-title">Course Discussions</h5>
-                                <% if (course.discussions && course.discussions.length > 0) { %>
-                                    <% course.discussions.forEach(discussion => { %>
-                                        <div class="card mb-3">
-                                            <div class="card-body">
-                                                <div class="d-flex justify-content-between">
-                                                    <h6><%= discussion.title %></h6>
-                                                    <span class="badge bg-primary"><%= discussion.replies %> replies</span>
-                                                </div>
-                                                <p class="text-muted"><small>Started by <%= discussion.author %> on <%= discussion.date %></small></p>
-                                                <p><%= discussion.preview %>...</p>
-                                                <a href="#" class="btn btn-sm btn-outline-primary">Join Discussion</a>
-                                            </div>
-                                        </div>
-                                    <% }) %>
-                                <% } else { %>
-                                    <p class="text-muted">No discussions yet. Be the first to start a discussion!</p>
-                                    <button class="btn btn-primary">Start Discussion</button>
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="row">
+      <div class="col-lg-8">
+        <% if (course.modules && course.modules.length > 0) { %>
+          <% course.modules.forEach(module => { %>
+            <div class="card">
+              <div class="card-header"><%= module.title %></div>
+              <div class="card-body">
+                <% module.lessons.forEach(lesson => { %>
+                  <div class="lesson-item">
+                    <span><%= lesson.title %></span>
+                    <span><small><%= lesson.duration %></small></span>
+                  </div>
+                <% }) %>
+              </div>
             </div>
+          <% }) %>
+        <% } else { %>
+          <p>No modules available.</p>
+        <% } %>
+      </div>
 
-            <!-- Sidebar -->
-            <div class="col-lg-4">
-                <div class="course-sidebar sticky-top" style="top: 20px;">
-                    <h6>Course Progress</h6>
-                    <div class="progress mb-3">
-                        <div class="progress-bar" style="width: <%= course.progress || 0 %>%"></div>
-                    </div>
-                    <div class="d-flex justify-content-between mb-4">
-                        <small>Completed: <%= course.progress || 0 %>%</small>
-                        <small>Time: <%= course.timeSpent || '0h 0m' %></small>
-                    </div>
-
-                    <h6>Instructor</h6>
-                    <div class="d-flex align-items-center mb-3">
-                        <img src="<%= course.instructorImage || '/public/images/placeholder/avatar-50.svg' %>" 
-                             class="rounded-circle me-3" width="50" height="50" alt="Instructor" loading="lazy">
-                        <div>
-                            <strong><%= course.instructor %></strong>
-                            <br>
-                            <small class="text-muted"><%= course.instructorTitle || 'Course Instructor' %></small>
-                        </div>
-                    </div>
-
-                    <h6 class="mt-4">Course Info</h6>
-                    <ul class="list-unstyled">
-                        <li class="mb-2">
-                            <i class="fas fa-video me-2"></i>
-                            <span><%= course.videoCount || 0 %> video lessons</span>
-                        </li>
-                        <li class="mb-2">
-                            <i class="fas fa-file-alt me-2"></i>
-                            <span><%= course.documentCount || 0 %> resources</span>
-                        </li>
-                        <li class="mb-2">
-                            <i class="fas fa-tasks me-2"></i>
-                            <span><%= course.assignmentCount || 0 %> assignments</span>
-                        </li>
-                        <li class="mb-2">
-                            <i class="fas fa-users me-2"></i>
-                            <span><%= course.studentCount || 0 %> students enrolled</span>
-                        </li>
-                    </ul>
-
-                    <% if (!course.isEnrolled) { %>
-                        <div class="d-grid mt-4">
-                            <button class="btn btn-primary btn-lg">Enroll in Course</button>
-                            <small class="text-center mt-2 text-muted">
-                                <% if (course.price > 0) { %>
-                                    $<%= course.price %> one-time payment
-                                <% } else { %>
-                                    Free enrollment
-                                <% } %>
-                            </small>
-                        </div>
-                    <% } %>
-                </div>
-            </div>
+      <div class="col-lg-4">
+        <div class="course-sidebar">
+          <h5>Course Details</h5>
+          <ul>
+            <li><strong>Instructor:</strong> <%= course.instructor %></li>
+            <li><strong>Duration:</strong> <%= course.duration %> weeks</li>
+            <li><strong>Students Enrolled:</strong> <%= course.studentCount || 0 %></li>
+          </ul>
         </div>
+      </div>
     </div>
+  <% } else { %>
+    <p>No course selected.</p>
+  <% } %>
+</div>
 
-    <%- include('../partials/footer') %>
-
-    <script>
-        function loadLesson(lessonId) {
-            // Simulate lesson loading
-            console.log('Loading lesson:', lessonId);
-            // In a real application, this would fetch lesson content via AJAX
-        }
-
-        // Initialize tooltips
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl);
-        });
-
-
-        
-
-    </script>
-</body>
-</html>
+<%- include('../partials/footer') %>
