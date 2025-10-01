@@ -118,6 +118,10 @@ CREATE TABLE `announcements` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+ALTER TABLE enrollments
+ADD COLUMN status ENUM('active','inactive') NOT NULL DEFAULT 'active';
+
+
 -- Insert sample announcements
 INSERT INTO `announcements` (`title`, `message`) VALUES
 ('Welcome to the LMS', 'This is the first announcement in the system. Stay tuned for more updates!');
