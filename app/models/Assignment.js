@@ -108,6 +108,11 @@ class Assignment {
     return rows[0].average || null;
   }
 
+  // Added method to match studentController call
+  static async getAverageGradeByStudent(studentId) {
+    return this.getAverageGrade(studentId);
+  }
+
   static async findByCourse(courseId) {
     const [rows] = await pool.query(
       'SELECT * FROM assignments WHERE course_id = ?',

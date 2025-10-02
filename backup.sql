@@ -132,6 +132,19 @@ CREATE TABLE submissions (
     FOREIGN KEY (student_id) REFERENCES users(id)
 );
   
+CREATE TABLE notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type ENUM('info', 'warning', 'error') DEFAULT 'info',
+    related_id INT NULL,
+    related_type VARCHAR(100) NULL,
+    is_read TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    read_at TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
 
 -- Insert sample announcements
 INSERT INTO `announcements` (`title`, `message`) VALUES
