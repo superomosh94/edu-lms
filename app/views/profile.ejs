@@ -1,18 +1,131 @@
-<%- include('partials/header') %>
+<%- include('partials/header', { title: 'Profile - EDU LMS' }) %>
 
-<div class="container" style="max-width: 720px; margin: 2rem auto; color:#f1f5f9;">
-  <h1>Your Profile</h1>
+<style>
+  body {
+    background: #f4f6f9;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    color: #333;
+  }
+
+  .profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+  }
+
+  .profile-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .profile-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+  }
+
+  .profile-header p {
+    margin-top: 5px;
+    font-size: 1rem;
+  }
+
+  .profile-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .profile-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .profile-row:last-child {
+    border-bottom: none;
+  }
+
+  .profile-label {
+    font-weight: bold;
+    color: #555;
+  }
+
+  .profile-value {
+    color: #222;
+  }
+
+  .profile-actions {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .profile-actions a {
+    padding: 10px 20px;
+    background: #667eea;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background 0.3s ease;
+  }
+
+  .profile-actions a:hover {
+    background: #556cd6;
+  }
+
+  @media (max-width: 600px) {
+    .profile-row {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .profile-actions {
+      flex-direction: column;
+      gap: 5px;
+    }
+  }
+</style>
+
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>Your Profile</h1>
+    <p>Manage your account information</p>
+  </div>
+
   <% if (user) { %>
-    <div style="background:#1e293b; padding:1rem; border-radius:8px;">
-      <p><strong>Name:</strong> <%= user.name %></p>
-      <p><strong>Email:</strong> <%= user.email %></p>
-      <p><strong>Role:</strong> <%= user.roleName %></p>
+    <div class="profile-card">
+      <div class="profile-row">
+        <div class="profile-label">Name:</div>
+        <div class="profile-value"><%= user.name %></div>
+      </div>
+      <div class="profile-row">
+        <div class="profile-label">Email:</div>
+        <div class="profile-value"><%= user.email %></div>
+      </div>
+      <div class="profile-row">
+        <div class="profile-label">Role:</div>
+        <div class="profile-value"><%= user.roleName || user.role %></div>
+      </div>
+
+      <div class="profile-actions">
+        <a href="/settings/profile/edit">Edit Profile</a>
+        <a href="/settings/password">Change Password</a>
+        <a href="/">Go to Home</a>
+      </div>
     </div>
   <% } else { %>
-    <p>You are not logged in.</p>
+    <div style="background:#fee2e2; padding:15px; border-radius:8px; color:#b91c1c;">
+      You are not logged in.
+    </div>
   <% } %>
 </div>
 
 <%- include('partials/footer') %>
-
-
