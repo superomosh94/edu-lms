@@ -24,8 +24,8 @@ const permissions = {
   ]
 };
 
-// Middleware to restrict routes to specific role
-exports.restrictTo = (role) => {
+// Middleware to restrict routes to specific roles
+exports.restrictTo = (...roles) => {
   return (req, res, next) => {
     if (!req.session.roleName) {
       return res.status(403).render('error', {
@@ -35,7 +35,9 @@ exports.restrictTo = (role) => {
       });
     }
 
-    if (req.session.roleName !== role) {
+    console.log("User role:", req.session.roleName); // Debugging
+
+    if (!roles.includes(req.session.roleName)) {
       return res.status(403).render('error', {
         title: 'Access Denied',
         message: 'You do not have permission to access this page',

@@ -2,17 +2,15 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const dotenv = require('dotenv');
-const adminRoutes = require('./app/routes/adminRoutes');
 const methodOverride = require('method-override');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const db = require('./app/controllers/config/db'); // Loads MySQL connection
+const db = require('./app/controllers/config/db'); // MySQL connection
 
 dotenv.config();
 
 const app = express();
 
-// Enable trust proxy (fixes X-Forwarded-For issue in Render)
 app.set('trust proxy', 1);
 
 // Security headers
@@ -21,35 +19,16 @@ app.use(
         contentSecurityPolicy: {
             directives: {
                 defaultSrc: ["'self'"],
-                styleSrc: [
-                    "'self'",
-                    "'unsafe-inline'",
-                    "https:",
-                    "https://fonts.googleapis.com",
-                    "https://cdnjs.cloudflare.com"
-                ],
-                scriptSrc: [
-                    "'self'",
-                    "https:",
-                    "https://cdn.jsdelivr.net"
-                ],
-                fontSrc: [
-                    "'self'",
-                    "https:",
-                    "https://fonts.gstatic.com",
-                    "data:"
-                ],
-                imgSrc: [
-                    "'self'",
-                    "data:",
-                    "https:"
-                ]
+                styleSrc: ["'self'", "'unsafe-inline'", "https:", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+                scriptSrc: ["'self'", "https:", "https://cdn.jsdelivr.net"],
+                fontSrc: ["'self'", "https:", "https://fonts.gstatic.com", "data:"],
+                imgSrc: ["'self'", "data:", "https:"]
             }
         }
     })
 );
 
-// Rate limiter for authentication routes
+// Rate limiter
 const authLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
@@ -83,16 +62,19 @@ app.use(
     })
 );
 
-// Expose session user to views
+// Attach session user to req.user and res.locals.user
 app.use((req, res, next) => {
-    res.locals.user = req.session.userId
-        ? {
+    if (req.session.userId) {
+        req.user = {
             id: req.session.userId,
             name: req.session.userName,
-            role: req.session.roleId,
-            roleName: req.session.roleName
-        }
-        : null;
+            roleId: req.session.roleId,      // Numeric role ID
+            roleName: req.session.roleName   // String role name
+        };
+    } else {
+        req.user = null;
+    }
+    res.locals.user = req.user || null; // Safe for EJS views
     next();
 });
 
@@ -103,6 +85,7 @@ const dashboardRoutes = require('./app/routes/dashboardRoutes');
 const courseRoutes = require('./app/routes/courseRoutes');
 const assignmentRoutes = require('./app/routes/assignmentRoutes');
 const settingsRoutes = require('./app/routes/settingsRoutes');
+const adminRoutes = require('./app/routes/adminRoutes');
 
 // Use routes
 app.use('/grades', gradesRoutes);
@@ -111,8 +94,6 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/courses', courseRoutes);
 app.use('/assignments', assignmentRoutes);
 app.use('/settings', settingsRoutes);
-
-// Mount admin routes at /admin
 app.use('/admin', adminRoutes);
 
 // Home route
@@ -123,12 +104,7 @@ app.get('/', (req, res) => {
 
     res.render('index', {
         title: 'EDU LMS - Home',
-        userStats: {
-            enrolledCourses: 0,
-            pendingAssignments: 0,
-            averageGrade: 'N/A',
-            upcomingDeadlines: 0
-        },
+        userStats: { enrolledCourses: 0, pendingAssignments: 0, averageGrade: 'N/A', upcomingDeadlines: 0 },
         recentActivity: []
     });
 });
@@ -152,11 +128,11 @@ app.use((err, req, res, next) => {
     });
 });
 
-// Start server - must listen on 0.0.0.0 for Render
-const port = process.env.PORT || 10000;
+const port = process.env.PORT || 3000;
 app.listen(port, "0.0.0.0", () => {
     console.log(`✅ EDU LMS server running on port ${port}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 module.exports = app;
+// End of server.js

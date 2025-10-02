@@ -37,22 +37,64 @@ exports.sanitizeInput = (input) => {
 
 exports.validateAssignmentData = (data) => {
   const errors = [];
-  
+
   if (!data.title || !validator.isLength(data.title, { min: 5, max: 255 })) {
     errors.push('Title must be between 5 and 255 characters');
   }
-  
+
   if (data.description && !validator.isLength(data.description, { max: 1000 })) {
     errors.push('Description too long');
   }
-  
+
   if (data.max_grade && !validator.isFloat(data.max_grade.toString(), { min: 0, max: 1000 })) {
     errors.push('Max grade must be a number between 0 and 1000');
   }
-  
+
   if (data.due_date && !validator.isISO8601(data.due_date)) {
     errors.push('Due date must be a valid date');
   }
-  
+
   return errors;
+};
+
+exports.validateCourseCreation = (data) => {
+  const errors = [];
+
+  if (!data.title || !validator.isLength(data.title, { min: 5, max: 255 })) {
+    errors.push('Title must be between 5 and 255 characters');
+  }
+
+  if (!data.description || !validator.isLength(data.description, { min: 10, max: 1000 })) {
+    errors.push('Description must be between 10 and 1000 characters');
+  }
+
+  if (data.status && !['active', 'inactive'].includes(data.status)) {
+    errors.push('Status must be active or inactive');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
+};
+
+exports.validateCourseUpdate = (data) => {
+  const errors = [];
+
+  if (data.title && !validator.isLength(data.title, { min: 5, max: 255 })) {
+    errors.push('Title must be between 5 and 255 characters');
+  }
+
+  if (data.description && !validator.isLength(data.description, { min: 10, max: 1000 })) {
+    errors.push('Description must be between 10 and 1000 characters');
+  }
+
+  if (data.status && !['active', 'inactive'].includes(data.status)) {
+    errors.push('Status must be active or inactive');
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors
+  };
 };

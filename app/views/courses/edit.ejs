@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title><%= title %></title>
+<link rel="stylesheet" href="/css/styles.css">
+<style>
+    body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 20px; }
+    h1 { color: #333; margin-bottom: 20px; }
+    .errors { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+    .errors ul { margin: 0; padding-left: 20px; }
+    form { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+    input[type="text"], textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
+    textarea { height: 120px; resize: vertical; }
+    input[type="file"] { padding: 5px; }
+    img { margin-top: 10px; border-radius: 5px; border: 1px solid #ddd; }
+    button { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; transition: background 0.3s ease; }
+    button:hover { background: #0056b3; }
+    a { display: inline-block; margin-top: 15px; text-decoration: none; color: #007bff; font-size: 14px; }
+    a:hover { text-decoration: underline; }
+    @media (max-width: 768px) { form { padding: 15px; } }
+</style>
+</head>
+<body>
+
+<h1>Edit Course</h1>
+
+<% if (errors && errors.length > 0) { %>
+    <div class="errors">
+    <ul>
+        <% errors.forEach(error => { %>
+        <li><%= error %></li>
+        <% }); %>
+    </ul>
+    </div>
+<% } %>
+
+<form action="/courses/<%= course.id %>?_method=PUT" method="POST" enctype="multipart/form-data">
+    <div class="form-group">
+    <label for="title">Title</label>
+    <input type="text" name="title" id="title" value="<%= course.title || '' %>" required>
+    </div>
+
+    <div class="form-group">
+    <label for="description">Description</label>
+    <textarea name="description" id="description" required><%= course.description || '' %></textarea>
+    </div>
+
+    <% if (user && user.roleName && user.roleName.toLowerCase() === 'admin') { %>
+    <div class="form-group">
+        <label for="teacherId">Teacher ID</label>
+        <input type="text" name="teacherId" id="teacherId" value="<%= course.teacherId || '' %>">
+    </div>
+    <% } %>
+
+    <div class="form-group">
+    <label for="status">Status</label>
+    <select name="status" id="status">
+        <option value="active" <%= course.status === 'active' ? 'selected' : '' %>>Active</option>
+        <option value="inactive" <%= course.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+    </select>
+    </div>
+
+    <div class="form-group">
+    <label for="image">Course Image</label>
+    <input type="file" name="image" id="image">
+    <% if (course.image) { %>
+        <div>
+        <img src="<%= course.image %>" alt="Course Image" width="200">
+        </div>
+    <% } %>
+    </div>
+
+    <button type="submit">Update Course</button>
+</form>
+
+<a href="/courses">Back to Courses</a>
+
+</body>
+</html>
