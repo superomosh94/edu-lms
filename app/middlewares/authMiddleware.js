@@ -5,6 +5,8 @@ const crypto = require('crypto');
 // Ensure user is authenticated
 exports.authenticate = (req, res, next) => {
   if (req.session && req.session.userId) {
+    req.userId = req.session.userId; // <-- Add this line
+    req.roleName = req.session.roleName ? req.session.roleName.toLowerCase() : null; // Store role
     return next();
   }
 
@@ -28,7 +30,6 @@ exports.requireRole = (roles) => {
 
     const userRole = req.session.roleName ? req.session.roleName.toLowerCase() : null;
 
-    // Debugging - remove in production
     console.log("User ID:", req.session.userId, "Role:", userRole);
 
     if (!roles.map(r => r.toLowerCase()).includes(userRole)) {

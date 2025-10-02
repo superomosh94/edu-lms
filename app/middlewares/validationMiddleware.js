@@ -31,5 +31,27 @@ module.exports = {
       return res.status(400).send('Missing status');
     }
     next();
+  },
+
+  // ADD THIS MISSING METHOD:
+  validateStudentProfileUpdate: (req, res, next) => {
+    const { firstName, lastName, email } = req.body;
+    
+    // Basic validation - you can expand this as needed
+    if (!firstName && !lastName && !email) {
+      return res.status(400).json({
+        success: false,
+        message: 'At least one field (firstName, lastName, or email) is required'
+      });
+    }
+    
+    if (email && !email.includes('@')) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid email'
+      });
+    }
+    
+    next();
   }
 };

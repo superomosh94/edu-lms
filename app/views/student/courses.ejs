@@ -1,0 +1,111 @@
+<%- include('../partials/header', { title: 'Courses | Student Panel' }) %>
+<%- include('../partials/navigation') %>
+
+<div class="student-page">
+    <aside class="sidebar">
+        <%- include('../partials/sidebar') %>
+    </aside>
+    <main class="content">
+        <header>
+            <h1>My Courses</h1>
+        </header>
+
+        <section class="page-content">
+            <% if (courses && courses.length) { %>
+                <div class="courses-list">
+                    <% courses.forEach(function(course) { %>
+                        <div class="course-card">
+                            <h2><%= course.title %></h2>
+                            <p><%= course.description %></p>
+                            <p>Status: <strong><%= course.status %></strong></p>
+
+                            <% if (course.progress) { %>
+                                <ul>
+                                    <li>Total Assignments: <%= course.progress.totalAssignments %></li>
+                                    <li>Completed Assignments: <%= course.progress.completedAssignments %></li>
+                                    <li>Average Grade: 
+                                        <%= course.progress.averageGrade !== null 
+                                            ? course.progress.averageGrade.toFixed(2) 
+                                            : "N/A" %>
+                                    </li>
+                                </ul>
+                            <% } %>
+
+                            <a href="/student/courses/<%= course.id %>" class="btn">View Course</a>
+                        </div>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <p>No courses found. Enroll in a course to get started.</p>
+            <% } %>
+        </section>
+    </main>
+</div>
+
+<%- include('../partials/footer') %>
+
+<style>
+body.student-page {
+    display: flex;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+
+.sidebar {
+    width: 220px;
+    background: #2c3e50;
+    color: white;
+    padding: 20px;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+}
+
+header {
+    background: #34495e;
+    color: white;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.page-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.course-card h2 {
+    margin: 0;
+}
+
+.course-card ul {
+    list-style: none;
+    padding: 0;
+}
+
+.course-card li {
+    margin-bottom: 5px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 8px 12px;
+    background: #3498db;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+}
+</style>

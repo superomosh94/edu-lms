@@ -1,50 +1,46 @@
 const Course = require('../models/Course');
 const Assignment = require('../models/Assignment');
-const User = require('../models/User');
+const User = require('../models/Student');
+const Notification = require('../models/Notification');
 const auditHelper = require('../helpers/auditHelper');
 
 const studentController = {
-    // Get student's enrolled courses
     getMyCourses: async (req, res) => {
         try {
             const studentId = req.userId;
+            if (!studentId) throw new Error('studentId is missing');
+
             const courses = await Course.findByStudent(studentId);
 
-            // Add progress information for each course
             const coursesWithProgress = await Promise.all(
                 courses.map(async (course) => {
-                    const progress = {
-                        totalAssignments: await Assignment.getCountByCourse(course.id),
-                        completedAssignments: await Assignment.getCompletedCountByStudent(course.id, studentId),
-                        averageGrade: await Assignment.getAverageGradeByCourseAndStudent(course.id, studentId)
-                    };
-                    return { ...course, progress };
+                    const totalAssignments = await Assignment.getCountByCourse(course.id);
+                    const completedAssignments = await Assignment.getCompletedCountByStudent(course.id, studentId);
+                    const averageGrade = await Assignment.getAverageGradeByCourseAndStudent(course.id, studentId);
+
+                    return { ...course, progress: { totalAssignments, completedAssignments, averageGrade } };
                 })
             );
 
-            res.json({ courses: coursesWithProgress });
+            res.render('student/courses', { title: "My Courses", courses: coursesWithProgress });
         } catch (error) {
             console.error('Get student courses error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).send('Internal server error');
         }
     },
 
-    // Get course details with student-specific information
     getCourse: async (req, res) => {
         try {
             const courseId = req.params.courseId;
             const studentId = req.userId;
+            if (!studentId) throw new Error('studentId is missing');
 
-            // Verify enrollment
             const isEnrolled = await Course.isStudentEnrolled(courseId, studentId);
-            if (!isEnrolled) {
-                return res.status(403).json({ error: 'Not enrolled in this course' });
-            }
+            if (!isEnrolled) return res.status(403).send('Not enrolled in this course');
 
             const course = await Course.findById(courseId);
             const assignments = await Assignment.findByCourse(courseId);
-            
-            // Add submission status for each assignment
+
             const assignmentsWithStatus = await Promise.all(
                 assignments.map(async (assignment) => {
                     const submission = await Assignment.getStudentSubmission(assignment.id, studentId);
@@ -57,126 +53,146 @@ const studentController = {
                 })
             );
 
-            res.json({ 
-                course, 
-                assignments: assignmentsWithStatus 
-            });
+            res.render('student/course', { title: course.title, course, assignments: assignmentsWithStatus });
         } catch (error) {
             console.error('Get student course error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).send('Internal server error');
         }
     },
 
-    // Get student's submissions
+    getAssignments: async (req, res) => {
+        try {
+            const studentId = req.userId;
+            if (!studentId) throw new Error('studentId is missing');
+
+            const assignments = await Assignment.getByStudent(studentId);
+            res.render('student/assignments', { title: "Assignments", assignments });
+        } catch (error) {
+            console.error('Get assignments error:', error);
+            res.status(500).send('Internal server error');
+        }
+    },
+
+    getAssignmentDetail: async (req, res) => {
+        try {
+            const assignmentId = req.params.id;
+            const studentId = req.userId;
+            if (!studentId) throw new Error('studentId is missing');
+
+            const assignment = await Assignment.findById(assignmentId);
+            if (!assignment) return res.status(404).send('Assignment not found');
+
+            const submission = await Assignment.getStudentSubmission(assignmentId, studentId);
+            res.render('student/assignment-detail', { title: assignment.title, assignment, submission });
+        } catch (error) {
+            console.error('Get assignment detail error:', error);
+            res.status(500).send('Internal server error');
+        }
+    },
+
     getMySubmissions: async (req, res) => {
         try {
             const studentId = req.userId;
-            const submissions = await Assignment.getStudentSubmissions(studentId);
+            if (!studentId) throw new Error('studentId is missing');
 
-            res.json({ submissions });
+            const submissions = await Assignment.getStudentSubmissions(studentId);
+            res.render('student/submissions', { title: "My Submissions", submissions });
         } catch (error) {
             console.error('Get student submissions error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).send('Internal server error');
         }
     },
 
-    // Get submission details
     getSubmission: async (req, res) => {
         try {
             const submissionId = req.params.id;
             const studentId = req.userId;
+            if (!studentId) throw new Error('studentId is missing');
 
             const submission = await Assignment.getSubmissionById(submissionId);
-            if (!submission) {
-                return res.status(404).json({ error: 'Submission not found' });
-            }
+            if (!submission) return res.status(404).send('Submission not found');
+            if (submission.studentId !== studentId) return res.status(403).send('Access denied');
 
-            // Verify ownership
-            if (submission.studentId !== studentId) {
-                return res.status(403).json({ error: 'Access denied' });
-            }
-
-            // Get assignment details
             submission.assignment = await Assignment.findById(submission.assignmentId);
-
-            res.json({ submission });
+            res.render('student/submission-detail', { title: "Submission Detail", submission });
         } catch (error) {
             console.error('Get submission error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).send('Internal server error');
         }
     },
 
-    // Get student's grades and performance
     getMyGrades: async (req, res) => {
         try {
             const studentId = req.userId;
+            if (!studentId) throw new Error('studentId is missing');
 
             const grades = await Assignment.getGradesByStudent(studentId);
             const overallStats = {
-                averageGrade: await Assignment.getAverageGrade(studentId),
+                averageGrade: await Assignment.getAverageGradeByStudent(studentId),
                 totalAssignments: await Assignment.getTotalAssignmentsCount(studentId),
                 completedAssignments: await Assignment.getCompletedCount(studentId),
                 pendingAssignments: await Assignment.getPendingCount(studentId)
             };
 
-            res.json({ 
-                grades, 
-                overallStats 
+            res.render('student/grades', {
+                title: 'grades | Student Panel',
+                grades,
+                overallStats
             });
         } catch (error) {
             console.error('Get student grades error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).send('Internal server error');
         }
     },
 
-    // Get course recommendations based on enrolled courses
     getCourseRecommendations: async (req, res) => {
         try {
             const studentId = req.userId;
-            
-            // Get student's enrolled courses
+            if (!studentId) throw new Error('studentId is missing');
+
             const enrolledCourses = await Course.findByStudent(studentId);
-            
-            if (enrolledCourses.length === 0) {
-                // If no enrolled courses, return popular courses
-                const popularCourses = await Course.findPopular(5);
-                return res.json({ recommendations: popularCourses });
+            let recommendations;
+
+            if (!enrolledCourses.length) {
+                recommendations = await Course.findPopular(5);
+            } else {
+                const enrolledCategories = [...new Set(enrolledCourses.map(course => course.category))];
+                recommendations = await Course.findByCategories(enrolledCategories, 5, studentId);
             }
 
-            // Simple recommendation based on categories of enrolled courses
-            const enrolledCategories = [...new Set(enrolledCourses.map(course => course.category))];
-            const recommendedCourses = await Course.findByCategories(enrolledCategories, 5, studentId);
-
-            res.json({ recommendations: recommendedCourses });
+            res.render('student/recommendations', { title: "Course Recommendations", recommendations });
         } catch (error) {
             console.error('Get recommendations error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).send('Internal server error');
         }
     },
 
-    // Update student profile
+    getNotifications: async (req, res) => {
+        try {
+            const studentId = req.userId;
+            if (!studentId) throw new Error('studentId is missing');
+
+            const notifications = await Notification.getForStudent(studentId);
+            res.render('student/notifications', { title: "Notifications", notifications });
+        } catch (error) {
+            console.error('Get notifications error:', error);
+            res.status(500).send('Internal server error');
+        }
+    },
+
     updateProfile: async (req, res) => {
         try {
             const studentId = req.userId;
+            if (!studentId) throw new Error('studentId is missing');
+
             const { bio, interests, contactInfo } = req.body;
+            const updatedStudent = await User.updateStudentProfile(studentId, { bio, interests, contactInfo });
+            await auditHelper.logAction(studentId, 'STUDENT_UPDATE_PROFILE', 'Updated student profile');
 
-            const updatedStudent = await User.updateStudentProfile(studentId, {
-                bio,
-                interests,
-                contactInfo
-            });
-
-            // Log audit trail
-            await auditHelper.logAction(studentId, 'STUDENT_UPDATE_PROFILE', 
-                'Updated student profile');
-
-            res.json({ 
-                message: 'Profile updated successfully',
-                student: updatedStudent 
-            });
+            res.json({ message: 'Profile updated successfully', student: updatedStudent });
         } catch (error) {
             console.error('Update student profile error:', error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).send('Internal server error');
         }
     }
 };

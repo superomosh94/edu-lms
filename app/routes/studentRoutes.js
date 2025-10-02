@@ -1,28 +1,39 @@
 const express = require('express');
 const router = express.Router();
+
 const studentController = require('../controllers/studentController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 const validationMiddleware = require('../middlewares/validationMiddleware');
 
-// All student routes require student role
+// Require authentication and student role
 router.use(authMiddleware.authenticate);
-router.use(roleMiddleware.restrictTo('student'));
+router.use(roleMiddleware.restrictTo('Student'));
 
-// Course management
+// Courses
 router.get('/courses', studentController.getMyCourses);
 router.get('/courses/:courseId', studentController.getCourse);
-router.get('/courses/recommendations', studentController.getCourseRecommendations);
 
-// Assignment management
+// Assignments
+router.get('/assignments', studentController.getAssignments);
+router.get('/assignments/:id', studentController.getAssignmentDetail);
+
+// Submissions
 router.get('/submissions', studentController.getMySubmissions);
 router.get('/submissions/:id', studentController.getSubmission);
 
-// Grades and performance
+// Grades
 router.get('/grades', studentController.getMyGrades);
 
+// Recommendations
+router.get('/recommendations', studentController.getCourseRecommendations);
+
+// Notifications
+router.get('/notifications', studentController.getNotifications);
+
 // Profile management
-router.put('/profile', 
+router.put(
+    '/profile',
     validationMiddleware.validateStudentProfileUpdate,
     studentController.updateProfile
 );

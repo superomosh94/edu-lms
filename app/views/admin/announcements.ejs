@@ -1,116 +1,135 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Announcements</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            min-height: 100vh;
-            background-color: #f5f5f5;
+<%- include('../partials/header', { title: 'Announcements - EDU LMS' }) %>
+<%- include('../partials/navigation') %>
+
+<style>
+    body.announcements-page {
+        background-color: #f5f5f5;
+        font-family: Arial, sans-serif;
+        margin: 0;
+    }
+
+    .announcements-main {
+        flex-grow: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .announcements-header {
+        background-color: #34495e;
+        color: white;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .announcements-header h1 {
+        margin: 0;
+        font-size: 1.8rem;
+        font-weight: bold;
+    }
+
+    .announcements-create-btn {
+        display: inline-block;
+        margin-bottom: 20px;
+        padding: 10px 15px;
+        background-color: #2980b9;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: background-color 0.3s ease;
+        font-weight: bold;
+    }
+
+    .announcements-create-btn:hover {
+        background-color: #3498db;
+    }
+
+    .announcements-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .announcements-list-item {
+        background: white;
+        margin-bottom: 15px;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .announcements-list-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .announcements-list-item-title {
+        display: block;
+        font-size: 1.3rem;
+        color: #2c3e50;
+        margin-bottom: 5px;
+        font-weight: bold;
+    }
+
+    .announcements-list-item-content {
+        margin: 10px 0;
+        color: #555;
+        line-height: 1.5;
+    }
+
+    .announcements-list-item-date {
+        display: block;
+        color: #999;
+        font-size: 0.85rem;
+    }
+
+    .announcements-no-items {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        color: #666;
+        text-align: center;
+    }
+
+    @media (max-width: 768px) {
+        .announcements-main {
+            padding: 10px;
         }
-        /* Sidebar */
-        .sidebar {
-            width: 220px;
-            background-color: #2c3e50;
-            color: white;
-            padding: 20px;
-            flex-shrink: 0;
-        }
-        .sidebar a {
-            display: block;
-            color: white;
-            padding: 10px 0;
-            text-decoration: none;
-        }
-        .sidebar a:hover {
-            background-color: #34495e;
+
+        .announcements-header h1 {
+            font-size: 1.5rem;
         }
 
-        /* Main content */
-        .main-content {
-            flex-grow: 1;
-            padding: 20px;
+        .announcements-create-btn {
+            padding: 8px 12px;
+            font-size: 0.9rem;
         }
+    }
+</style>
 
-        header, footer {
-            background-color: #34495e;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
+<div class="announcements-main">
+    <header class="announcements-header">
+        <h1>Announcements</h1>
+    </header>
 
-        h1 {
-            margin-top: 0;
-        }
+    <a href="/admin/announcements/add" class="announcements-create-btn">Create Announcement</a>
 
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        li {
-            background: white;
-            margin-bottom: 10px;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0,0,0,0.1);
-        }
-
-        .create-btn {
-            display: inline-block;
-            margin-bottom: 20px;
-            padding: 10px 15px;
-            background-color: #2980b9;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-
-        .create-btn:hover {
-            background-color: #3498db;
-        }
-
-    </style>
-</head>
-<body>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Admin Panel</h2>
-        <a href="/admin/dashboard">Dashboard</a>
-        <a href="/admin/users">Users</a>
-        <a href="/admin/courses">Courses</a>
-        <a href="/admin/announcements">Announcements</a>
-        <a href="/admin/settings">Settings</a>
-        <a href="/logout">Logout</a>
-    </div>
-
-    <!-- Main content -->
-    <div class="main-content">
-        <!-- Header -->
-        <header>
-            <h1>Announcements</h1>
-        </header>
-
-        <a href="/admin/announcements/add" class="create-btn">Create Announcement</a>
-
-        <ul>
+    <ul class="announcements-list">
+        <% if (announcements && announcements.length > 0) { %>
             <% announcements.forEach(announcement => { %>
-                <li>
-                    <strong><%= announcement.title %></strong><br>
-                    <p><%= announcement.content %></p>
-                    <small>Posted on <%= new Date(announcement.created_at).toLocaleString() %></small>
+                <li class="announcements-list-item">
+                    <span class="announcements-list-item-title"><%= announcement.title %></span>
+                    <p class="announcements-list-item-content"><%= announcement.content %></p>
+                    <small class="announcements-list-item-date">Posted on <%= new Date(announcement.created_at).toLocaleString() %></small>
                 </li>
             <% }) %>
-        </ul>
+        <% } else { %>
+            <div class="announcements-no-items">No announcements available.</div>
+        <% } %>
+    </ul>
+</div>
 
-        <!-- Footer -->
-        <footer>
-            <p>&copy; <%= new Date().getFullYear() %> Edu-LMS Admin</p>
-        </footer>
-    </div>
-
-</body>
-</html>
+<%- include('../partials/footer') %>

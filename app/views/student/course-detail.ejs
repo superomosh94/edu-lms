@@ -1,0 +1,27 @@
+<%- include('../partials/header', {{ title: 'course-detail | Student Panel' }}) %>
+<%- include('../partials/navigation') %>
+
+<div class='student-page'>
+    <aside class='sidebar'>
+        <%- include('../partials/sidebar') %>
+    </aside>
+    <main class='content'>
+        <header>
+            <h1>course-detail</h1>
+        </header>
+
+        <section class='page-content'>
+            <p>This is the <strong>course-detail</strong> page for the student section.</p>
+        </section>
+    </main>
+</div>
+
+<%- include('../partials/footer') %>
+
+<style>
+body.student-page { display: flex; font-family: Arial, sans-serif; background: #f4f6f8; margin:0; padding:0;}
+.sidebar {width:220px; background:#2c3e50; color:white; padding:20px;}
+.content {flex-grow:1; padding:20px;}
+header {background:#34495e; color:white; padding:15px; border-radius:5px; margin-bottom:20px;}
+.page-content {background:white; padding:20px; border-radius:5px; box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+</style>

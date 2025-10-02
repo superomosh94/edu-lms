@@ -1,55 +1,193 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>System Overview | Admin Panel</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background: #f4f6f8; }
-        h1 { margin-bottom: 20px; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-        .card h2 { margin-top: 0; font-size: 18px; }
-        .card p { font-size: 24px; font-weight: bold; margin: 10px 0 0; }
-    </style>
-</head>
-<body>
-    <h1>System Overview</h1>
+<%- include('../partials/header', { title: 'System Overview | Admin Panel' }) %>
+<%- include('../partials/navigation') %>
+
+<style>
+    body.system-settings-page {
+        background-color: #f4f6f8;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+
+    .system-settings-main {
+        padding: 20px;
+        flex-grow: 1;
+    }
+
+    .system-settings-header {
+        padding: 20px 0;
+        text-align: center;
+    }
+
+    .system-settings-header h1 {
+        font-size: 2rem;
+        color: #2c3e50;
+        margin: 0;
+    }
+
+    /* Grid layout for stats and settings */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    /* Individual stats cards */
+    .stats-card {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .stats-card h2 {
+        font-size: 1.2rem;
+        color: #34495e;
+        margin: 0 0 10px 0;
+    }
+
+    .stats-card p {
+        font-size: 1.8rem;
+        font-weight: bold;
+        margin: 0;
+        color: #2980b9;
+    }
+
+    /* Individual settings forms */
+    .settings-section {
+        background: white;
+        padding: 20px;
+        margin-top: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .settings-section h3 {
+        margin-top: 0;
+        color: #34495e;
+    }
+
+    .settings-section form label {
+        display: block;
+        margin: 10px 0 5px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+    .settings-section form input,
+    .settings-section form select,
+    .settings-section form textarea {
+        width: 100%;
+        padding: 8px 10px;
+        margin-bottom: 15px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        font-size: 1rem;
+        font-family: inherit;
+    }
+
+    .settings-section form button {
+        padding: 10px 20px;
+        background-color: #2980b9;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    .settings-section form button:hover {
+        background-color: #3498db;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        }
+
+        .stats-card p {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="system-settings-main system-settings-page">
+
+    <!-- Page Header -->
+    <div class="system-settings-header">
+        <h1>System Overview</h1>
+    </div>
+
+    <!-- Stats Grid -->
     <div class="stats-grid">
-        <div class="card">
+        <div class="stats-card">
             <h2>Total Users</h2>
             <p><%= stats.totalUsers %></p>
         </div>
-        <div class="card">
+        <div class="stats-card">
             <h2>Admins</h2>
             <p><%= stats.admins %></p>
         </div>
-        <div class="card">
+        <div class="stats-card">
             <h2>Teachers</h2>
             <p><%= stats.teachers %></p>
         </div>
-        <div class="card">
+        <div class="stats-card">
             <h2>Students</h2>
             <p><%= stats.students %></p>
         </div>
-        <div class="card">
+        <div class="stats-card">
             <h2>Active Users</h2>
             <p><%= stats.activeUsers %></p>
         </div>
-        <div class="card">
+        <div class="stats-card">
             <h2>Inactive Users</h2>
             <p><%= stats.inactiveUsers %></p>
         </div>
-        <div class="card">
+        <div class="stats-card">
             <h2>Total Courses</h2>
             <p><%= stats.totalCourses %></p>
         </div>
-        <div class="card">
+        <div class="stats-card">
             <h2>Total Payments</h2>
             <p><%= stats.totalPayments %></p>
         </div>
-        <div class="card">
+        <div class="stats-card">
             <h2>Total Revenue</h2>
             <p>$<%= stats.totalRevenue %></p>
         </div>
     </div>
-</body>
-</html>
+
+    <!-- Example Settings Section -->
+    <div class="settings-section" id="general-settings">
+        <h3>General Settings</h3>
+        <form action="/admin/settings/general" method="POST">
+            <label for="site-name">Site Name</label>
+            <input type="text" id="site-name" name="siteName" value="<%= settings.siteName %>" required>
+
+            <label for="site-logo">Site Logo</label>
+            <input type="file" id="site-logo" name="siteLogo">
+
+            <label for="default-language">Default Language</label>
+            <select id="default-language" name="defaultLanguage">
+                <option value="en" <%= settings.defaultLanguage === 'en' ? 'selected' : '' %>>English</option>
+                <option value="es" <%= settings.defaultLanguage === 'es' ? 'selected' : '' %>>Spanish</option>
+            </select>
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+
+    <!-- Additional sections like Security, Notifications, Integrations can follow the same structure -->
+
+</div>
+
+<%- include('../partials/footer') %>

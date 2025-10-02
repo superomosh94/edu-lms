@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
     <div class="container-fluid">
-        
+
         <!-- Brand -->
         <a class="navbar-brand d-flex align-items-center fw-bold" href="/dashboard">
             <i class="fas fa-graduation-cap me-2" style="color: #ffd700;"></i>
@@ -14,7 +14,7 @@
 
         <!-- Navbar content -->
         <div class="collapse navbar-collapse" id="navbarContent">
-            
+
             <!-- Left menu -->
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
@@ -60,13 +60,20 @@
             <!-- Right menu -->
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
 
+                <!-- Dark/Light Mode Switch -->
+                <li class="nav-item d-flex align-items-center px-3">
+                    <label class="switch mb-0">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="slider round"></span>
+                    </label>
+                    <small class="text-light ms-2">Dark Mode</small>
+                </li>
+
                 <!-- Notifications -->
                 <li class="nav-item dropdown">
                     <a class="nav-link position-relative px-3" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-bell"></i>
-                        <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            0
-                        </span>
+                        <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
                     </a>
                     <ul id="notificationList" class="dropdown-menu dropdown-menu-end shadow">
                         <li><h6 class="dropdown-header">Notifications</h6></li>
@@ -120,3 +127,83 @@
         </div>
     </div>
 </nav>
+
+<!-- Dark Mode Switch CSS -->
+<style>
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+  border-radius: 20px;
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: #667eea;
+}
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+</style>
+
+<!-- Dark Mode Script -->
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('themeToggle');
+  toggle.addEventListener('change', () => {
+    document.body.classList.toggle('dark-mode', toggle.checked);
+    localStorage.setItem('darkMode', toggle.checked);
+  });
+
+  if (localStorage.getItem('darkMode') === 'true') {
+    toggle.checked = true;
+    document.body.classList.add('dark-mode');
+  }
+});
+</script>
+
+<!-- Dark Mode CSS -->
+<style>
+.dark-mode {
+  background-color: #121212 !important;
+  color: #e0e0e0 !important;
+}
+.dark-mode nav.navbar {
+  background-color: #1f1f1f !important;
+}
+.dark-mode .dropdown-menu {
+  background-color: #2c2c2c !important;
+  color: #e0e0e0;
+}
+.dark-mode .dropdown-item {
+  color: #e0e0e0 !important;
+}
+.dark-mode input, .dark-mode select {
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+  border: 1px solid #444;
+}
+</style>
