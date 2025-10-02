@@ -1,7 +1,7 @@
 <%- include('../partials/header', { title: 'Dashboard - EDU LMS', headerTitle: 'Dashboard', adminName: user.name }) %>
 <%- include('../partials/navigation') %>
 
-<div class="dashboard-container">
+<div class="dashboard-container <%= user.role.toLowerCase() %>-theme">
   <!-- Sidebar -->
   <div class="sidebar">
     <%- include('../partials/sidebar', { user: user, activePage: 'dashboard' }) %>
@@ -75,145 +75,148 @@
 </div>
 
 <style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background: #f4f6f9;
-    color: #222;
-  }
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  color: #222;
+}
 
-  .dashboard-container {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-  }
+.dashboard-container {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
 
-  .sidebar {
-    width: 240px;
-    background: #1a1a1a;
-    color: #fff;
-    height: 100%;
-    overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-  }
+.sidebar {
+  width: 240px;
+  color: #fff;
+  height: 100%;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+}
 
-  .dashboard-main {
-    flex: 1;
-    padding: 20px;
-    overflow-y: auto;
-  }
+.dashboard-main {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+}
 
-  .dashboard-header {
-    background: linear-gradient(135deg,#667eea,#764ba2);
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-  }
+.dashboard-header {
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  color: white;
+}
 
-  .dashboard-header h2 {
-    margin: 0;
-    font-size: 1.6em;
-  }
+.stats-grid {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
 
-  .dashboard-header p {
-    margin: 5px 0 0;
-    font-size: 0.95em;
-  }
+.stat-card {
+  flex: 1;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
 
-  .stats-grid {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 20px;
-  }
+.stat-icon {
+  font-size: 1.8em;
+  margin-bottom: 10px;
+}
 
-  .stat-card {
-    flex: 1;
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  }
+.stat-number {
+  font-size: 1.5em;
+  font-weight: bold;
+}
 
-  .stat-icon {
-    font-size: 1.8em;
-    margin-bottom: 10px;
-  }
+.stat-label {
+  font-size: 0.85em;
+  color: #555;
+}
 
-  .stat-number {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #667eea;
-  }
+.actions-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
+}
 
-  .stat-label {
-    font-size: 0.85em;
-    color: #555;
-  }
+.action-card {
+  flex: 1 1 calc(25% - 15px);
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
 
-  .actions-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    margin-top: 10px;
-  }
+.action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.15);
+}
 
-  .action-card {
-    flex: 1 1 calc(25% - 15px);
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-    text-decoration: none;
-    color: inherit;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-  }
+.action-icon {
+  font-size: 1.8em;
+  margin-bottom: 10px;
+}
 
-  .action-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 12px rgba(0,0,0,0.15);
-  }
+.recent-activity {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
 
-  .action-icon {
-    font-size: 1.8em;
-    color: #667eea;
-    margin-bottom: 10px;
-  }
+.activity-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
 
-  .recent-activity {
-    background: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    margin-top: 20px;
-  }
+.activity-item:last-child {
+  border-bottom: none;
+}
 
-  .activity-item {
-    display: flex;
-    align-items: center;
-    padding: 10px 0;
-    border-bottom: 1px solid #eee;
-  }
+.activity-icon {
+  background: #f8f9fa;
+  padding: 8px;
+  border-radius: 50%;
+  margin-right: 10px;
+  font-size: 1.2em;
+}
 
-  .activity-item:last-child {
-    border-bottom: none;
-  }
+.activity-time {
+  font-size: 0.85em;
+  color: #888;
+}
 
-  .activity-icon {
-    background: #f8f9fa;
-    padding: 8px;
-    border-radius: 50%;
-    margin-right: 10px;
-    font-size: 1.2em;
-    color: #667eea;
-  }
+/* Role Themes */
+.dashboard-container.admin-theme .dashboard-header {
+  background: linear-gradient(135deg,#1f6feb,#10b981);
+}
+.dashboard-container.teacher-theme .dashboard-header {
+  background: linear-gradient(135deg,#10b981,#3b82f6);
+}
+.dashboard-container.student-theme .dashboard-header {
+  background: linear-gradient(135deg,#f59e0b,#f97316);
+}
+.dashboard-container.finance-theme .dashboard-header {
+  background: linear-gradient(135deg,#ef4444,#b91c1c);
+}
 
-  .activity-time {
-    font-size: 0.85em;
-    color: #888;
-  }
+.dashboard-container.admin-theme .stat-number { color: #1f6feb; }
+.dashboard-container.teacher-theme .stat-number { color: #10b981; }
+.dashboard-container.student-theme .stat-number { color: #f59e0b; }
+.dashboard-container.finance-theme .stat-number { color: #ef4444; }
 </style>
 
 <%- include('../partials/footer') %>
