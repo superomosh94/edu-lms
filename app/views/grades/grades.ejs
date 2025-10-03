@@ -1,191 +1,190 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title><%= title %></title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<%- include('../partials/header', { title: 'Grades | Student Panel' }) %>
+<%- include('../partials/navigation') %>
 
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #f5f6fa;
-            color: #333;
-        }
+<div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2>Student Panel</h2>
+        <nav>
+            <%- include('../partials/sidebar', { user: user, activePage: 'grades' }) %>
+        </nav>
+    </aside>
 
-        .container {
-            display: flex;
-            height: 100vh;
-        }
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Grades</h1>
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background: linear-gradient(180deg, #0d1117, #161b22);
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.25);
-        }
-
-        .sidebar h2 {
-            font-size: 22px;
-            font-weight: 700;
-            text-align: center;
-            margin: 20px 0;
-            color: #f8f9fa;
-        }
-
-        .sidebar nav {
-            flex-grow: 1;
-        }
-
-        .sidebar a {
-            display: block;
-            color: #aaa;
-            text-decoration: none;
-            padding: 14px 22px;
-            font-size: 15px;
-            transition: all 0.25s ease;
-            border-left: 4px solid transparent;
-        }
-
-        .sidebar a:hover {
-            background-color: #21262d;
-            color: #fff;
-            border-left: 4px solid #0d6efd;
-        }
-
-        .sidebar a.active {
-            background-color: #0d6efd;
-            color: #fff;
-            font-weight: 600;
-            border-left: 4px solid #084298;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex-grow: 1;
-            padding: 30px;
-            overflow-y: auto;
-        }
-
-        .main-content h1 {
-            margin-top: 0;
-            font-size: 24px;
-            color: #222;
-            border-bottom: 2px solid #ddd;
-            padding-bottom: 10px;
-            margin-bottom: 25px;
-        }
-
-        /* Grades Table */
-        .grades-table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-            border-radius: 6px;
-            overflow: hidden;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-        }
-
-        .grades-table th,
-        .grades-table td {
-            padding: 14px 16px;
-            text-align: left;
-            font-size: 15px;
-        }
-
-        .grades-table th {
-            background-color: #0d6efd;
-            color: white;
-            text-transform: uppercase;
-            font-size: 14px;
-            letter-spacing: 0.5px;
-        }
-
-        .grades-table tr {
-            border-bottom: 1px solid #eee;
-        }
-
-        .grades-table tr:nth-child(even) {
-            background-color: #f9fafb;
-        }
-
-        .grades-table tr:hover {
-            background-color: #eef3ff;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                flex-direction: row;
-                overflow-x: auto;
-            }
-
-            .sidebar h2 {
-                display: none;
-            }
-
-            .sidebar nav {
-                display: flex;
-            }
-
-            .sidebar a {
-                flex: 1;
-                text-align: center;
-                font-size: 14px;
-                padding: 12px;
-                border-left: none;
-                border-bottom: 3px solid transparent;
-            }
-
-            .sidebar a.active {
-                border-bottom: 3px solid #0d6efd;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <!-- Import Sidebar Partial -->
-        <%- include('../partials/sidebar') %>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <h1><%= title %></h1>
-
-            <% if (grades.length > 0) { %>
-                <table class="grades-table">
-                    <thead>
+        <% if (grades && grades.length > 0) { %>
+            <table class="grades-table">
+                <thead>
+                    <tr>
+                        <% if (!singleStudent) { %>
+                            <th>Student Name</th>
+                        <% } %>
+                        <th>Course</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% grades.forEach(g => { %>
                         <tr>
                             <% if (!singleStudent) { %>
-                                <th>Student Name</th>
+                                <td><%= g.student_name %></td>
                             <% } %>
-                            <th>Course</th>
-                            <th>Grade</th>
+                            <td><%= g.course %></td>
+                            <td><%= g.grade %></td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <% grades.forEach(g => { %>
-                            <tr>
-                                <% if (!singleStudent) { %>
-                                    <td><%= g.student_name %></td>
-                                <% } %>
-                                <td><%= g.course %></td>
-                                <td><%= g.grade %></td>
-                            </tr>
-                        <% }) %>
-                    </tbody>
-                </table>
-            <% } else { %>
-                <p>No grades available.</p>
-            <% } %>
-        </div>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } else { %>
+            <p>No grades available.</p>
+        <% } %>
     </div>
-</body>
-</html>
+</div>
+
+<footer>
+    <%- include('../partials/footer') %>
+</footer>
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f5f6fa;
+    color: #333;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 240px;
+    background: linear-gradient(180deg, #0d1117, #161b22);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.25);
+}
+
+.sidebar h2 {
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.sidebar nav a {
+    display: block;
+    color: #aaa;
+    text-decoration: none;
+    padding: 14px 22px;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    border-left: 4px solid transparent;
+}
+
+.sidebar nav a.active {
+    background: #0d6efd;
+    color: white;
+    font-weight: 600;
+    border-left: 4px solid #084298;
+}
+
+.sidebar nav a:hover {
+    background: #21262d;
+    color: #fff;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    overflow-y: auto;
+    background: #f4f6f8;
+}
+
+.main-content h1 {
+    margin-top: 0;
+    font-size: 24px;
+    color: #222;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+}
+
+/* Grades Table */
+.grades-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+.grades-table th, .grades-table td {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 15px;
+}
+
+.grades-table th {
+    background: #0d6efd;
+    color: white;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+}
+
+.grades-table tr:nth-child(even) {
+    background: #f9fafb;
+}
+
+.grades-table tr:hover {
+    background: #eef3ff;
+}
+
+/* Footer */
+footer {
+    margin-left: 240px;
+    padding: 15px 20px;
+    background: #fff;
+    border-top: 1px solid #e0e0e0;
+    text-align: center;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+    .sidebar h2 {
+        display: none;
+    }
+    .sidebar nav a {
+        flex: 1;
+        text-align: center;
+        font-size: 14px;
+        padding: 12px;
+        border-left: none;
+        border-bottom: 3px solid transparent;
+    }
+    .sidebar nav a.active {
+        border-bottom: 3px solid #0d6efd;
+    }
+    footer {
+        margin-left: 0;
+    }
+}
+</style>

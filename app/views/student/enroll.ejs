@@ -1,0 +1,174 @@
+<%- include('../partials/header', { title: 'Enroll in a Course | Student Panel' }) %>
+<%- include('../partials/navigation') %>
+
+<div class="student-page">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <%- include('../partials/sidebar', { user: user, activePage: 'enroll' }) %>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="content">
+    <header>
+      <button class="btn-back" onclick="history.back()">
+        <i class="fas fa-arrow-left"></i> Back
+      </button>
+      <h1>Enroll in a Course</h1>
+    </header>
+
+    <section class="page-content">
+      <% if (availableCourses && availableCourses.length) { %>
+        <form action="/students/enroll" method="POST">
+          <div class="courses-list">
+            <% availableCourses.forEach(function(course) { %>
+              <div class="course-card">
+                <label>
+                  <input type="radio" name="courseId" value="<%= course.id %>" required>
+                  <span class="course-title"><i class="fas fa-book-open"></i> <%= course.title %></span>
+                </label>
+                <p><%= course.description %></p>
+                <p><strong>Instructor:</strong> <%= course.instructor || "N/A" %></p>
+                <p><strong>Status:</strong> <%= course.status %></p>
+              </div>
+            <% }); %>
+          </div>
+          <button type="submit" class="btn">Enroll</button>
+        </form>
+      <% } else { %>
+        <p>No available courses to enroll. Please check later.</p>
+      <% } %>
+    </section>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>
+
+<style>
+body.student-page {
+  display: flex;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background: #2c3e50;
+  color: white;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+}
+
+/* Main content */
+.content {
+  margin-left: 250px;
+  padding: 20px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+/* Header */
+header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #34495e;
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.btn-back {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.btn-back i {
+  margin-right: 5px;
+}
+
+/* Page content */
+.page-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Course list layout */
+.courses-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.course-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+  width: 300px;
+  background: #fff;
+  transition: transform 0.2s ease-in-out;
+}
+
+.course-card:hover {
+  transform: scale(1.02);
+}
+
+.course-card label {
+  cursor: pointer;
+}
+
+.course-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+.course-card p {
+  margin: 5px 0;
+}
+
+/* Button styling */
+.btn {
+  display: inline-block;
+  padding: 10px 15px;
+  background: #3498db;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #2980b9;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  body.student-page {
+    flex-direction: column;
+  }
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+  .content {
+    margin-left: 0;
+  }
+}
+</style>

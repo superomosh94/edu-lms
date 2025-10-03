@@ -27,6 +27,18 @@ class Course {
         }
     }
 
+    static async findAvailable() {
+        try {
+            const [rows] = await pool.query(
+                "SELECT * FROM courses WHERE status = 'active'"
+            );
+            return rows;
+        } catch (error) {
+            console.error("Course.findAvailable error:", error);
+            throw error;
+        }
+    }
+
     static async findById(id) {
         try {
             const [rows] = await pool.query('SELECT * FROM courses WHERE id = ?', [id]);

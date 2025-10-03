@@ -5,7 +5,8 @@ const dotenv = require('dotenv');
 const methodOverride = require('method-override');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
-const db = require('./app/controllers/config/db'); // MySQL connection
+const db = require('./app/controllers/config/db');
+const roleMiddleware = require('./app/middlewares/roleMiddleware');
 
 dotenv.config();
 
@@ -78,6 +79,9 @@ app.use((req, res, next) => {
     next();
 });
 
+// **Set global variables for all views**
+app.use(roleMiddleware.setGlobals);
+
 // Import routes
 const gradesRoutes = require('./app/routes/grades');
 const authRoutes = require('./app/routes/authRoutes');
@@ -86,7 +90,7 @@ const courseRoutes = require('./app/routes/courseRoutes');
 const assignmentRoutes = require('./app/routes/assignmentRoutes');
 const settingsRoutes = require('./app/routes/settingsRoutes');
 const adminRoutes = require('./app/routes/adminRoutes');
-const studentRoutes = require('./app/routes/studentRoutes'); // Added
+const studentRoutes = require('./app/routes/studentRoutes');
 
 // Use routes
 app.use('/grades', gradesRoutes);
@@ -95,8 +99,10 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/courses', courseRoutes);
 app.use('/assignments', assignmentRoutes);
 app.use('/settings', settingsRoutes);
-app.use('/admin', adminRoutes);
-app.use('/student', studentRoutes); // Added student routes
+
+// **Protected routes with role restrictions**
+app.use('/admin', roleMiddleware.restrictTo('Super Admin', 'Admin'), adminRoutes);
+app.use('/student', roleMiddleware.restrictTo('Student'), studentRoutes);
 
 // Test route for student routes
 app.get('/student/test', (req, res) => {

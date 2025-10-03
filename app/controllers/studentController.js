@@ -1,17 +1,19 @@
+// app/controllers/studentController.js
+
 const Course = require('../models/Course');
 const Assignment = require('../models/Assignment');
 const User = require('../models/Student');
 const Notification = require('../models/Notification');
+const Enrollment = require('../models/Enrollment');
 const auditHelper = require('../helpers/auditHelper');
 
 const studentController = {
     getMyCourses: async (req, res) => {
         try {
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const courses = await Course.findByStudent(studentId);
-
             const coursesWithProgress = await Promise.all(
                 courses.map(async (course) => {
                     const totalAssignments = await Assignment.getCountByCourse(course.id);
@@ -22,10 +24,52 @@ const studentController = {
                 })
             );
 
-            res.render('student/courses', { title: "My Courses", courses: coursesWithProgress });
+            res.render('student/courses', {
+                title: "My Courses",
+                courses: coursesWithProgress
+            });
         } catch (error) {
             console.error('Get student courses error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).render('error', {
+                title: "Error",
+                message: "Unable to fetch courses",
+                error
+            });
+        }
+    },
+
+    getEnrollPage: async (req, res) => {
+        try {
+            const studentId = req.userId;
+            if (!studentId) throw new Error('Student ID is missing');
+
+            const availableCourses = await Course.findAvailable();
+
+            res.render('student/enroll', {
+                title: "Enroll in a Course",
+                availableCourses,
+                user: req.user,
+                activePage: "enroll"
+            });
+        } catch (error) {
+            console.error('Get enroll page error:', error);
+            res.status(500).render('error', { title: "Error", message: "Unable to load enroll page", error });
+        }
+    },
+
+    postEnroll: async (req, res) => {
+        try {
+            const studentId = req.userId;
+            const { courseId } = req.body;
+            if (!studentId || !courseId) throw new Error('Missing enrollment data');
+
+            await Enrollment.create({ studentId, courseId });
+            await auditHelper.logAction(studentId, 'ENROLL_COURSE', `Enrolled in course ID ${courseId}`);
+
+            res.redirect('/student/courses');
+        } catch (error) {
+            console.error('Post enroll error:', error);
+            res.status(500).render('error', { title: "Error", message: "Enrollment failed", error });
         }
     },
 
@@ -33,10 +77,10 @@ const studentController = {
         try {
             const courseId = req.params.courseId;
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const isEnrolled = await Course.isStudentEnrolled(courseId, studentId);
-            if (!isEnrolled) return res.status(403).send('Not enrolled in this course');
+            if (!isEnrolled) return res.status(403).render('error', { title: "Access Denied", message: "Not enrolled in this course" });
 
             const course = await Course.findById(courseId);
             const assignments = await Assignment.findByCourse(courseId);
@@ -47,29 +91,33 @@ const studentController = {
                     return {
                         ...assignment,
                         submissionStatus: submission ? 'submitted' : 'pending',
-                        grade: submission ? submission.grade : null,
-                        submittedAt: submission ? submission.submittedAt : null
+                        grade: submission?.grade || null,
+                        submittedAt: submission?.submittedAt || null
                     };
                 })
             );
 
-            res.render('student/course', { title: course.title, course, assignments: assignmentsWithStatus });
+            res.render('student/course', {
+                title: course.title,
+                course,
+                assignments: assignmentsWithStatus
+            });
         } catch (error) {
             console.error('Get student course error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).render('error', { title: "Error", message: "Unable to load course", error });
         }
     },
 
     getAssignments: async (req, res) => {
         try {
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const assignments = await Assignment.getByStudent(studentId);
             res.render('student/assignments', { title: "Assignments", assignments });
         } catch (error) {
             console.error('Get assignments error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).render('error', { title: "Error", message: "Unable to load assignments", error });
         }
     },
 
@@ -77,29 +125,29 @@ const studentController = {
         try {
             const assignmentId = req.params.id;
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const assignment = await Assignment.findById(assignmentId);
-            if (!assignment) return res.status(404).send('Assignment not found');
+            if (!assignment) return res.status(404).render('error', { title: "Not Found", message: "Assignment not found" });
 
             const submission = await Assignment.getStudentSubmission(assignmentId, studentId);
             res.render('student/assignment-detail', { title: assignment.title, assignment, submission });
         } catch (error) {
             console.error('Get assignment detail error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).render('error', { title: "Error", message: "Unable to load assignment details", error });
         }
     },
 
     getMySubmissions: async (req, res) => {
         try {
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const submissions = await Assignment.getStudentSubmissions(studentId);
             res.render('student/submissions', { title: "My Submissions", submissions });
         } catch (error) {
             console.error('Get student submissions error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).render('error', { title: "Error", message: "Unable to load submissions", error });
         }
     },
 
@@ -107,24 +155,24 @@ const studentController = {
         try {
             const submissionId = req.params.id;
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const submission = await Assignment.getSubmissionById(submissionId);
-            if (!submission) return res.status(404).send('Submission not found');
-            if (submission.studentId !== studentId) return res.status(403).send('Access denied');
+            if (!submission) return res.status(404).render('error', { title: "Not Found", message: "Submission not found" });
+            if (submission.studentId !== studentId) return res.status(403).render('error', { title: "Access Denied", message: "You cannot view this submission" });
 
             submission.assignment = await Assignment.findById(submission.assignmentId);
             res.render('student/submission-detail', { title: "Submission Detail", submission });
         } catch (error) {
             console.error('Get submission error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).render('error', { title: "Error", message: "Unable to load submission", error });
         }
     },
 
     getMyGrades: async (req, res) => {
         try {
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const grades = await Assignment.getGradesByStudent(studentId);
             const overallStats = {
@@ -134,21 +182,17 @@ const studentController = {
                 pendingAssignments: await Assignment.getPendingCount(studentId)
             };
 
-            res.render('student/grades', {
-                title: 'grades | Student Panel',
-                grades,
-                overallStats
-            });
+            res.render('student/grades', { title: 'Grades | Student Panel', grades, overallStats });
         } catch (error) {
             console.error('Get student grades error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).render('error', { title: "Error", message: "Unable to load grades", error });
         }
     },
 
     getCourseRecommendations: async (req, res) => {
         try {
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const enrolledCourses = await Course.findByStudent(studentId);
             let recommendations;
@@ -163,27 +207,27 @@ const studentController = {
             res.render('student/recommendations', { title: "Course Recommendations", recommendations });
         } catch (error) {
             console.error('Get recommendations error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).render('error', { title: "Error", message: "Unable to load recommendations", error });
         }
     },
 
     getNotifications: async (req, res) => {
         try {
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const notifications = await Notification.getForStudent(studentId);
             res.render('student/notifications', { title: "Notifications", notifications });
         } catch (error) {
             console.error('Get notifications error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).render('error', { title: "Error", message: "Unable to load notifications", error });
         }
     },
 
     updateProfile: async (req, res) => {
         try {
             const studentId = req.userId;
-            if (!studentId) throw new Error('studentId is missing');
+            if (!studentId) throw new Error('Student ID is missing');
 
             const { bio, interests, contactInfo } = req.body;
             const updatedStudent = await User.updateStudentProfile(studentId, { bio, interests, contactInfo });
@@ -192,7 +236,7 @@ const studentController = {
             res.json({ message: 'Profile updated successfully', student: updatedStudent });
         } catch (error) {
             console.error('Update student profile error:', error);
-            res.status(500).send('Internal server error');
+            res.status(500).json({ message: 'Failed to update profile', error });
         }
     }
 };

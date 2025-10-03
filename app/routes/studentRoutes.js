@@ -14,6 +14,10 @@ router.use(roleMiddleware.restrictTo('Student'));
 router.get('/courses', studentController.getMyCourses);
 router.get('/courses/:courseId', studentController.getCourse);
 
+// Enrollments
+router.get('/enroll', studentController.getEnrollPage); // New
+router.post('/enroll', studentController.postEnroll); // New
+
 // Assignments
 router.get('/assignments', studentController.getAssignments);
 router.get('/assignments/:id', studentController.getAssignmentDetail);
