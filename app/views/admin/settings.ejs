@@ -1,85 +1,156 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+    <!-- include the header from patials and the navigation bar
+      -->
+    <%-include('../partials/header', { title: "Admin Settings", headerTitle: "Admin Settings", adminName: "Admin" }) %>
+
+
+    <%- include('../partials/navigation') %>
 <head>
-    <title>Admin Settings</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background: #f4f6f8;
-            color: #333;
-        }
-        h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        form {
-            background: #fff;
-            padding: 25px;
-            border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            max-width: 500px;
-        }
-        label {
-            display: block;
-            margin-top: 15px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        button {
-            margin-top: 25px;
-            padding: 12px 20px;
-            background: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 15px;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .form-section {
-            margin-bottom: 20px;
-        }
-    </style>
+
+  <meta charset="UTF-8">
+  <title>Admin Settings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+  <style>
+    body {
+      background-color: #f5f7fb;
+      font-family: 'Inter', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #1e293b;
+    }
+
+    .settings-container {
+      max-width: 700px;
+      margin: 60px auto;
+      background: #ffffff;
+      padding: 40px 50px;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+      border: 1px solid #e2e8f0;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 30px;
+    }
+
+    .form-section {
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      color: #334155;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background-color: #f8fafc;
+      color: #1e293b;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #2563eb;
+      background-color: #ffffff;
+      outline: none;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      background-color: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button i {
+      margin-right: 8px;
+      font-size: 1rem;
+    }
+
+    button:hover {
+      background-color: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .form-divider {
+      height: 1px;
+      background-color: #e2e8f0;
+      margin: 25px 0;
+    }
+
+    @media (max-width: 600px) {
+      .settings-container {
+        margin: 30px 15px;
+        padding: 25px 20px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <h1>Admin Settings</h1>
+     <%- include('../partials/adminSidebar') %>
+  <div class="settings-container">
+    <h1><i class="fas fa-cogs"></i> Admin Settings</h1>
+
     <form method="POST" action="/admin/settings">
-        <div class="form-section">
-            <label for="siteName">Site Name</label>
-            <input type="text" id="siteName" name="siteName" value="Edu LMS" required>
-        </div>
+      <div class="form-section">
+        <label for="siteName">Site Name</label>
+        <input type="text" id="siteName" name="siteName" value="Edu LMS" required>
+      </div>
 
-        <div class="form-section">
-            <label for="siteEmail">Site Email</label>
-            <input type="email" id="siteEmail" name="siteEmail" value="admin@example.com" required>
-        </div>
+      <div class="form-section">
+        <label for="siteEmail">Site Email</label>
+        <input type="email" id="siteEmail" name="siteEmail" value="admin@example.com" required>
+      </div>
 
-        <div class="form-section">
-            <label for="siteStatus">Site Status</label>
-            <select id="siteStatus" name="siteStatus" required>
-                <option value="online">Online</option>
-                <option value="maintenance">Maintenance</option>
-                <option value="offline">Offline</option>
-            </select>
-        </div>
+      <div class="form-section">
+        <label for="siteStatus">Site Status</label>
+        <select id="siteStatus" name="siteStatus" required>
+          <option value="online">Online</option>
+          <option value="maintenance">Maintenance</option>
+          <option value="offline">Offline</option>
+        </select>
+      </div>
 
-        <div class="form-section">
-            <label for="siteDescription">Site Description</label>
-            <input type="text" id="siteDescription" name="siteDescription" value="Learning Management System">
-        </div>
+      <div class="form-section">
+        <label for="siteDescription">Site Description</label>
+        <input type="text" id="siteDescription" name="siteDescription" value="Learning Management System">
+      </div>
 
-        <button type="submit">Save Settings</button>
+      <div class="form-divider"></div>
+
+      <button type="submit">
+        <i class="fas fa-save"></i> Save Settings
+      </button>
     </form>
+  </div>
 </body>
 </html>

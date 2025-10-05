@@ -1,135 +1,174 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-sm">
-    <div class="container-fluid">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm gradient-navbar">
+  <div class="container-fluid">
 
-        <!-- Brand -->
-        <a class="navbar-brand d-flex align-items-center fw-bold" href="/dashboard">
-            <i class="fas fa-graduation-cap me-2" style="color: #ffd700;"></i>
-            EDU LMS
-        </a>
+    <!-- Brand -->
+    <a class="navbar-brand d-flex align-items-center fw-bold" href="/dashboard">
+      <i class="fas fa-graduation-cap me-2" style="color: #ffd700;"></i>
+      EDU LMS
+      <small class="text-light ms-2 fw-normal">Learn. Grow. Achieve.</small>
+    </a>
 
-        <!-- Mobile toggle -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+    <!-- Mobile Toggle -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-        <!-- Navbar content -->
-        <div class="collapse navbar-collapse" id="navbarContent">
+    <!-- Navbar Content -->
+    <div class="collapse navbar-collapse" id="navbarContent">
 
-            <!-- Left menu -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link px-3" href="/dashboard">
-                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link px-3" href="/courses">
-                        <i class="fas fa-book me-1"></i>Courses
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link px-3" href="/assignments">
-                        <i class="fas fa-tasks me-1"></i>Assignments
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link px-3" href="/grades">
-                        <i class="fas fa-chart-bar me-1"></i>Grades
-                    </a>
-                </li>
+      <!-- Left Menu -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link px-3" href="/dashboard"><i class="fas fa-tachometer-alt me-1"></i>My Learning Space</a></li>
+        <li class="nav-item"><a class="nav-link px-3" href="/courses"><i class="fas fa-book me-1"></i>My Courses</a></li>
+        <li class="nav-item"><a class="nav-link px-3" href="/assignments"><i class="fas fa-tasks me-1"></i>Assignments</a></li>
+        <li class="nav-item"><a class="nav-link px-3" href="/grades"><i class="fas fa-chart-bar me-1"></i>Performance</a></li>
 
-                <!-- Management menu -->
-                <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle px-3" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-cogs me-1"></i>Management
-                    </a>
-                    <ul class="dropdown-menu shadow-sm">
-                        <% if (user.role === 'admin') { %>
-                        <li><a class="dropdown-item" href="/admin/users">User Management</a></li>
-                        <li><a class="dropdown-item" href="/admin/courses">Course Management</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <% } %>
-                        <li><a class="dropdown-item" href="/courses/create">Create Course</a></li>
-                        <li><a class="dropdown-item" href="/assignments/create">Create Assignment</a></li>
-                    </ul>
-                </li>
-                <% } %>
-            </ul>
+        <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle px-3" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-cogs me-1"></i>Management
+          </a>
+          <ul class="dropdown-menu shadow-sm">
+            <% if (user.role === 'admin') { %>
+              <li><a class="dropdown-item" href="/admin/users">User Management</a></li>
+              <li><a class="dropdown-item" href="/admin/courses">Course Management</a></li>
+              <li><hr class="dropdown-divider"></li>
+            <% } %>
+            <li><a class="dropdown-item" href="/courses/create">Create Course</a></li>
+            <li><a class="dropdown-item" href="/assignments/create">Create Assignment</a></li>
+          </ul>
+        </li>
+        <% } %>
+      </ul>
 
-            <!-- Right menu -->
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+      <!-- Right Menu -->
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
 
-                <!-- Dark/Light Mode Switch -->
-                <li class="nav-item d-flex align-items-center px-3">
-                    <label class="switch mb-0">
-                        <input type="checkbox" id="themeToggle">
-                        <span class="slider round"></span>
-                    </label>
-                    <small class="text-light ms-2">Dark Mode</small>
-                </li>
+        <!-- Dark Mode Switch -->
+        <li class="nav-item d-flex align-items-center px-3">
+          <label class="switch mb-0">
+            <input type="checkbox" id="themeToggle">
+            <span class="slider round"></span>
+          </label>
+          <small class="text-light ms-2">Dark Mode</small>
+        </li>
 
-                <!-- Notifications -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link position-relative px-3" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-bell"></i>
-                        <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-                    </a>
-                    <ul id="notificationList" class="dropdown-menu dropdown-menu-end shadow">
-                        <li><h6 class="dropdown-header">Notifications</h6></li>
-                        <li><a class="dropdown-item text-center text-muted" href="#">No notifications</a></li>
-                    </ul>
-                </li>
+        <!-- Notifications -->
+        <li class="nav-item dropdown">
+          <a class="nav-link position-relative px-3" href="#" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-bell"></i>
+            <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+          </a>
+          <ul id="notificationList" class="dropdown-menu dropdown-menu-end shadow">
+            <li><h6 class="dropdown-header">Notifications</h6></li>
+            <li><a class="dropdown-item text-center text-muted" href="#">No notifications</a></li>
+          </ul>
+        </li>
 
-                <!-- Messages -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link position-relative px-3" href="#" id="messageDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-envelope"></i>
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">2</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                        <li><h6 class="dropdown-header">Messages</h6></li>
-                        <li><a class="dropdown-item" href="#">
-                            <div class="d-flex w-100 justify-content-between">
-                                <strong>Dr. Smith</strong>
-                                <small class="text-muted">10 min ago</small>
-                            </div>
-                            <small class="text-muted">Regarding your assignment submission...</small>
-                        </a></li>
-                        <li><a class="dropdown-item text-center" href="#">View all messages</a></li>
-                    </ul>
-                </li>
+        <!-- Messages -->
+        <li class="nav-item dropdown">
+          <a class="nav-link position-relative px-3" href="#" id="messageDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-envelope"></i>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">2</span>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li><h6 class="dropdown-header">Messages</h6></li>
+            <li><a class="dropdown-item" href="#">
+              <div class="d-flex w-100 justify-content-between">
+                <strong>Dr. Smith</strong>
+                <small class="text-muted">10 min ago</small>
+              </div>
+              <small class="text-muted">Regarding your assignment submission...</small>
+            </a></li>
+            <li><a class="dropdown-item text-center" href="#">View all messages</a></li>
+          </ul>
+        </li>
 
-                <!-- User profile -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle px-3 d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                        <i class="fas fa-user me-1"></i>
-                        <% if (user) { %><span><%= user.firstName %> <%= user.lastName %></span><% } else { %>Guest<% } %>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end shadow">
-                        <li><a class="dropdown-item" href="/settings/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
-                        <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                        <li><a class="dropdown-item" href="/settings/help"><i class="fas fa-question-circle me-2"></i>Help & Support</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-danger" href="/auth/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                    </ul>
-                </li>
-            </ul>
+        <!-- User Profile -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle px-3 d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user me-1"></i>
+            <% if (user) { %><span>Welcome, <%= user.firstName %>!</span><% } else { %>Guest<% } %>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li><a class="dropdown-item" href="/settings/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
+            <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
+            <li><a class="dropdown-item" href="/settings/help"><i class="fas fa-question-circle me-2"></i>Help & Support</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="/auth/logout"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+          </ul>
+        </li>
+      </ul>
 
-            <!-- Search -->
-            <form class="d-flex ms-3">
-                <div class="input-group">
-                    <input class="form-control form-control-sm rounded-start" type="search" placeholder="Search..." aria-label="Search">
-                    <button class="btn btn-outline-light btn-sm rounded-end" type="submit"><i class="fas fa-search"></i></button>
-                </div>
-            </form>
-
+      <!-- Search -->
+      <form class="d-flex ms-3">
+        <div class="input-group">
+          <input class="form-control form-control-sm rounded-start" type="search" placeholder="Search..." aria-label="Search">
+          <button class="btn btn-outline-light btn-sm rounded-end" type="submit"><i class="fas fa-search"></i></button>
         </div>
+      </form>
+
     </div>
+  </div>
 </nav>
 
-<!-- Dark Mode Switch CSS -->
+<!-- CSS -->
 <style>
+.gradient-navbar {
+  background: linear-gradient(90deg, #0b0c10, #1f2937);
+  transition: background 0.4s ease;
+}
+.navbar .nav-link {
+  color: #e0e0e0;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.navbar .nav-link:hover {
+  color: #ffd700;
+  transform: scale(1.05);
+}
+.navbar-brand {
+  font-size: 1.4rem;
+  letter-spacing: 1px;
+}
+.navbar-brand small {
+  font-size: 0.9rem;
+  color: #ff7f50;
+}
+.dropdown-menu {
+  background-color: #1e293b;
+}
+.dropdown-item {
+  color: #e0e0e0;
+}
+.dropdown-item:hover {
+  background-color: #2c3e50;
+  color: #ffd700;
+}
+.badge {
+  font-size: 0.7rem;
+}
+
+/* Dark Mode */
+.dark-mode {
+  background-color: #0a0a0a !important;
+  color: #e0e0e0 !important;
+}
+.dark-mode .gradient-navbar {
+  background: linear-gradient(90deg, #0a0a0a, #1c1c1c);
+}
+.dark-mode .dropdown-menu {
+  background-color: #1c1c1c;
+  color: #f1f5f9;
+}
+.dark-mode .nav-link {
+  color: #e0e0e0;
+}
+.dark-mode .nav-link:hover {
+  color: #ffd700;
+}
+
+/* Dark Mode Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -144,9 +183,8 @@
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
-  background-color: #ccc;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #555;
   transition: .4s;
   border-radius: 20px;
 }
@@ -177,33 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.toggle('dark-mode', toggle.checked);
     localStorage.setItem('darkMode', toggle.checked);
   });
-
   if (localStorage.getItem('darkMode') === 'true') {
     toggle.checked = true;
     document.body.classList.add('dark-mode');
   }
 });
 </script>
-
-<!-- Dark Mode CSS -->
-<style>
-.dark-mode {
-  background-color: #121212 !important;
-  color: #e0e0e0 !important;
-}
-.dark-mode nav.navbar {
-  background-color: #1f1f1f !important;
-}
-.dark-mode .dropdown-menu {
-  background-color: #2c2c2c !important;
-  color: #e0e0e0;
-}
-.dark-mode .dropdown-item {
-  color: #e0e0e0 !important;
-}
-.dark-mode input, .dark-mode select {
-  background-color: #2c2c2c;
-  color: #e0e0e0;
-  border: 1px solid #444;
-}
-</style>

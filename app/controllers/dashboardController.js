@@ -30,7 +30,7 @@ exports.getDashboard = async (req, res) => {
         dashboardData = { stats: {} };
     }
 
-    res.render('dashboard/index', {
+    res.render('dashboard/admin', {
       title: 'Dashboard',
       role: roleName,
       user: {

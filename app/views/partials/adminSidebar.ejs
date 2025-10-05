@@ -1,0 +1,170 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <h2>Welcome, Admin</h2>
+    <p class="sidebar-subtext">Own every move. Lead the system.</p>
+  </div>
+
+  <ul class="sidebar-menu">
+    <li><a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+    <li><a href="/admin/users"><i class="fas fa-users-cog"></i> Manage Users</a></li>
+    <li><a href="/admin/courses"><i class="fas fa-book"></i> Manage Courses</a></li>
+    <li><a href="/admin/reports"><i class="fas fa-chart-bar"></i> Reports & Insights</a></li>
+    <li><a href="/admin/stats"><i class="fas fa-chart-pie"></i> System Analytics</a></li>
+    <li><a href="/admin/announcements"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+    <li><a href="/admin/audit-logs"><i class="fas fa-file-alt"></i> Audit Logs</a></li>
+    <li><a href="/admin/settings"><i class="fas fa-sliders-h"></i> Control Panel</a></li>
+    <li><a href="/admin/system"><i class="fas fa-cogs"></i> System Power</a></li>
+  </ul>
+
+  <div class="sidebar-footer">
+    <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+    <p class="logout-text">Secure your leadership</p>
+  </div>
+</aside>
+
+<style>
+  .sidebar {
+    width: 250px;
+    height: 100vh;
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    color: #e2e8f0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 3px 0 10px rgba(0, 0, 0, 0.15);
+    transform: translateX(-260px);
+    opacity: 0;
+    animation: sidebarSlideIn 0.6s ease-out forwards;
+  }
+
+  .sidebar-header {
+    padding-top: 80px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    animation: fadeIn 1s ease forwards 0.3s;
+  }
+
+  .sidebar-header h2 {
+    font-size: 20px;
+    color: #60a5fa;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .sidebar-subtext {
+    font-size: 13px;
+    color: #94a3b8;
+    opacity: 0.8;
+    margin: 0;
+  }
+
+  .sidebar-menu {
+    list-style: none;
+    margin: 20px 0;
+    padding: 0;
+  }
+
+  .sidebar-menu li {
+    margin: 6px 0;
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: fadeSlide 0.5s ease forwards;
+  }
+
+  .sidebar-menu li:nth-child(1) { animation-delay: 0.3s; }
+  .sidebar-menu li:nth-child(2) { animation-delay: 0.4s; }
+  .sidebar-menu li:nth-child(3) { animation-delay: 0.5s; }
+  .sidebar-menu li:nth-child(4) { animation-delay: 0.6s; }
+  .sidebar-menu li:nth-child(5) { animation-delay: 0.7s; }
+  .sidebar-menu li:nth-child(6) { animation-delay: 0.8s; }
+  .sidebar-menu li:nth-child(7) { animation-delay: 0.9s; }
+  .sidebar-menu li:nth-child(8) { animation-delay: 1.0s; }
+  .sidebar-menu li:nth-child(9) { animation-delay: 1.1s; }
+
+  .sidebar-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 22px;
+    text-decoration: none;
+    color: #cbd5e1;
+    font-size: 15px;
+    font-weight: 500;
+    border-left: 3px solid transparent;
+    transition: all 0.25s ease;
+  }
+
+  .sidebar-menu li a:hover {
+    background: rgba(37, 99, 235, 0.15);
+    color: #fff;
+    border-left: 3px solid #2563eb;
+    transform: translateX(5px);
+  }
+
+  .sidebar-menu li a i {
+    width: 20px;
+    text-align: center;
+    color: #94a3b8;
+    transition: color 0.25s ease, transform 0.25s ease;
+  }
+
+  .sidebar-menu li a:hover i {
+    color: #60a5fa;
+    transform: rotate(10deg);
+  }
+
+  .sidebar-menu li.active a {
+    background: rgba(37, 99, 235, 0.25);
+    color: #fff;
+    border-left: 3px solid #2563eb;
+  }
+
+  .sidebar-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 15px 20px;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 1.2s;
+    text-align: center;
+  }
+
+  .sidebar-footer a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 15px;
+    transition: color 0.2s, transform 0.2s;
+  }
+
+  .sidebar-footer a:hover {
+    color: #60a5fa;
+    transform: scale(1.05);
+  }
+
+  .logout-text {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 8px;
+  }
+
+  @keyframes sidebarSlideIn {
+    from { transform: translateX(-260px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+</style>

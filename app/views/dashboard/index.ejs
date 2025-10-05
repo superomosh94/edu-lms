@@ -3,9 +3,11 @@
 
 <div class="dashboard-container <%= user.role.toLowerCase() %>-theme">
   <!-- Sidebar -->
+ 
   <div class="sidebar">
-    <%- include('../partials/sidebar', { user: user, activePage: 'dashboard' }) %>
-  </div>
+  <%- include('../partials/sidebar', { user: user, activePage: 'dashboard' }) %>
+</div>
+
 
   <!-- Main Content -->
   <main class="dashboard-main">
@@ -258,3 +260,4 @@ body {
 </style>
 
 <%- include('../partials/footer') %>
+
