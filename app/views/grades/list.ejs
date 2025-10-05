@@ -1,33 +1,57 @@
-<%- include('../partials/header') %>
+<%- include('../partials/header', { title: title }) %>
 <%- include('../partials/navigation') %>
 
-<div class="container py-4">
-    <h2 class="mb-4"><%= title %></h2>
+<div class="container d-flex py-4">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <% if (user && user.role && user.role.toLowerCase() === 'admin') { %>
+            <h2>Admin Panel</h2>
+            <nav>
+                <%- include('../partials/adminSidebar', { user: user, activePage: activePage }) %>
+            </nav>
+        <% } else { %>
+            <h2>Student Panel</h2>
+            <nav>
+                <%- include('../partials/sidebar', { user: user, activePage: activePage }) %>
+            </nav>
+        <% } %>
+    </aside>
 
-    <% if (grades && grades.length > 0) { %>
-        <div class="table-responsive">
-            <table class="table table-bordered table-hover">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Course</th>
-                        <th>Grade</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% grades.forEach(grade => { %>
+    <!-- Main Content -->
+    <div class="main-content flex-grow-1">
+        <h2 class="mb-4"><%= title %></h2>
+
+        <% if (grades && grades.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-dark">
                         <tr>
-                            <td><%= grade.course %></td>
-                            <td><%= grade.grade %></td>
+                            <% if (!singleStudent) { %>
+                                <th>Student Name</th>
+                            <% } %>
+                            <th>Course</th>
+                            <th>Grade</th>
                         </tr>
-                    <% }) %>
-                </tbody>
-            </table>
-        </div>
-    <% } else { %>
-        <div class="alert alert-info" role="alert">
-            No grades available for this student.
-        </div>
-    <% } %>
+                    </thead>
+                    <tbody>
+                        <% grades.forEach(grade => { %>
+                            <tr>
+                                <% if (!singleStudent) { %>
+                                    <td><%= grade.student_name %></td>
+                                <% } %>
+                                <td><%= grade.course %></td>
+                                <td><%= grade.grade %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="alert alert-info" role="alert">
+                No grades available.
+            </div>
+        <% } %>
+    </div>
 </div>
 
 <%- include('../partials/footer') %>

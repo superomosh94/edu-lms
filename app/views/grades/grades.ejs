@@ -1,77 +1,77 @@
-<%- include('../partials/header', { title: 'Grades | Panel' }) %>
+<%- include('../partials/header', { title: title }) %>
 <%- include('../partials/navigation') %>
 
-<div class="container">
+<div class="container flex-container">
     <!-- Sidebar -->
     <aside class="sidebar">
-        <% if (user && user.role === 'admin') { %>
+        <% if (user && user.role && user.role.toLowerCase() === 'admin') { %>
             <h2>Admin Panel</h2>
             <nav>
-                <%- include('../partials/adminSidebar', { user: user, activePage: 'grades' }) %>
+                <%- include('../partials/adminSidebar', { user: user, activePage: activePage }) %>
             </nav>
         <% } else { %>
             <h2>Student Panel</h2>
             <nav>
-                <%- include('../partials/sidebar', { user: user, activePage: 'grades' }) %>
+                <%- include('../partials/sidebar', { user: user, activePage: activePage }) %>
             </nav>
         <% } %>
     </aside>
 
     <!-- Main Content -->
-    <div class="main-content">
-        <h1>Grades</h1>
+    <main class="main-content">
+        <h2><%= title %></h2>
 
         <% if (grades && grades.length > 0) { %>
-            <table class="grades-table">
-                <thead>
-                    <tr>
-                        <% if (!singleStudent) { %>
-                            <th>Student Name</th>
-                        <% } %>
-                        <th>Course</th>
-                        <th>Grade</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% grades.forEach(g => { %>
+            <div class="table-responsive">
+                <table class="grades-table">
+                    <thead>
                         <tr>
                             <% if (!singleStudent) { %>
-                                <td><%= g.student_name %></td>
+                                <th>Student Name</th>
                             <% } %>
-                            <td><%= g.course %></td>
-                            <td><%= g.grade %></td>
+                            <th>Course</th>
+                            <th>Grade</th>
                         </tr>
-                    <% }) %>
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        <% grades.forEach(grade => { %>
+                            <tr>
+                                <% if (!singleStudent) { %>
+                                    <td><%= grade.student_name %></td>
+                                <% } %>
+                                <td><%= grade.course %></td>
+                                <td><%= grade.grade %></td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
         <% } else { %>
-            <p>No grades available.</p>
+            <div class="alert">No grades available.</div>
         <% } %>
-    </div>
+    </main>
 </div>
 
-<footer>
-    <%- include('../partials/footer') %>
-</footer>
+<%- include('../partials/footer') %>
 
 <style>
 body {
     margin: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: #121212;
-    color: #eee;
+    background: #1d2022;
+    color: #333;
 }
 
-.container {
+.flex-container {
     display: flex;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 /* Sidebar */
 .sidebar {
     width: 250px;
-    background: linear-gradient(180deg, #121212, #1f1f1f);
-    color: #ddd;
+    background: linear-gradient(180deg, #0d1117, #161b22);
+    color: #fff;
     display: flex;
     flex-direction: column;
     box-shadow: 2px 0 8px rgba(0,0,0,0.3);
@@ -113,31 +113,35 @@ body {
 .main-content {
     flex-grow: 1;
     padding: 30px;
-    background: #1c1c1c;
-    color: #eee;
+    background: #fff;
+    border-left: 1px solid #ddd;
 }
 
-.main-content h1 {
-    margin-top: 0;
+.main-content h2 {
     font-size: 24px;
-    border-bottom: 2px solid #333;
+    margin-bottom: 20px;
+    color: #1a73e8;
+    border-bottom: 2px solid #ddd;
     padding-bottom: 10px;
-    margin-bottom: 25px;
 }
 
 /* Grades Table */
+.table-responsive {
+    overflow-x: auto;
+}
+
 .grades-table {
     width: 100%;
     border-collapse: collapse;
-    background: #222;
-    border-radius: 6px;
-    overflow: hidden;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    background: white;
 }
 
 .grades-table th,
 .grades-table td {
-    padding: 14px 16px;
+    padding: 14px;
     text-align: left;
+    border-bottom: 1px solid #eee;
 }
 
 .grades-table th {
@@ -146,24 +150,35 @@ body {
 }
 
 .grades-table tr:nth-child(even) {
-    background: #2a2a2a;
+    background: #f9f9f9;
 }
 
 .grades-table tr:hover {
-    background: #333;
+    background: #f1f1f1;
+}
+
+/* Alerts */
+.alert {
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-left: 4px solid #1a73e8;
+    margin-top: 20px;
+    font-size: 16px;
 }
 
 /* Footer */
 footer {
-    padding: 15px 20px;
-    background: #121212;
-    color: #aaa;
+    padding: 15px;
     text-align: center;
+    background: #f4f6f8;
+    border-top: 1px solid #ddd;
+    font-size: 14px;
+    color: #666;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .container {
+    .flex-container {
         flex-direction: column;
     }
     .sidebar {
@@ -185,8 +200,8 @@ footer {
     .sidebar nav a.active {
         border-bottom: 3px solid #1a73e8;
     }
-    footer {
-        margin-left: 0;
+    .main-content {
+        padding: 20px;
     }
 }
 </style>

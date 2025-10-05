@@ -1,335 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Courses - EDU LMS</title>
-    <%- include('../partials/header') %>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f8f9fa;
-        }
-
-        .sidebar {
-            background: #111;
-            color: #fff;
-            height: 100vh;
-            padding-top: 1rem;
-            position: sticky;
-            top: 0;
-        }
-
-        .nav-link {
-            color: rgba(255,255,255,0.9);
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-        }
-
-        .nav-link.active {
-            background: #1f6feb;
-            color: #fff;
-        }
-
-        .nav-link:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .sidebar-heading {
-            font-size: 0.85rem;
-            font-weight: bold;
-            padding-left: 15px;
-            margin-top: 20px;
-        }
-
-        .course-card {
-            transition: all 0.3s ease;
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            background: #fff;
-        }
-
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-
-        .course-image {
-            height: 200px;
-            object-fit: cover;
-            border-top-left-radius: 10px;
-            border-top-right-radius: 10px;
-        }
-
-        .progress {
-            height: 6px;
-            border-radius: 3px;
-            background: #e9ecef;
-        }
-
-        .progress-bar {
-            background: #667eea;
-        }
-
-        .filter-section {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box .form-control {
-            padding-left: 40px;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #6c757d;
-        }
-
-        .title {
-            font-size: 1.8rem;
-            font-weight: bold;
-        }
-
-        .subtitle {
-            font-size: 1rem;
-            color: #6c757d;
-        }
-
-        .btn-primary {
-            background: #667eea;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-weight: bold;
-        }
-
-        .btn-primary:hover {
-            background: #556cd6;
-        }
-
-        .btn {
-            font-weight: bold;
-        }
-
-        .page-header {
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 20px;
-        }
-
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .course-sidebar {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 20px;
-        }
-
-        .pagination {
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                height: auto;
-                padding-bottom: 20px;
-            }
-
-            .course-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
+<%- include('../partials/header', { title: "Courses" }) %>
 <%- include('../partials/navigation') %>
 
-<div class="container-fluid py-4">
-    <% const safeUser = user || { role: 'student' }; %>
-    <div class="row">
-        <!-- Sidebar -->
-        <div class="col-md-3 col-lg-2 sidebar">
-            <div class="position-sticky pt-3">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link <%= activePage==='dashboard'?'active':'' %>" href="/dashboard">
-                            <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <%= activePage==='courses'?'active':'' %>" href="/courses">
-                            <i class="fas fa-book me-2"></i> Courses
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <%= activePage==='assignments'?'active':'' %>" href="/assignments">
-                            <i class="fas fa-tasks me-2"></i> Assignments
-                        </a>
-                    </li>
-                    <% if (safeUser.role === 'teacher' || safeUser.role === 'admin') { %>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/courses/create">
-                                <i class="fas fa-plus-circle me-2"></i> Create Course
-                            </a>
-                        </li>
-                    <% } %>
-                </ul>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Courses</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f8;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
 
-                <div class="filter-section mt-4">
-                    <h6 class="sidebar-heading">Filters</h6>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="filter-enrolled">
-                        <label class="form-check-label text-light" for="filter-enrolled">
-                            <i class="fas fa-user-graduate me-1"></i> My Courses
-                        </label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="filter-available">
-                        <label class="form-check-label text-light" for="filter-available">
-                            <i class="fas fa-book-open me-1"></i> Available
-                        </label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="filter-completed">
-                        <label class="form-check-label text-light" for="filter-completed">
-                            <i class="fas fa-check-circle me-1"></i> Completed
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
+ 
 
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap align-items-center page-header">
-                <div>
-                    <h1 class="title">Courses</h1>
-                    <p class="subtitle">Browse available courses, filter by status, or create new ones.</p>
-                </div>
-                <% if (safeUser.role === 'teacher' || safeUser.role === 'admin') { %>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/courses/create" class="btn btn-primary">
-                            <i class="fas fa-plus me-2"></i>Create Course
-                        </a>
-                    </div>
-                <% } %>
-            </div>
+  .container {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+  }
 
-            <!-- Search and Sort -->
-            <div class="row mb-4">
-                <div class="col-md-8">
-                    <div class="search-box">
-                        <i class="fas fa-search"></i>
-                        <input type="text" class="form-control" id="course-search" placeholder="Search courses...">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <select class="form-select" id="course-sort">
-                        <option value="newest">Newest</option>
-                        <option value="popular">Popular</option>
-                        <option value="alphabetical">Alphabetical</option>
-                    </select>
-                </div>
-            </div>
+  aside {
+    /* margin-top: 20px; */
+    width: 220px;
+    background: #111;
+    color: #fff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 64px; /* height of header */
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+  }
 
-            <!-- Courses Grid -->
-            <div class="course-grid" id="courses-grid">
-                <% if (courses && courses.length > 0) { %>
-                    <% courses.forEach(course => { %>
-                        <div class="course-item" data-enrolled="<%= course.isEnrolled %>" data-completed="<%= course.completed %>">
-                            <div class="card course-card">
-                                <img src="<%= course.image || '/public/images/placeholder/course-300x200.svg' %>" class="course-image" alt="<%= course.title %>">
-                                <div class="card-body">
-                                    <h5 class="card-title"><%= course.title %></h5>
-                                    <p class="card-text text-muted"><%= (course.description || '').substring(0, 100) %>...</p>
-                                    <small class="text-muted"><i class="fas fa-user-tie"></i> <%= course.instructor || 'N/A' %></small>
-                                    <div class="mt-2">
-                                        <span class="badge bg-info"><%= course.category || 'General' %></span>
-                                        <span class="badge bg-success"><%= course.difficulty || 'Beginner' %></span>
-                                    </div>
-                                </div>
-                                <div class="card-footer bg-transparent">
-                                    <a href="/courses/view/<%= course.id %>" class="btn btn-primary w-100">
-                                        <%= course.isEnrolled ? 'Continue Learning' : 'View Course' %>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    <% }) %>
-                <% } else { %>
-                    <div class="col-12 text-center py-5">
-                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
-                        <h4 class="text-muted">No courses available</h4>
-                        <% if (safeUser.role === 'teacher' || safeUser.role === 'admin') { %>
-                            <a href="/courses/create" class="btn btn-primary">Create First Course</a>
-                        <% } %>
-                    </div>
-                <% } %>
-            </div>
+  aside h3 {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+  }
 
-            <!-- Pagination -->
-            <nav aria-label="Course pagination">
-                <ul class="pagination">
-                    <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                </ul>
-            </nav>
-        </main>
-    </div>
-</div>
+  aside a {
+    display: block;
+    color: #fff;
+    padding: 10px;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 0.95rem;
+    transition: background 0.3s;
+  }
 
-<%- include('../partials/footer') %>
+  aside a:hover {
+    background: rgba(255,255,255,0.1);
+  }
 
-<script>
-    const searchInput = document.getElementById('course-search');
-    const filterEnrolled = document.getElementById('filter-enrolled');
-    const filterAvailable = document.getElementById('filter-available');
-    const filterCompleted = document.getElementById('filter-completed');
+  main {
+    flex: 1;
+    margin-left: 240px; /* width of sidebar + padding */
+    padding: 20px;
+    overflow-y: auto;
+    height: calc(100vh - 64px);
+  }
 
-    function filterCourses() {
-        const searchTerm = searchInput.value.toLowerCase();
-        const courseItems = document.querySelectorAll('.course-item');
+  h1 {
+    margin-top: 0;
+    color: #1e3c72;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+  }
 
-        courseItems.forEach(item => {
-            const title = item.querySelector('.card-title').textContent.toLowerCase();
-            const description = item.querySelector('.card-text').textContent.toLowerCase();
+  .search-box {
+    margin-bottom: 20px;
+    position: relative;
+  }
 
-            let matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
-            let matchesEnrolled = !filterEnrolled.checked || item.dataset.enrolled === 'true';
-            let matchesCompleted = !filterCompleted.checked || item.dataset.completed === 'true';
-            let matchesAvailable = !filterAvailable.checked || item.dataset.enrolled !== 'true';
+  .search-box input {
+    width: 100%;
+    padding: 10px 10px 10px 40px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 0.95rem;
+  }
 
-            item.style.display = (matchesSearch && matchesEnrolled && matchesCompleted && matchesAvailable) ? 'block' : 'none';
-        });
+  .search-box i {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #888;
+  }
+
+  .course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+  }
+
+  .course-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  }
+
+  .course-card img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  .card-body {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .card-title {
+    font-size: 1.1rem;
+    margin: 0 0 8px;
+    font-weight: bold;
+    color: #1e3c72;
+  }
+
+  .card-text {
+    font-size: 0.9rem;
+    color: #555;
+    flex-grow: 1;
+  }
+
+  small {
+    color: #888;
+    font-size: 0.8rem;
+  }
+
+  .btn {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    background: #1e90ff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+  }
+
+  .btn:hover {
+    background: #1565c0;
+  }
+
+  @media (max-width: 768px) {
+    aside {
+      position: relative;
+      width: 100%;
+      top: 0;
+      height: auto;
     }
 
-    searchInput.addEventListener('input', filterCourses);
-    filterEnrolled.addEventListener('change', filterCourses);
-    filterAvailable.addEventListener('change', filterCourses);
-    filterCompleted.addEventListener('change', filterCourses);
+    main {
+      margin-left: 0;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<!-- <header>EDU LMS - Courses</header> -->
+
+<div class="container">
+  <!-- Sidebar -->
+  <aside>
+    <h3>Menu</h3>
+    <a href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+    <a href="/courses"><i class="fas fa-book"></i> Courses</a>
+    <a href="/assignments"><i class="fas fa-tasks"></i> Assignments</a>
+    <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
+      <a href="/courses/create"><i class="fas fa-plus-circle"></i> Create Course</a>
+    <% } %>
+  </aside>
+
+  <!-- Main Content -->
+  <main>
+    <h1>Courses</h1>
+
+    <!-- Search -->
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="course-search" placeholder="Search courses...">
+    </div>
+
+    <!-- Courses Grid -->
+    <div class="course-grid" id="courses-grid">
+      <% if (courses && courses.length > 0) { %>
+        <% courses.forEach(course => { %>
+          <div class="course-card" data-title="<%= course.title.toLowerCase() %>" data-description="<%= (course.description || '').toLowerCase() %>">
+            <img src="<%= course.image || '/public/images/placeholder/course-300x200.svg' %>" alt="<%= course.title %>">
+            <div class="card-body">
+              <h5 class="card-title"><%= course.title %></h5>
+              <p class="card-text"><%= (course.description || '').substring(0, 100) %>...</p>
+              <small>Instructor: <%= course.instructor || 'N/A' %></small>
+              <a href="/courses/view/<%= course.id %>" class="btn">
+                <%= course.isEnrolled ? 'Continue Learning' : 'View Course' %>
+              </a>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p>No courses available.</p>
+      <% } %>
+    </div>
+  </main>
+</div>
+
+<script>
+const searchInput = document.getElementById('course-search');
+
+function filterCourses() {
+  const searchTerm = searchInput.value.toLowerCase();
+  document.querySelectorAll('.course-card').forEach(card => {
+    const title = card.dataset.title;
+    const description = card.dataset.description;
+    card.style.display = (title.includes(searchTerm) || description.includes(searchTerm)) ? 'block' : 'none';
+  });
+}
+
+searchInput.addEventListener('input', filterCourses);
 </script>
+
 </body>
 </html>

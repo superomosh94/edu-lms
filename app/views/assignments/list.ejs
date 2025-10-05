@@ -1,284 +1,191 @@
-<%- include('../partials/header') %>
+<%- include('../partials/header', { title: 'Assignments - EDU LMS' }) %>
 <%- include('../partials/navigation') %>
 
-<div class="container py-4">
-  <div class="page-header border-bottom">
-    <div>
-      <h1 class="h2 title">Assignments</h1>
-      <p class="subtitle">Track upcoming, submitted, and graded assignments in one place.</p>
-    </div>
-    <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
-    <a href="/assignments/create" class="btn btn-primary">
-      <i class="fas fa-plus me-2"></i>Create Assignment
-    </a>
-    <% } %>
-  </div>
+<div class="container-fluid assignments-page">
+  <div class="row">
+    <!-- Sidebar -->
+    <aside class="col-md-3 col-lg-2 sidebar">
+      <div class="sidebar-content pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="/courses"><i class="fas fa-book me-2"></i>Courses</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/assignments"><i class="fas fa-tasks me-2"></i>Assignments</a></li>
+          <li class="nav-item"><a class="nav-link" href="/grades"><i class="fas fa-chart-bar me-2"></i>Grades</a></li>
+          <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
+            <li class="nav-item"><a class="nav-link" href="/assignments/create"><i class="fas fa-plus-circle me-2"></i>Create Assignment</a></li>
+          <% } %>
+        </ul>
 
-  <% if (!assignments || assignments.length === 0) { %>
-    <div class="empty-state">
-      <div class="icon">📝</div>
-      <p>No assignments yet. Check back later.</p>
-    </div>
-  <% } else { %>
-    <div class="row g-3">
-      <% assignments.forEach(a => { %>
-      <div class="col-lg-6">
-        <div class="card card-soft">
-          <div class="card-body">
-            <div class="d-flex justify-content-between">
-              <h5 class="mb-1"><%= a.title %></h5>
-              <span class="badge <%= a.status==='graded' ? 'bg-success' : a.status==='submitted' ? 'bg-info' : 'bg-warning' %>"><%= a.status %></span>
-            </div>
-            <p class="text-muted mb-2"><%= (a.description||'').substring(0,120) %>...</p>
-            <small class="text-muted">Due: <%= a.due_date || a.dueDate %></small>
+        <div class="filters mt-4">
+          <h6>Filters</h6>
+          <button class="btn filter-btn filter-btn-pending active" data-status="pending">Pending</button>
+          <button class="btn filter-btn filter-btn-submitted" data-status="submitted">Submitted</button>
+          <button class="btn filter-btn filter-btn-graded" data-status="graded">Graded</button>
+          <button class="btn filter-btn filter-btn-overdue" data-status="overdue">Overdue</button>
+        </div>
+
+        <div class="courses mt-4">
+          <h6>By Course</h6>
+          <div class="form-check">
+            <input class="form-check-input course-checkbox" type="checkbox" id="course-all" checked>
+            <label class="form-check-label" for="course-all">All Courses</label>
           </div>
-          <div class="card-footer bg-transparent d-flex justify-content-end">
-            <a href="/assignments/view/<%= a.id %>" class="btn btn-sm btn-outline-primary">View</a>
-          </div>
+          <% if (courses && courses.length > 0) { %>
+            <% courses.forEach(course => { %>
+              <div class="form-check">
+                <input class="form-check-input course-checkbox" type="checkbox" id="course-<%= course.id %>" checked>
+                <label class="form-check-label" for="course-<%= course.id %>"><%= course.title %></label>
+              </div>
+            <% }) %>
+          <% } %>
         </div>
       </div>
-      <% }) %>
-    </div>
-  <% } %>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="col-md-9 col-lg-10 main-content">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h1 class="h2">Assignments</h1>
+          <p class="text-muted">Track upcoming, submitted, and graded assignments in one place.</p>
+        </div>
+        <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
+          <a href="/assignments/create" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Create Assignment</a>
+        <% } %>
+      </div>
+
+      <% if (!assignments || assignments.length === 0) { %>
+        <div class="empty-state text-center">
+          <div class="icon">📝</div>
+          <p>No assignments yet. Check back later.</p>
+        </div>
+      <% } else { %>
+        <div class="row g-3 assignments-list">
+          <% assignments.forEach(a => { %>
+            <div class="col-lg-6 assignment-item" data-status="<%= a.status %>" data-course="<%= a.courseId %>">
+              <div class="card assignment-card shadow-sm">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="mb-0"><%= a.title %></h5>
+                    <span class="badge status-badge <%= a.status==='graded' ? 'graded' : a.status==='submitted' ? 'submitted' : a.status==='pending' ? 'pending' : 'overdue' %>">
+                      <%= a.status %>
+                    </span>
+                  </div>
+                  <p class="text-muted mb-2"><%= (a.description||'').substring(0,120) %>...</p>
+                  <small class="text-muted">Due: <%= a.due_date || a.dueDate %></small>
+                </div>
+                <div class="card-footer bg-transparent text-end">
+                  <a href="/assignments/view/<%= a.id %>" class="btn btn-sm btn-outline-primary">View</a>
+                </div>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </main>
+  </div>
 </div>
 
 <%- include('../partials/footer') %>
-<% const safeStats = stats || { pending: 0, submitted: 0, overdue: 0, averageGrade: 'N/A' }; %>
-<% const safeAssignments = assignments || []; %>
-<% const safeUser = user || { role: 'student' }; %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignments - EDU LMS</title>
-    <%- include('../partials/header') %>
-    <style>
-        .assignment-card { transition: all 0.3s ease; border: none; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .assignment-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-        .priority-high { border-left: 4px solid #dc3545; }
-        .priority-medium { border-left: 4px solid #ffc107; }
-        .priority-low { border-left: 4px solid #28a745; }
-        .status-badge { font-size: 0.75rem; }
-        .filter-buttons .btn { margin-right: 5px; margin-bottom: 5px; }
-        .assignment-actions .btn { margin-right: 5px; }
-        .due-date { font-size: 0.875rem; }
-        .progress { height: 6px; }
-    </style>
-</head>
-<body>
-    <%- include('../partials/navigation') %>
+<style>
+.assignments-page {
+  font-family: 'Segoe UI', sans-serif;
+}
+.sidebar {
+  background: linear-gradient(180deg, #1e3c72, #2a5298);
+  min-height: 100vh;
+  padding: 15px;
+  color: #fff;
+}
+.sidebar a.nav-link {
+  color: #fff;
+  transition: background 0.2s ease;
+}
+.sidebar a.nav-link.active {
+  background: #f4a261;
+  border-radius: 5px;
+}
+.filters {
+  margin-top: 20px;
+}
+.filters h6 {
+  color: #f0f0f0;
+}
+.filters button {
+  width: 100%;
+  margin-bottom: 5px;
+  font-weight: bold;
+  border: none;
+  color: #fff;
+  transition: transform 0.2s ease;
+}
+.filters button:hover {
+  transform: scale(1.02);
+}
+.filter-btn-pending { background: #f7dc6f; color: #333; }
+.filter-btn-submitted { background: #3498db; color: #fff; }
+.filter-btn-graded { background: #2ecc71; color: #fff; }
+.filter-btn-overdue { background: #e74c3c; color: #fff; }
+.filters button.active {
+  border: 2px solid #fff;
+}
+.main-content {
+  padding: 20px;
+  background: #f9f9f9;
+}
+.assignment-card {
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+.assignment-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+.status-badge {
+  font-size: 0.75rem;
+  padding: 0.3em 0.6em;
+  border-radius: 5px;
+}
+.status-badge.pending { background: #f7dc6f; color: #333; }
+.status-badge.submitted { background: #3498db; color: #fff; }
+.status-badge.graded { background: #2ecc71; color: #fff; }
+.status-badge.overdue { background: #e74c3c; color: #fff; }
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  color: #777;
+}
+.empty-state .icon {
+  font-size: 50px;
+  margin-bottom: 10px;
+}
+</style>
 
-    <div class="container-fluid py-4">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/courses"><i class="fas fa-book me-2"></i>Courses</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="/assignments"><i class="fas fa-tasks me-2"></i>Assignments</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/grades"><i class="fas fa-chart-bar me-2"></i>Grades</a></li>
-                        <% if (safeUser && (safeUser.role === 'teacher' || safeUser.role === 'admin')) { %>
-                        <li class="nav-item"><a class="nav-link" href="/assignments/create"><i class="fas fa-plus-circle me-2"></i>Create Assignment</a></li>
-                        <% } %>
-                    </ul>
+<script>
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    filterAssignments();
+  });
+});
 
-                    <!-- Filters -->
-                    <div class="mt-4">
-                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"><span>Filters</span></h6>
-                        <div class="nav flex-column">
-                            <div class="form-check mb-2"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-pending" checked><label class="form-check-label" for="filter-pending">Pending</label></div>
-                            <div class="form-check mb-2"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-submitted" checked><label class="form-check-label" for="filter-submitted">Submitted</label></div>
-                            <div class="form-check mb-2"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-graded" checked><label class="form-check-label" for="filter-graded">Graded</label></div>
-                            <div class="form-check mb-2"><input class="form-check-input filter-checkbox" type="checkbox" id="filter-overdue"><label class="form-check-label" for="filter-overdue">Overdue</label></div>
-                        </div>
-                    </div>
+document.querySelectorAll('.course-checkbox').forEach(cb => cb.addEventListener('change', filterAssignments));
 
-                    <!-- Courses Filter -->
-                    <div class="mt-3">
-                        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted"><span>By Course</span></h6>
-                        <div class="nav flex-column">
-                            <div class="form-check mb-2"><input class="form-check-input course-checkbox" type="checkbox" id="course-all" checked><label class="form-check-label" for="course-all">All Courses</label></div>
-                            <% if (courses && courses.length > 0) { %>
-                                <% courses.forEach(course => { %>
-                                    <div class="form-check mb-2">
-                                        <input class="form-check-input course-checkbox" type="checkbox" id="course-<%= course.id %>" checked>
-                                        <label class="form-check-label" for="course-<%= course.id %>"><%= course.title %></label>
-                                    </div>
-                                <% }) %>
-                            <% } %>
-                        </div>
-                    </div>
-                </div>
-            </div>
+function filterAssignments() {
+  const selectedStatus = document.querySelector('.filter-btn.active').dataset.status;
+  const selectedCourses = Array.from(document.querySelectorAll('.course-checkbox:checked')).map(cb => cb.id.replace('course-', ''));
 
-            <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Assignments</h1>
-                    <% if (safeUser && (safeUser.role === 'teacher' || safeUser.role === 'admin')) { %>
-                    <div class="btn-toolbar mb-2 mb-md-0"><a href="/assignments/create" class="btn btn-primary"><i class="fas fa-plus me-2"></i>Create Assignment</a></div>
-                    <% } %>
-                </div>
+  document.querySelectorAll('.assignment-item').forEach(item => {
+    const itemStatus = item.dataset.status;
+    const itemCourse = item.dataset.course;
+    const statusMatch = selectedStatus === "all" || itemStatus === selectedStatus;
+    const courseMatch = selectedCourses.includes("all") || selectedCourses.includes(itemCourse);
 
-                <!-- Stats Summary -->
-                <div class="row mb-4">
-                    <% const statCards = [
-                        { label: 'Pending', value: safeStats.pending || 0, icon: 'clock', color: 'primary' },
-                        { label: 'Submitted', value: safeStats.submitted || 0, icon: 'check-circle', color: 'success' },
-                        { label: 'Overdue', value: safeStats.overdue || 0, icon: 'exclamation-triangle', color: 'warning' },
-                        { label: 'Avg. Grade', value: safeStats.averageGrade || 'N/A', icon: 'chart-bar', color: 'info' }
-                    ]; %>
-                    <% statCards.forEach(card => { %>
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-<%= card.color %> shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-<%= card.color %> text-uppercase mb-1"><%= card.label %></div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800"><%= card.value %></div>
-                                        </div>
-                                        <div class="col-auto"><i class="fas fa-<%= card.icon %> fa-2x text-gray-300"></i></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    <% }) %>
-                </div>
+    item.style.display = (statusMatch && courseMatch) ? "block" : "none";
+  });
+}
 
-                <!-- Assignments List -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                        <h6 class="m-0 font-weight-bold text-primary"><%= (safeUser && (safeUser.role === 'teacher' || safeUser.role === 'admin')) ? 'All Assignments' : 'My Assignments' %></h6>
-                        <div class="filter-buttons">
-                            <div class="btn-group btn-group-sm">
-                                <button class="btn btn-outline-primary active" data-filter="all">All</button>
-                                <button class="btn btn-outline-primary" data-filter="week">This Week</button>
-                                <button class="btn btn-outline-primary" data-filter="month">This Month</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <% if (safeAssignments.length > 0) { %>
-                        <div class="table-responsive">
-                            <table class="table table-hover" id="assignmentsTable">
-                                <thead>
-                                    <tr>
-                                        <th>Title</th>
-                                        <th>Course</th>
-                                        <th>Due Date</th>
-                                        <th>Status</th>
-                                        <% if (safeUser && (safeUser.role === 'teacher' || safeUser.role === 'admin')) { %><th>Submissions</th><% } %>
-                                        <th>Grade</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% safeAssignments.forEach(a => { %>
-                                    <tr class="assignment-row" data-status="<%= a.status || 'pending' %>" data-course="<%= a.courseId || '0' %>" data-priority="<%= a.priority || 'low' %>">
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <i class="fas fa-<%= a.type==='essay'?'file-alt':a.type==='quiz'?'question-circle':'tasks' %> text-primary me-3"></i>
-                                                <div>
-                                                    <strong><%= a.title || 'Untitled' %></strong><br>
-                                                    <small class="text-muted"><%= a.description ? a.description.substring(0,50) : '' %>...</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td><span class="badge bg-secondary"><%= a.courseTitle || 'N/A' %></span></td>
-                                        <td><div class="due-date"><strong><%= a.dueDate || '-' %></strong><br><small class="text-<%= a.isOverdue?'danger':'muted' %>"><%= a.daysLeft || '-' %></small></div></td>
-                                        <td><span class="badge status-badge bg-<%= a.status==='submitted'?'success':a.status==='graded'?'info':a.isOverdue?'danger':'warning' %>"><%= a.status ? a.status.charAt(0).toUpperCase()+a.status.slice(1) : 'Pending' %></span></td>
-                                        <% if (safeUser && (safeUser.role==='teacher'||safeUser.role==='admin')) { %>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="progress flex-grow-1 me-2" style="height:6px;"><div class="progress-bar" style="width:<%= a.submissionRate || 0 %>%"></div></div>
-                                                <small><%= a.submittedCount || 0 %>/<%= a.totalStudents || 0 %></small>
-                                            </div>
-                                        </td>
-                                        <% } %>
-                                        <td><%= a.grade ? ('<strong class="text-'+(a.grade>=90?'success':a.grade>=70?'warning':'danger')+'">'+a.grade+'%</strong>') : '<span class="text-muted">-</span>' %></td>
-                                        <td>
-                                            <div class="assignment-actions">
-                                                <a href="/assignments/view/<%= a.id %>" class="btn btn-sm btn-outline-primary" title="View"><i class="fas fa-eye"></i></a>
-                                                <% if (safeUser && safeUser.role==='student' && a.status==='pending') { %>
-                                                    <a href="/assignments/submit/<%= a.id %>" class="btn btn-sm btn-success" title="Submit"><i class="fas fa-paper-plane"></i></a>
-                                                <% } %>
-                                                <% if (safeUser && (safeUser.role==='teacher'||safeUser.role==='admin')) { %>
-                                                    <a href="/assignments/grade/<%= a.id %>" class="btn btn-sm btn-warning" title="Grade"><i class="fas fa-edit"></i></a>
-                                                <% } %>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <% }) %>
-                                </tbody>
-                            </table>
-                        </div>
-                        <% } else { %>
-                        <div class="text-center py-5">
-                            <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
-                            <h4 class="text-muted">No assignments found</h4>
-                            <p class="text-muted"><%= (safeUser && (safeUser.role==='teacher'||safeUser.role==='admin')) ? 'Create your first assignment to get started.' : "You don't have any assignments at the moment." %></p>
-                            <% if (safeUser && (safeUser.role==='teacher'||safeUser.role==='admin')) { %>
-                                <a href="/assignments/create" class="btn btn-primary">Create Assignment</a>
-                            <% } %>
-                        </div>
-                        <% } %>
-                    </div>
-                </div>
-
-                <!-- Pagination -->
-                <% if (safeAssignments.length>0) { %>
-                <nav aria-label="Assignment pagination">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled"><a class="page-link" href="#" tabindex="-1">Previous</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
-                    </ul>
-                </nav>
-                <% } %>
-            </main>
-        </div>
-    </div>
-
-    <%- include('../partials/footer') %>
-
-    <script>
-        document.querySelectorAll('.filter-checkbox, .course-checkbox').forEach(cb => cb.addEventListener('change', filterAssignments));
-        document.querySelectorAll('.filter-buttons .btn').forEach(btn => btn.addEventListener('click', function() {
-            document.querySelectorAll('.filter-buttons .btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            filterAssignments();
-        }));
-
-        function filterAssignments() {
-            const statusFilters = { 'filter-pending':'pending', 'filter-submitted':'submitted', 'filter-graded':'graded', 'filter-overdue':'overdue' };
-            const timeFilter = document.querySelector('.filter-buttons .btn.active').dataset.filter;
-            const selectedCourses = Array.from(document.querySelectorAll('.course-checkbox:checked')).map(cb => cb.id.replace('course-',''));
-            document.querySelectorAll('.assignment-row').forEach(row => {
-                const status=row.dataset.status, course=row.dataset.course;
-                const dueDate=new Date(row.querySelector('td:nth-child(3) strong').textContent), now=new Date();
-                let statusMatch=false;
-                for(const [id,val] of Object.entries(statusFilters)) { if(document.getElementById(id).checked && status===val){statusMatch=true;break;} }
-                const courseMatch = selectedCourses.includes('all') || selectedCourses.includes(course);
-                let timeMatch = true;
-                if(timeFilter==='week'){ timeMatch=dueDate<=new Date(now.getTime()+7*24*60*60*1000); }
-                else if(timeFilter==='month'){ timeMatch=dueDate<=new Date(now.getFullYear(), now.getMonth()+1, now.getDate()); }
-                row.style.display=(statusMatch && courseMatch && timeMatch)?'':'none';
-            });
-        }
-
-        const viewToggle=document.getElementById('view-toggle');
-        if(viewToggle){viewToggle.addEventListener('click',function(){
-            const table=document.getElementById('assignmentsTable');
-            table.classList.toggle('table-view');
-            this.innerHTML=table.classList.contains('table-view')?'<i class="fas fa-th-large me-1"></i>Toggle View':'<i class="fas fa-th-list me-1"></i>Toggle View';
-        });}
-
-        filterAssignments();
-    </script>
-</body>
-</html>
+filterAssignments();
+</script>
