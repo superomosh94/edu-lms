@@ -4,61 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard - EDU LMS</title>
+    <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
     <%- include('../partials/header') %>
+
     <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #2980b9;
+            --success: #27ae60;
+            --info: #16a085;
+            --warning: #f39c12;
+            --danger: #c0392b;
+            --light-bg: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-color: #2c3e50;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background: var(--light-bg);
+            font-family: 'Segoe UI', sans-serif;
+            color: var(--text-color);
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            color: white;
+            min-height: 100vh;
+        }
+
+        .sidebar a {
+            color: white;
+            transition: color 0.2s ease;
+        }
+
+        .sidebar a:hover {
+            color: var(--warning);
+        }
+
         .teacher-stats .card {
-            transition: transform 0.3s ease;
-            border: none;
-            border-radius: 10px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+
         .teacher-stats .card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px var(--shadow);
         }
-        .course-progress {
+
+        .card-header {
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+            color: white;
+            border-radius: 8px 8px 0 0;
+            font-weight: 600;
+        }
+
+        .progress {
             height: 10px;
+            border-radius: 5px;
         }
-        .assignment-status {
-            font-size: 0.875rem;
+
+        .progress-bar {
+            background: linear-gradient(90deg, var(--info), var(--success));
+        }
+
+        .list-group-item {
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .list-group-item:hover {
+            background: rgba(41, 128, 185, 0.1);
         }
     </style>
 </head>
+
 <body>
     <%- include('../partials/navigation') %>
 
     <div class="container-fluid py-4">
         <div class="row">
             <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                <div class="position-sticky pt-3">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link active" href="/dashboard/teacher">
-                                <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/courses">
-                                <i class="fas fa-book me-2"></i>My Courses
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/assignments">
-                                <i class="fas fa-tasks me-2"></i>Assignments
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/grades">
-                                <i class="fas fa-chart-bar me-2"></i>Grades
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/attendance">
-                                <i class="fas fa-clipboard-check me-2"></i>Attendance
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <%- include('../partials/sidebar') %>
 
             <!-- Main Content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
@@ -71,24 +102,20 @@
                     </div>
                 </div>
 
-                <!-- Welcome Message -->
                 <div class="alert alert-info">
                     <h4>Welcome, Professor <%= user?.firstName %>!</h4>
-                    <p class="mb-0">You have <strong><%= stats?.pendingGrading || 0 %> assignments</strong> waiting to be graded.</p>
+                    <p>You have <strong><%= stats?.pendingGrading || 0 %> assignments</strong> waiting to be graded.</p>
                 </div>
 
-                <!-- Stats Cards -->
+                <!-- Stats -->
                 <div class="row teacher-stats">
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                            My Courses</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <%= stats?.myCourses || 0 %>
-                                        </div>
+                                    <div class="col">
+                                        <div class="text-xs font-weight-bold text-primary mb-1">My Courses</div>
+                                        <div class="h5 mb-0 font-weight-bold"><%= stats?.myCourses || 0 %></div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-book fa-2x text-gray-300"></i>
@@ -99,15 +126,12 @@
                     </div>
 
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                            Total Students</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <%= stats?.totalStudents || 0 %>
-                                        </div>
+                                    <div class="col">
+                                        <div class="text-xs font-weight-bold text-success mb-1">Total Students</div>
+                                        <div class="h5 mb-0 font-weight-bold"><%= stats?.totalStudents || 0 %></div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -118,15 +142,12 @@
                     </div>
 
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                            Pending Grading</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <%= stats?.pendingGrading || 0 %>
-                                        </div>
+                                    <div class="col">
+                                        <div class="text-xs font-weight-bold text-info mb-1">Pending Grading</div>
+                                        <div class="h5 mb-0 font-weight-bold"><%= stats?.pendingGrading || 0 %></div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-tasks fa-2x text-gray-300"></i>
@@ -137,107 +158,17 @@
                     </div>
 
                     <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card shadow h-100 py-2">
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
-                                    <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                            Upcoming Classes</div>
-                                        <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                            <%= stats?.upcomingClasses || 0 %>
-                                        </div>
+                                    <div class="col">
+                                        <div class="text-xs font-weight-bold text-warning mb-1">Upcoming Classes</div>
+                                        <div class="h5 mb-0 font-weight-bold"><%= stats?.upcomingClasses || 0 %></div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-clock fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- My Courses -->
-                <div class="row">
-                    <div class="col-md-8">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                                <h6 class="m-0 font-weight-bold text-primary">My Courses</h6>
-                                <a href="/courses" class="btn btn-sm btn-primary">View All</a>
-                            </div>
-                            <div class="card-body">
-                                <% if (myCourses && myCourses.length > 0) { %>
-                                    <div class="row">
-                                        <% myCourses.forEach(course => { %>
-                                            <div class="col-md-6 mb-3">
-                                                <div class="card h-100">
-                                                    <div class="card-body">
-                                                        <h5 class="card-title"><%= course.title %></h5>
-                                                        <p class="card-text text-muted"><%= course.description %></p>
-                                                        <div class="d-flex justify-content-between align-items-center">
-                                                            <span class="badge bg-primary"><%= course.studentCount %> students</span>
-                                                            <div class="assignment-status">
-                                                                <i class="fas fa-tasks me-1"></i><%= course.pendingAssignments %> pending
-                                                            </div>
-                                                        </div>
-                                                        <div class="progress course-progress mt-2">
-                                                            <div class="progress-bar" style="width: <%= course.progress %>%;"></div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        <% }) %>
-                                    </div>
-                                <% } else { %>
-                                    <p class="text-muted text-center">No courses found. <a href="/courses/create">Create your first course</a></p>
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-4">
-                        <div class="card shadow mb-4">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
-                            </div>
-                            <div class="card-body">
-                                <div class="d-grid gap-2">
-                                    <a href="/courses/create" class="btn btn-primary">
-                                        <i class="fas fa-plus-circle me-2"></i>Create Course
-                                    </a>
-                                    <a href="/assignments/create" class="btn btn-success">
-                                        <i class="fas fa-tasks me-2"></i>Create Assignment
-                                    </a>
-                                    <a href="/grades" class="btn btn-info">
-                                        <i class="fas fa-chart-bar me-2"></i>Enter Grades
-                                    </a>
-                                    <a href="/attendance/take" class="btn btn-warning">
-                                        <i class="fas fa-clipboard-check me-2"></i>Take Attendance
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Upcoming Classes -->
-                        <div class="card shadow">
-                            <div class="card-header py-3">
-                                <h6 class="m-0 font-weight-bold text-primary">Upcoming Classes</h6>
-                            </div>
-                            <div class="card-body">
-                                <% if (upcomingClasses && upcomingClasses.length > 0) { %>
-                                    <div class="list-group list-group-flush">
-                                        <% upcomingClasses.forEach(classItem => { %>
-                                            <div class="list-group-item d-flex justify-content-between align-items-start">
-                                                <div class="ms-2 me-auto">
-                                                    <div class="fw-bold"><%= classItem.course %></div>
-                                                    <small class="text-muted"><%= classItem.time %></small>
-                                                </div>
-                                                <span class="badge bg-primary rounded-pill"><%= classItem.room %></span>
-                                            </div>
-                                        <% }) %>
-                                    </div>
-                                <% } else { %>
-                                    <p class="text-muted text-center">No upcoming classes</p>
-                                <% } %>
                             </div>
                         </div>
                     </div>
