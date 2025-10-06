@@ -10,6 +10,7 @@ const paymentRoutes = require('./paymentRoutes');
 const adminRoutes = require('./adminRoutes');
 const teacherRoutes = require('./teacherRoutes');
 const studentRoutes = require('./studentRoutes');
+const staticRoutes = require('./staticRoutes');
 
 // Mount routes
 router.use('/auth', authRoutes);
@@ -20,6 +21,7 @@ router.use('/payments', paymentRoutes);
 router.use('/admin', adminRoutes);
 router.use('/teacher', teacherRoutes);
 router.use('/student', studentRoutes);
+router.use('/', staticRoutes);
 
 // Health check route
 router.get('/health', (req, res) => {
