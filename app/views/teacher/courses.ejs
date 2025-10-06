@@ -1,0 +1,152 @@
+﻿<%- include('../partials/header', { title: 'Courses' }) %>
+<%- include('../partials/sidebar', { menu: menu, activePage: 'courses' }) %>
+
+<div class="main-content" style=" margin-left: 260px; min-height: 100vh;">
+  <header class="page-header">
+    <h1>My Courses</h1>
+    <a href="/teacher/courses/create" class="btn btn-primary">
+      <i class="fas fa-plus"></i> Create New Course
+    </a>
+  </header>
+
+  <% if (courses && courses.length > 0) { %>
+    <div class="course-list">
+      <% courses.forEach(course => { %>
+        <div class="course-card">
+          <h2><%= course.title %></h2>
+          <p><%= course.description %></p>
+          <a href="/teacher/courses/<%= course.id %>" class="btn btn-secondary">
+            View Details
+          </a>
+        </div>
+      <% }); %>
+    </div>
+  <% } else { %>
+    <div class="empty">
+      <i class="fas fa-book"></i>
+      <p>You have no courses assigned.</p>
+    </div>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>
+
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --muted: #64748b;
+    --radius: 8px;
+  }
+
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: var(--bg);
+    margin: 0;
+    color: var(--text);
+  }
+
+  .main-content {
+    padding: 2rem;
+    flex: 1;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    color: var(--primary-dark);
+    margin: 0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: var(--primary-dark);
+  }
+
+  .btn-secondary {
+    background: #e2e8f0;
+    color: var(--text);
+  }
+
+  .btn-secondary:hover {
+    background: #cbd5e1;
+  }
+
+  .course-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .course-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .course-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+
+  .course-card h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1.3rem;
+    color: var(--primary-dark);
+  }
+
+  .course-card p {
+    flex: 1;
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    padding: 2rem;
+    font-size: 1.1rem;
+  }
+
+  .empty i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary);
+  }
+
+  @media (max-width: 768px) {
+    .course-list {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+  }
+</style>

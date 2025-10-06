@@ -1,194 +1,344 @@
-const Course = require('../models/Course');
-const Assignment = require('../models/Assignment');
-const User = require('../models/User');
-const auditHelper = require('../helpers/auditHelper');
+// ==================================
+// Teacher Controller (Final Version)
+// ==================================
 
-const teacherController = {
-    // Get teacher's courses with statistics
-    getMyCourses: async (req, res) => {
-        try {
-            const teacherId = req.userId;
-            const courses = await Course.findByTeacher(teacherId);
+const pool = require('../controllers/config/db');
 
-            // Add statistics for each course
-            const coursesWithStats = await Promise.all(
-                courses.map(async (course) => {
-                    const stats = {
-                        totalStudents: await Course.getEnrollmentCount(course.id),
-                        totalAssignments: await Assignment.getCountByCourse(course.id),
-                        averageGrade: await Assignment.getAverageGradeByCourse(course.id)
-                    };
-                    return { ...course, stats };
-                })
-            );
+// ------------------------------
+// Sidebar Menu
+// ------------------------------
+function getMenu() {
+  return [
+    { name: "Dashboard", link: "/teacher", icon: "fas fa-tachometer-alt" },
+    { name: "Courses", link: "/teacher/courses", icon: "fas fa-book" },
+    { name: "Assignments", link: "/teacher/assignments", icon: "fas fa-tasks" },
+    { name: "Submissions", link: "/teacher/submissions", icon: "fas fa-file-alt" },
+    { name: "Grades", link: "/teacher/grades", icon: "fas fa-clipboard" },
+    { name: "Announcements", link: "/teacher/announcements", icon: "fas fa-bullhorn" },
+    { name: "Reports", link: "/teacher/reports", icon: "fas fa-chart-line" }
+  ];
+}
 
-            res.json({ courses: coursesWithStats });
-        } catch (error) {
-            console.error('Get teacher courses error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    },
+// ------------------------------
+// Dashboard
+// ------------------------------
+async function showTeacherDashboard(req, res) {
+  try {
+    const userId = req.session.userId;
+    const userName = req.session.userName || 'Teacher';
+    const role = req.session.roleName || 'Teacher';
+    const avatar = req.session.userAvatar || '/images/default-avatar.png';
 
-    // Get students enrolled in teacher's courses
-    getMyStudents: async (req, res) => {
-        try {
-            const teacherId = req.userId;
-            const students = await User.findStudentsByTeacher(teacherId);
+    const data = await fetchTeacherDashboard(userId);
 
-            res.json({ students });
-        } catch (error) {
-            console.error('Get teacher students error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    },
+    res.render('dashboard/teacher', { // <-- fixed path here
+      title: 'Teacher Dashboard',
+      role,
+      user: { id: userId, name: userName, avatar },
+      activePage: 'dashboard',
+      menu: getMenu(),
+      stats: data.stats,
+      courses: data.courses,
+      assignments: data.assignments
+    });
+  } catch (error) {
+    console.error('Dashboard error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to load dashboard.' });
+  }
+}
 
-    // Get submissions for teacher's assignments
-    getSubmissions: async (req, res) => {
-        try {
-            const teacherId = req.userId;
-            const { status, courseId, assignmentId } = req.query;
+// ------------------------------
+// Courses
+// ------------------------------
+async function showCoursesPage(req, res) {
+  try {
+    const teacherId = req.session.userId;
+    const [courses] = await pool.query(
+      `SELECT id, title, description, status, created_at
+       FROM courses
+       WHERE teacher_id = ?`,
+      [teacherId]
+    );
 
-            const submissions = await Assignment.getSubmissionsByTeacher(teacherId, {
-                status,
-                courseId,
-                assignmentId
-            });
+    res.render('teacher/courses', {
+      title: 'My Courses',
+      activePage: 'courses',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      courses
+    });
+  } catch (error) {
+    console.error('Courses error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to load courses.' });
+  }
+}
 
-            res.json({ submissions });
-        } catch (error) {
-            console.error('Get submissions error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    },
+// ------------------------------
+// Assignments
+// ------------------------------
+async function showAssignmentsPage(req, res) {
+  try {
+    const teacherId = req.session.userId;
 
-    // Get submission details
-    getSubmission: async (req, res) => {
-        try {
-            const submissionId = req.params.id;
-            const submission = await Assignment.getSubmissionById(submissionId);
+    const [courses] = await pool.query(
+      'SELECT id, title FROM courses WHERE teacher_id = ?',
+      [teacherId]
+    );
 
-            if (!submission) {
-                return res.status(404).json({ error: 'Submission not found' });
-            }
+    const [assignments] = await pool.query(
+      `SELECT a.id, a.title, a.due_date, c.title AS course_name,
+              (SELECT COUNT(*) FROM submissions s WHERE s.assignment_id = a.id) AS submissions_count
+       FROM assignments a
+       JOIN courses c ON a.course_id = c.id
+       WHERE a.teacher_id = ?
+       ORDER BY a.created_at DESC`,
+      [teacherId]
+    );
 
-            // Verify teacher owns the assignment
-            const assignment = await Assignment.findById(submission.assignmentId);
-            if (assignment.teacherId !== req.userId) {
-                return res.status(403).json({ error: 'Access denied' });
-            }
+    res.render('teacher/assignments', {
+      title: 'Assignments',
+      activePage: 'assignments',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      courses,
+      assignments
+    });
+  } catch (error) {
+    console.error('Assignments error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to load assignments.' });
+  }
+}
 
-            // Get student details
-            submission.student = await User.findById(submission.studentId);
+// ------------------------------
+// Submissions
+// ------------------------------
+async function showSubmissionsPage(req, res) {
+  try {
+    const teacherId = req.session.userId;
+    const [submissions] = await pool.query(
+      `SELECT s.id, u.name AS student_name, s.submitted_at, s.grade, 
+              a.title AS assignment_title, c.title AS course_name
+       FROM submissions s
+       JOIN users u ON s.student_id = u.id
+       JOIN assignments a ON s.assignment_id = a.id
+       JOIN courses c ON a.course_id = c.id
+       WHERE c.teacher_id = ?
+       ORDER BY s.submitted_at DESC`,
+      [teacherId]
+    );
 
-            res.json({ submission });
-        } catch (error) {
-            console.error('Get submission error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    },
+    res.render('teacher/submissions', {
+      title: 'Submissions',
+      activePage: 'submissions',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      submissions
+    });
+  } catch (error) {
+    console.error('Submissions error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to load submissions.' });
+  }
+}
 
-    // Grade submission
-    gradeSubmission: async (req, res) => {
-        try {
-            const submissionId = req.params.id;
-            const { points, feedback } = req.body;
+// ------------------------------
+// Submission Details
+// ------------------------------
+async function getSubmission(req, res) {
+  try {
+    const submissionId = req.params.id;
+    const [result] = await pool.query(
+      `SELECT s.id, s.grade, s.submitted_at, u.name AS student_name, 
+              a.title AS assignment_title, a.description, c.title AS course_name
+       FROM submissions s
+       JOIN users u ON s.student_id = u.id
+       JOIN assignments a ON s.assignment_id = a.id
+       JOIN courses c ON a.course_id = c.id
+       WHERE s.id = ?`,
+      [submissionId]
+    );
 
-            const submission = await Assignment.getSubmissionById(submissionId);
-            if (!submission) {
-                return res.status(404).json({ error: 'Submission not found' });
-            }
-
-            // Verify teacher owns the assignment
-            const assignment = await Assignment.findById(submission.assignmentId);
-            if (assignment.teacherId !== req.userId) {
-                return res.status(403).json({ error: 'Access denied' });
-            }
-
-            // Validate points
-            if (points > assignment.maxPoints) {
-                return res.status(400).json({ 
-                    error: `Points cannot exceed maximum points (${assignment.maxPoints})` 
-                });
-            }
-
-            await Assignment.gradeSubmission(submissionId, points, feedback, req.userId);
-
-            // Log audit trail
-            await auditHelper.logAction(req.userId, 'TEACHER_GRADE_SUBMISSION', 
-                `Graded submission ${submissionId}`, submissionId);
-
-            res.json({ message: 'Submission graded successfully' });
-        } catch (error) {
-            console.error('Grade submission error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    },
-
-    // Get course analytics
-    getCourseAnalytics: async (req, res) => {
-        try {
-            const courseId = req.params.courseId;
-            
-            // Verify teacher owns the course
-            const course = await Course.findById(courseId);
-            if (!course || course.teacherId !== req.userId) {
-                return res.status(403).json({ error: 'Access denied' });
-            }
-
-            const analytics = {
-                enrollmentStats: await Course.getEnrollmentStats(courseId),
-                assignmentStats: await Assignment.getStatsByCourse(courseId),
-                gradeDistribution: await Assignment.getGradeDistribution(courseId),
-                studentPerformance: await Assignment.getStudentPerformance(courseId)
-            };
-
-            res.json({ analytics });
-        } catch (error) {
-            console.error('Get course analytics error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
-    },
-
-    // Send announcement to course students
-    sendAnnouncement: async (req, res) => {
-        try {
-            const courseId = req.params.courseId;
-            const { title, message } = req.body;
-
-            // Verify teacher owns the course
-            const course = await Course.findById(courseId);
-            if (!course || course.teacherId !== req.userId) {
-                return res.status(403).json({ error: 'Access denied' });
-            }
-
-            // Get enrolled students
-            const students = await Course.getEnrolledStudents(courseId);
-
-            // Here you would typically send notifications/emails
-            // This is a simplified implementation
-            const announcement = {
-                courseId,
-                teacherId: req.userId,
-                title,
-                message,
-                sentAt: new Date(),
-                recipients: students.length
-            };
-
-            // Log audit trail
-            await auditHelper.logAction(req.userId, 'TEACHER_SEND_ANNOUNCEMENT', 
-                `Sent announcement to ${students.length} students in course: ${course.title}`,
-                courseId);
-
-            res.json({ 
-                message: `Announcement sent to ${students.length} students`,
-                announcement 
-            });
-        } catch (error) {
-            console.error('Send announcement error:', error);
-            res.status(500).json({ error: 'Internal server error' });
-        }
+    if (!result.length) {
+      return res.status(404).render('error', { title: 'Not Found', message: 'Submission not found.' });
     }
-};
 
-module.exports = teacherController;
+    res.render('teacher/submission-detail', {
+      title: 'Submission Details',
+      activePage: 'submissions',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      submission: result[0]
+    });
+  } catch (error) {
+    console.error('Submission detail error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to load submission details.' });
+  }
+}
+
+// ------------------------------
+// Grades
+// ------------------------------
+async function showGradesPage(req, res) {
+  try {
+    const teacherId = req.session.userId;
+
+    const [grades] = await pool.query(
+      `SELECT s.id, u.name AS student_name, c.title AS course_name, 
+              a.title AS assignment_title, s.grade, s.submitted_at AS created_at
+       FROM submissions s
+       JOIN users u ON s.student_id = u.id
+       JOIN assignments a ON s.assignment_id = a.id
+       JOIN courses c ON a.course_id = c.id
+       WHERE a.teacher_id = ?
+       ORDER BY s.submitted_at DESC`,
+      [teacherId]
+    );
+
+    res.render('teacher/grades', {
+      title: 'Gradebook',
+      activePage: 'grades',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      grades
+    });
+  } catch (error) {
+    console.error('Grades error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to load grades.' });
+  }
+}
+
+// ------------------------------
+// Announcements
+// ------------------------------
+async function showAnnouncementsPage(req, res) {
+  try {
+    const [announcements] = await pool.query(
+      `SELECT id, title, message, created_at 
+       FROM announcements 
+       ORDER BY created_at DESC`
+    );
+
+    res.render('teacher/announcements', {
+      title: 'Announcements',
+      activePage: 'announcements',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      announcements
+    });
+  } catch (error) {
+    console.error('Announcements error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to load announcements.' });
+  }
+}
+
+async function sendAnnouncement(req, res) {
+  try {
+    const { title, message } = req.body;
+    if (!title || !message) {
+      return res.status(400).render('error', { title: 'Invalid Input', message: 'Title and message are required.' });
+    }
+
+    await pool.query(
+      `INSERT INTO announcements (title, message, created_at) VALUES (?, ?, NOW())`,
+      [title, message]
+    );
+
+    res.redirect('/teacher/announcements');
+  } catch (error) {
+    console.error('Send announcement error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to post announcement.' });
+  }
+}
+
+// ------------------------------
+// Reports
+// ------------------------------
+async function showReportsPage(req, res) {
+  try {
+    const teacherId = req.session.userId;
+    const selectedCourse = req.query.course || null;
+
+    const [courses] = await pool.query(
+      `SELECT id, title FROM courses WHERE teacher_id = ?`,
+      [teacherId]
+    );
+
+    let reportsQuery = `
+      SELECT r.id, r.title, r.description, r.created_at, c.title AS course_title
+      FROM reports r
+      JOIN courses c ON r.course_id = c.id
+      WHERE c.teacher_id = ?
+    `;
+    const queryParams = [teacherId];
+
+    if (selectedCourse) {
+      reportsQuery += ` AND r.course_id = ?`;
+      queryParams.push(selectedCourse);
+    }
+
+    reportsQuery += ` ORDER BY r.created_at DESC`;
+
+    const [reports] = await pool.query(reportsQuery, queryParams);
+
+    res.render('teacher/reports', {
+      title: 'Reports',
+      activePage: 'reports',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      courses,
+      reports,
+      selectedCourse
+    });
+  } catch (error) {
+    console.error('Reports error:', error);
+    res.status(500).render('error', {
+      title: 'Error',
+      message: 'Unable to load reports.'
+    });
+  }
+}
+
+// ------------------------------
+// Dashboard Helper
+// ------------------------------
+async function fetchTeacherDashboard(userId) {
+  const [[courseCount]] = await pool.query('SELECT COUNT(*) AS count FROM courses WHERE teacher_id = ?', [userId]);
+  const [[assignmentCount]] = await pool.query('SELECT COUNT(*) AS count FROM assignments WHERE teacher_id = ?', [userId]);
+  const [[pendingCount]] = await pool.query(
+    `SELECT COUNT(*) AS count 
+     FROM submissions s 
+     JOIN assignments a ON s.assignment_id = a.id 
+     WHERE a.teacher_id = ? AND s.grade IS NULL`,
+    [userId]
+  );
+
+  const [courses] = await pool.query('SELECT id, title, created_at FROM courses WHERE teacher_id = ?', [userId]);
+  const [assignments] = await pool.query(
+    `SELECT id, title, due_date FROM assignments WHERE teacher_id = ? ORDER BY due_date DESC LIMIT 10`,
+    [userId]
+  );
+
+  return {
+    stats: {
+      courses: courseCount.count,
+      assignments: assignmentCount.count,
+      pendingGrading: pendingCount.count
+    },
+    courses,
+    assignments
+  };
+}
+
+// ------------------------------
+// Exports
+// ------------------------------
+module.exports = {
+  showTeacherDashboard,
+  showCoursesPage,
+  showAssignmentsPage,
+  showSubmissionsPage,
+  getSubmission,
+  showGradesPage,
+  showAnnouncementsPage,
+  sendAnnouncement,
+  showReportsPage
+};

@@ -1,3 +1,6 @@
+<!-- IMPORT HEADER PARTIAL -->
+<%- include('../partials/header', { title: 'Login' }) %>
+
 <style>
 :root {
   --primary-blue: #2563eb;
@@ -7,24 +10,28 @@
   --dark-text: #f1f5f9;
   --light-text: #94a3b8;
   --white: #ffffff;
+  --error-red: #ef4444;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1),
                0 4px 6px -2px rgba(0,0,0,0.05);
 }
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--dark-bg);
   color: var(--dark-text);
   margin: 0;
 }
+
 .auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1rem;
 }
+
 .auth-card {
   background: var(--dark-card);
   padding: 2rem;
@@ -32,46 +39,70 @@ body {
   box-shadow: var(--shadow-lg);
   width: 100%;
   max-width: 420px;
+  box-sizing: border-box;
 }
+
 .auth-header {
   text-align: center;
   margin-bottom: 2rem;
 }
+
 .auth-header h2 {
   margin: 0;
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.6rem;
+  font-weight: 700;
   color: var(--white);
 }
+
+.auth-header h4 {
+  margin: 0.2rem 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--light-text);
+}
+
 .auth-header p {
   color: var(--light-text);
   font-size: 0.95rem;
   margin-top: 0.5rem;
 }
+
 .form-group {
   margin-bottom: 1.25rem;
 }
+
 .form-label {
   display: block;
   margin-bottom: 0.5rem;
   font-weight: 500;
   color: var(--light-text);
 }
+
 .form-control {
   width: 100%;
   padding: 0.75rem;
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
-  color: var(--dark-text);
+  color: var(--white);
   font-size: 1rem;
+  box-sizing: border-box;
 }
+
+.form-control::placeholder {
+  color: var(--white);
+  opacity: 1;
+}
+
 .form-control:focus {
   border-color: var(--primary-blue);
+  outline: none;
 }
+
 .password-wrapper {
   position: relative;
 }
+
 .toggle-password {
   position: absolute;
   right: 12px;
@@ -84,10 +115,12 @@ body {
   display: flex;
   align-items: center;
 }
+
 .toggle-password svg {
   width: 20px;
   height: 20px;
 }
+
 .btn-primary {
   display: inline-block;
   width: 100%;
@@ -98,23 +131,83 @@ body {
   font-weight: 600;
   border: none;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
+
 .btn-primary:hover {
   background: var(--primary-blue-dark);
 }
+
 .auth-footer {
   text-align: center;
   margin-top: 1.5rem;
   font-size: 0.9rem;
   color: var(--light-text);
 }
+
 .auth-footer a {
   color: var(--primary-blue);
   font-weight: 500;
   text-decoration: none;
 }
+
 .auth-footer a:hover {
   color: var(--primary-blue-dark);
+}
+
+.error {
+  color: var(--error-red);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .auth-header h2 {
+    font-size: 1.4rem;
+  }
+
+  .form-control {
+    padding: 0.65rem;
+  }
+
+  .btn-primary {
+    padding: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+
+  .auth-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .auth-header h4 {
+    font-size: 1rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+  }
+
+  .form-control {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+  }
 }
 </style>
 
@@ -122,28 +215,30 @@ body {
   <div class="auth-card">
     <div class="auth-header">
       <h2>Login</h2>
+      <h4>Welcome back to EduLMS</h4>
       <p>Sign in to access your account</p>
     </div>
+
+    <% if (error) { %>
+      <div class="error"><%= error %></div>
+    <% } %>
 
     <form action="/auth/login" method="POST" class="auth-form">
       <div class="form-group">
         <label for="email" class="form-label">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="you@example.com" required class="form-control">
+        <input type="email" id="email" name="email" placeholder="e.g. you@example.com" required class="form-control">
       </div>
 
       <div class="form-group password-wrapper">
         <label for="password" class="form-label">Password</label>
         <input type="password" id="password" name="password" placeholder="Enter your password" required class="form-control">
-        <button type="button" id="togglePassword" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="password">
+        <button type="button" id="togglePassword" class="toggle-password" aria-label="Show password">
           <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
           <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none;">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.57-4.362M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.57-4.362M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />
           </svg>
         </button>
       </div>

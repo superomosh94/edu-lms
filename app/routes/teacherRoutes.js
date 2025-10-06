@@ -5,29 +5,35 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 const validationMiddleware = require('../middlewares/validationMiddleware');
 
-// All teacher routes require teacher role
+// All teacher routes require authentication and teacher/admin role
 router.use(authMiddleware.authenticate);
 router.use(roleMiddleware.restrictTo('teacher', 'admin'));
 
-// Course management
-router.get('/courses', teacherController.getMyCourses);
-router.get('/students', teacherController.getMyStudents);
+// Dashboard
+router.get('/', teacherController.showTeacherDashboard);
 
-// Assignment management
-router.get('/submissions', teacherController.getSubmissions);
+// Courses
+router.get('/courses', teacherController.showCoursesPage);
+
+// Assignments
+router.get('/assignments', teacherController.showAssignmentsPage);
+
+// Submissions
+router.get('/submissions', teacherController.showSubmissionsPage);
 router.get('/submissions/:id', teacherController.getSubmission);
-router.post('/submissions/:id/grade', 
-    validationMiddleware.validateGrading,
-    teacherController.gradeSubmission
-);
 
-// Analytics
-router.get('/courses/:courseId/analytics', teacherController.getCourseAnalytics);
+// Grades
+router.get('/grades', teacherController.showGradesPage);
 
-// Communication
-router.post('/courses/:courseId/announcements', 
+// Announcements
+router.get('/announcements', teacherController.showAnnouncementsPage);
+router.post(
+    '/announcements',
     validationMiddleware.validateAnnouncement,
     teacherController.sendAnnouncement
 );
+
+// Reports
+router.get('/reports', teacherController.showReportsPage);
 
 module.exports = router;

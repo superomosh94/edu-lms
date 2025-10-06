@@ -1,0 +1,145 @@
+﻿<%- include('../partials/header', { title: 'Submissions' }) %>
+
+<%- include('../partials/sidebar', { activePage: 'submissions' }) %>
+<div class="main-container" style="margin-left: 260px; min-height: 100vh;">
+
+  <main class="content">
+    <header class="page-header">
+      <h1>Student Submissions</h1>
+      <div class="user-info">
+        <i class="fas fa-user-tie"></i>
+        <span>Welcome, <%= user && user.name ? user.name : 'Teacher' %></span>
+      </div>
+    </header>
+
+    <% if (submissions && submissions.length > 0) { %>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student</th>
+            <th>Assignment</th>
+            <th>File</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% submissions.forEach((submission, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><%= submission.student_name %></td>
+              <td><%= submission.assignment_title %></td>
+              <td>
+                <% if (submission.file_path) { %>
+                  <a href="<%= submission.file_path %>" target="_blank">View File</a>
+                <% } else { %>
+                  N/A
+                <% } %>
+              </td>
+              <td>
+                <%= submission.date_submitted
+                      ? new Date(submission.date_submitted).toLocaleDateString()
+                      : '—' %>
+              </td>
+              <td>
+                <span class="status <%= submission.status === 'Submitted' ? 'submitted' : 'pending' %>">
+                  <%= submission.status %>
+                </span>
+              </td>
+              <td class="actions">
+                <a href="/teacher/submissions/<%= submission.id %>">View</a>
+                <a href="/teacher/submissions/grade/<%= submission.id %>">Grade</a>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    <% } else { %>
+      <div class="no-data">
+        <i class="fas fa-folder-open"></i>
+        <p>No submissions found.</p>
+      </div>
+    <% } %>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>
+
+<style>
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+  }
+
+  .data-table th {
+    background: #2563eb;
+    color: white;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
+  tr:hover {
+    background: #f1f5f9;
+  }
+
+  .status {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .status.submitted {
+    background: #dcfce7;
+    color: #15803d;
+  }
+
+  .status.pending {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+
+  .actions a {
+    text-decoration: none;
+    color: #2563eb;
+    margin-right: 10px;
+  }
+
+  .actions a:hover {
+    text-decoration: underline;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 40px;
+    background: #fff;
+    border-radius: 6px;
+    color: #64748b;
+    font-size: 15px;
+  }
+
+  .no-data i {
+    font-size: 40px;
+    margin-bottom: 10px;
+  }
+</style>

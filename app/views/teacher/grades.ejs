@@ -1,0 +1,181 @@
+﻿<%- include('../partials/header', { title: 'Grades' }) %>
+
+<%- include('../partials/sidebar', { activePage: 'grades' }) %>
+<div class="main-container" style="margin-left: 250px;">
+
+  <main class="content">
+    <header class="page-header">
+      <h1>Student Grades</h1>
+      <div class="user-info">
+        <i class="fas fa-user-tie"></i>
+        <span>Welcome, <%= user && user.name ? user.name : 'Teacher' %></span>
+      </div>
+    </header>
+
+    <% if (grades && grades.length > 0) { %>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Student</th>
+              <th>Assignment</th>
+              <th>Marks</th>
+              <th>Grade</th>
+              <th>Remarks</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% grades.forEach((g, index) => { %>
+              <tr>
+                <td><%= index + 1 %></td>
+                <td><%= g.student_name %></td>
+                <td><%= g.assignment_title %></td>
+                <td><%= g.marks || '—' %></td>
+                <td class="grade"><%= g.grade || '—' %></td>
+                <td><%= g.remarks || 'N/A' %></td>
+                <td><%= g.date_graded ? new Date(g.date_graded).toLocaleDateString() : '—' %></td>
+                <td class="actions">
+                  <a href="/teacher/grades/<%= g.id %>">View</a>
+                  <a href="/teacher/grades/edit/<%= g.id %>">Edit</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } else { %>
+      <div class="no-data">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>No grades available yet.</p>
+      </div>
+    <% } %>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>
+
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f9fafb;
+    color: #1e293b;
+    margin: 0;
+  }
+
+  .main-container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  main.content {
+    flex: 1;
+    padding: 20px;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 10px;
+  }
+
+  .page-header h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #1e3a8a;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .user-info i {
+    color: #2563eb;
+  }
+
+  .table-container {
+    overflow-x: auto;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+  }
+
+  .data-table th {
+    background: #2563eb;
+    color: #fff;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
+  tr:hover {
+    background: #f1f5f9;
+  }
+
+  .grade {
+    font-weight: 600;
+    color: #1e3a8a;
+  }
+
+  .actions a {
+    text-decoration: none;
+    color: #2563eb;
+    margin-right: 10px;
+    font-weight: 500;
+  }
+
+  .actions a:hover {
+    text-decoration: underline;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 6px;
+    color: #64748b;
+    font-size: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-top: 20px;
+  }
+
+  .no-data i {
+    font-size: 40px;
+    margin-bottom: 10px;
+    color: #94a3b8;
+  }
+
+  @media (max-width: 768px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .data-table th, .data-table td {
+      font-size: 13px;
+      padding: 10px;
+    }
+  }
+</style>

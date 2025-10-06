@@ -11,7 +11,7 @@ module.exports = {
     { label: "System Settings", icon: "cogs", url: "/admin/system", page: "system" }
   ],
   Teacher: [
-    { label: "Dashboard", icon: "tachometer-alt", url: "/teacher", page: "dashboard" },
+    { label: "Dashboard", icon: "tachometer-alt", url: "/teacher/dashboard", page: "dashboard" },
     { label: "My Courses", icon: "chalkboard-teacher", url: "/teacher/courses", page: "courses" },
     { label: "Assignments", icon: "tasks", url: "/teacher/assignments", page: "assignments" },
     { label: "Student Submissions", icon: "folder-open", url: "/teacher/submissions", page: "submissions" },

@@ -1,7 +1,11 @@
--- Disable foreign key checks
+-- ==========================================
+-- EDU-LMS DATABASE RESET AND CLEAN SETUP
+-- ==========================================
+
 SET FOREIGN_KEY_CHECKS = 0;
 
 -- Drop tables in correct dependency order
+DROP TABLE IF EXISTS `notifications`;
 DROP TABLE IF EXISTS `submissions`;
 DROP TABLE IF EXISTS `assignments`;
 DROP TABLE IF EXISTS `enrollments`;
@@ -12,105 +16,111 @@ DROP TABLE IF EXISTS `roles`;
 DROP TABLE IF EXISTS `reports`;
 DROP TABLE IF EXISTS `announcements`;
 
--- Re-enable foreign key checks
 SET FOREIGN_KEY_CHECKS = 1;
 
--- Create roles table
+-- ==========================================
+-- ROLES TABLE
+-- ==========================================
 CREATE TABLE `roles` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) NOT NULL UNIQUE,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(50) NOT NULL UNIQUE,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Insert default roles
 INSERT INTO `roles` (`name`) VALUES ('Admin'), ('Teacher'), ('Student');
 
--- Create users table
+-- ==========================================
+-- USERS TABLE
+-- ==========================================
 CREATE TABLE `users` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role_id` int NOT NULL,
-  `is_active` tinyint(1) DEFAULT 1,
-  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL UNIQUE,
+  `password` VARCHAR(255) NOT NULL,
+  `role_id` INT NOT NULL,
+  `is_active` TINYINT(1) DEFAULT 1,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-  KEY `role_id` (`role_id`),
-  CONSTRAINT `users_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`)
+  FOREIGN KEY (`role_id`) REFERENCES `roles`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create courses table
+-- ==========================================
+-- COURSES TABLE
+-- ==========================================
 CREATE TABLE `courses` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL,
-  `description` text,
-  `teacher_id` int NOT NULL,
-  `status` varchar(50) NOT NULL DEFAULT 'pending',
-  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `teacher_id` INT NOT NULL,
+  `status` VARCHAR(50) NOT NULL DEFAULT 'pending',
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `teacher_id` (`teacher_id`),
-  CONSTRAINT `courses_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`teacher_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create assignments table
+-- ==========================================
+-- ASSIGNMENTS TABLE
+-- ==========================================
 CREATE TABLE `assignments` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `course_id` int NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `description` text,
-  `due_date` datetime DEFAULT NULL,
-  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `teacher_id` int NOT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `course_id` INT NOT NULL,
+  `teacher_id` INT NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `due_date` DATETIME DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `course_id` (`course_id`),
-  KEY `teacher_id` (`teacher_id`),
-  CONSTRAINT `assignments_ibfk_1` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `assignments_ibfk_2` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`course_id`) REFERENCES `courses`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`teacher_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create enrollments table
+-- ==========================================
+-- ENROLLMENTS TABLE
+-- ==========================================
 CREATE TABLE `enrollments` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `student_id` int NOT NULL,
-  `course_id` int NOT NULL,
-  `enrolled_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `student_id` INT NOT NULL,
+  `course_id` INT NOT NULL,
+  `enrolled_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `status` ENUM('active','inactive') DEFAULT 'active',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_enrollment` (`student_id`, `course_id`),
-  KEY `student_id` (`student_id`),
-  KEY `course_id` (`course_id`),
-  CONSTRAINT `enrollments_ibfk_1` FOREIGN KEY (`student_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
-  CONSTRAINT `enrollments_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`) ON DELETE CASCADE
+  FOREIGN KEY (`student_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`course_id`) REFERENCES `courses`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create audit_logs table
+-- ==========================================
+-- AUDIT LOGS TABLE
+-- ==========================================
 CREATE TABLE `audit_logs` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int DEFAULT NULL,
-  `action` varchar(255) NOT NULL,
-  `details` text,
-  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  `ip` varchar(45) DEFAULT NULL,
-  `user_agent` varchar(255) DEFAULT NULL,
-  `meta` json DEFAULT NULL,
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `user_id` INT DEFAULT NULL,
+  `action` VARCHAR(255) NOT NULL,
+  `details` TEXT,
+  `ip` VARCHAR(45) DEFAULT NULL,
+  `user_agent` VARCHAR(255) DEFAULT NULL,
+  `meta` TEXT DEFAULT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `action` (`action`),
-  KEY `created_at` (`created_at`),
-  CONSTRAINT `audit_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create reports table
+-- ==========================================
+-- REPORTS TABLE (NO course_id)
+-- ==========================================
 CREATE TABLE `reports` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL,
-  `description` text,
-  `created_at` timestamp DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `teacher_id` INT NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `description` TEXT,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`teacher_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create announcements table
+-- ==========================================
+-- ANNOUNCEMENTS TABLE
+-- ==========================================
 CREATE TABLE `announcements` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `title` VARCHAR(255) NOT NULL,
@@ -118,60 +128,72 @@ CREATE TABLE `announcements` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-ALTER TABLE enrollments
-ADD COLUMN status ENUM('active','inactive') NOT NULL DEFAULT 'active';
+-- ==========================================
+-- SUBMISSIONS TABLE
+-- ==========================================
+CREATE TABLE `submissions` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `assignment_id` INT NOT NULL,
+  `student_id` INT NOT NULL,
+  `grade` VARCHAR(50),
+  `submitted_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`assignment_id`) REFERENCES `assignments`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`student_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ==========================================
+-- NOTIFICATIONS TABLE
+-- ==========================================
+CREATE TABLE `notifications` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id` INT NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `message` TEXT NOT NULL,
+  `type` ENUM('info','warning','error') DEFAULT 'info',
+  `related_id` INT DEFAULT NULL,
+  `related_type` VARCHAR(100) DEFAULT NULL,
+  `is_read` TINYINT(1) DEFAULT 0,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  `read_at` TIMESTAMP NULL,
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE submissions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    assignment_id INT NOT NULL,
-    student_id INT NOT NULL,
-    grade VARCHAR(50),
-    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (assignment_id) REFERENCES assignments(id),
-    FOREIGN KEY (student_id) REFERENCES users(id)
-);
-  
-CREATE TABLE notifications (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,
-    type ENUM('info', 'warning', 'error') DEFAULT 'info',
-    related_id INT NULL,
-    related_type VARCHAR(100) NULL,
-    is_read TINYINT(1) DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    read_at TIMESTAMP NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-);
+-- ==========================================
+-- SAMPLE DATA
+-- ==========================================
+INSERT INTO `announcements` (`title`, `message`)
+VALUES ('Welcome to the LMS', 'This is the first announcement in the system. Stay tuned for more updates.');
 
--- Insert sample announcements
-INSERT INTO `announcements` (`title`, `message`) VALUES
-('Welcome to the LMS', 'This is the first announcement in the system. Stay tuned for more updates!');
-
--- Insert sample data
 INSERT INTO `users` (`name`, `email`, `password`, `role_id`) VALUES
 ('Admin User', 'admin@example.com', '$2b$10$Ws/hBCP.V.KWe0gGLanaCOC3fKtpZ/I7pKSSnaDHL9BNdMhdxQ8EW', 1),
 ('Teacher One', 'teacher1@example.com', '$2b$10$YKwlvko52wAoOZzWpf0hH.uTA93hmRFyoV0heeHKfLAZKoVTePeq.', 2),
 ('Student One', 'student1@example.com', '$2b$10$ju6Akc2NtVAca6tuhkrQseiGJL0Lya38t8UlhfgTMCA5SKHoxRSHW', 3);
 
 INSERT INTO `courses` (`title`, `description`, `teacher_id`, `status`) VALUES
-('Mathematics 101', 'Basic Mathematics Course', 2, 'pending'),
-('History 101', 'Introduction to World History', 2, 'pending');
+('Mathematics 101', 'Basic Mathematics Course', 2, 'active'),
+('History 101', 'Introduction to World History', 2, 'active');
 
-INSERT INTO `assignments` (`course_id`, `title`, `description`, `due_date`, `teacher_id`) VALUES
-(1, 'Algebra Homework', 'Solve the following algebraic equations', '2025-10-15 23:59:59', 2),
-(1, 'Geometry Quiz', 'Basic geometry concepts and problems', '2025-10-20 23:59:59', 2);
+INSERT INTO `assignments` (`course_id`, `teacher_id`, `title`, `description`, `due_date`) VALUES
+(1, 2, 'Algebra Homework', 'Solve the following algebraic equations', '2025-10-15 23:59:59'),
+(1, 2, 'Geometry Quiz', 'Basic geometry concepts and problems', '2025-10-20 23:59:59');
 
 INSERT INTO `enrollments` (`student_id`, `course_id`, `status`) VALUES
 (3, 1, 'active'),
 (3, 2, 'active');
 
-INSERT INTO `audit_logs` (`user_id`, `action`, `ip`, `user_agent`) VALUES
-(1, 'login', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'),
-(3, 'course_enrollment', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36');
+INSERT INTO `audit_logs` (`user_id`, `action`, `ip`, `user_agent`)
+VALUES
+(1, 'login', '127.0.0.1', 'Mozilla/5.0'),
+(3, 'course_enrollment', '127.0.0.1', 'Mozilla/5.0');
 
-INSERT INTO `reports` (`title`, `description`) VALUES
-('Monthly User Report', 'Summary of user registrations and activity for the month.'),
-('Course Enrollment Report', 'Details of course enrollments and statuses.');
+INSERT INTO `reports` (`teacher_id`, `title`, `description`) VALUES
+(2, 'Monthly User Report', 'Summary of user registrations and activity for the month.'),
+(2, 'Course Enrollment Report', 'Details of course enrollments and statuses.');
+
+INSERT INTO `submissions` (`assignment_id`, `student_id`, `grade`) VALUES
+(1, 3, 'A'),
+(2, 3, 'B+');
+
+INSERT INTO `notifications` (`user_id`, `title`, `message`, `type`, `related_id`, `related_type`) VALUES
+(3, 'New Assignment Posted', 'A new assignment "Algebra Homework" has been posted for your course "Mathematics 101".', 'info', 1, 'assignment'),
+(3, 'Course Enrollment Approved', 'Your enrollment in the course "Mathematics 101" has been approved.', 'info', 1, 'course');

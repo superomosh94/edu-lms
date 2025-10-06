@@ -1,4 +1,5 @@
-<%- include('../partials/header') %>
+<!-- GET HEADER FROM PARTIALS -->
+<%- include('../partials/header', { title: 'Register' }) %>
 
 <style>
 :root {
@@ -14,19 +15,22 @@
   --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1),
                0 4px 6px -2px rgba(0,0,0,0.05);
 }
+
 body {
   font-family: 'Inter', sans-serif;
   background-color: var(--dark-bg);
   color: var(--dark-text);
   margin: 0;
 }
+
 .auth-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 1rem;
 }
+
 .auth-card {
   background: var(--dark-card);
   padding: 2rem;
@@ -35,47 +39,57 @@ body {
   width: 100%;
   max-width: 420px;
 }
+
 .auth-header {
   text-align: center;
   margin-bottom: 2rem;
 }
+
 .auth-header h2 {
-  margin: 0;
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--white);
 }
+
 .auth-header p {
   color: var(--light-text);
-  font-size: 0.95rem;
-  margin-top: 0.5rem;
 }
+
 .form-group {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
   position: relative;
 }
+
 .form-label {
   display: block;
   margin-bottom: 0.5rem;
-  font-weight: 500;
   color: var(--light-text);
 }
+
 .form-control {
   width: 100%;
   padding: 0.75rem;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.05);
   color: var(--dark-text);
   font-size: 1rem;
 }
+
+.form-control::placeholder {
+  color: var(--white);
+  opacity: 1;
+}
+
 .form-control:focus {
   border-color: var(--primary-blue);
   outline: none;
 }
+
 .password-wrapper {
   position: relative;
 }
+
 .toggle-password {
   position: absolute;
   right: 12px;
@@ -85,31 +99,21 @@ body {
   border: none;
   cursor: pointer;
   color: var(--light-text);
-  display: flex;
-  align-items: center;
 }
-.toggle-password svg {
-  width: 20px;
-  height: 20px;
-}
+
 .password-rules {
   font-size: 0.85rem;
-  margin-top: -0.5rem;
-  margin-bottom: 1rem;
   color: var(--light-text);
 }
+
 .password-rules span {
   display: block;
-  margin: 2px 0;
 }
-.password-rules .valid {
-  color: #22c55e;
-}
-.password-rules .invalid {
-  color: #ef4444;
-}
+
+.password-rules .valid { color: #22c55e; }
+.password-rules .invalid { color: #ef4444; }
+
 .btn-primary {
-  display: inline-block;
   width: 100%;
   padding: 0.75rem;
   border-radius: var(--radius-md);
@@ -117,30 +121,79 @@ body {
   color: var(--white);
   font-weight: 600;
   border: none;
-  cursor: pointer;
 }
+
 .btn-primary:hover {
   background: var(--primary-blue-dark);
 }
+
 .auth-footer {
   text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: var(--light-text);
+  margin-top: 1rem;
 }
+
 .auth-footer a {
   color: var(--primary-blue);
-  font-weight: 500;
   text-decoration: none;
 }
+
 .auth-footer a:hover {
   color: var(--primary-blue-dark);
 }
+
 .error {
   color: #ef4444;
   text-align: center;
   margin-bottom: 1rem;
-  font-size: 0.9rem;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .auth-card {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .auth-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .form-control {
+    padding: 0.65rem;
+  }
+
+  .btn-primary {
+    padding: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+
+  .auth-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .form-label {
+    font-size: 0.9rem;
+  }
+
+  .form-control {
+    padding: 0.6rem;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    padding: 0.6rem;
+    font-size: 0.95rem;
+  }
+
+  .password-rules {
+    font-size: 0.8rem;
+  }
 }
 </style>
 
@@ -155,31 +208,22 @@ body {
       <div class="error"><%= error %></div>
     <% } %>
 
-    <form action="/auth/register" method="POST" class="auth-form">
+    <form action="/auth/register" method="POST">
       <div class="form-group">
         <label for="name" class="form-label">Full Name</label>
-        <input type="text" id="name" name="name" value="<%= name %>" placeholder="John Doe" required class="form-control">
+        <input type="text" id="name" name="name" value="<%= name %>" placeholder="e.g John Doe" required class="form-control">
       </div>
 
       <div class="form-group">
         <label for="email" class="form-label">Email Address</label>
-        <input type="email" id="email" name="email" value="<%= email %>" placeholder="you@example.com" required class="form-control">
+        <input type="email" id="email" name="email" value="<%= email %>" placeholder="e.g you@example.com" required class="form-control">
       </div>
 
       <div class="form-group password-wrapper">
         <label for="password" class="form-label">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter password" required class="form-control">
-        <button type="button" id="togglePassword" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="password">
-          <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-          <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none;">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.57-4.362M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />
-          </svg>
+        <input type="password" id="password" name="password" placeholder="**********" required class="form-control">
+        <button type="button" id="togglePassword" class="toggle-password">
+          <i class="fas fa-eye"></i>
         </button>
       </div>
 
@@ -193,18 +237,9 @@ body {
 
       <div class="form-group password-wrapper">
         <label for="confirmPassword" class="form-label">Confirm Password</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Re-enter password" required class="form-control">
-        <button type="button" id="toggleConfirmPassword" class="toggle-password" aria-label="Show password" aria-pressed="false" data-target="confirmPassword">
-          <svg id="eyeOpenConfirm" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-          <svg id="eyeClosedConfirm" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none;">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.57-4.362M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />
-          </svg>
+        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="**********" required class="form-control">
+        <button type="button" id="toggleConfirmPassword" class="toggle-password">
+          <i class="fas fa-eye"></i>
         </button>
       </div>
 
@@ -217,47 +252,4 @@ body {
   </div>
 </div>
 
-<script>
-  // Toggle password view
-  function setupToggle(btnId, inputId, openId, closedId) {
-    const btn = document.getElementById(btnId);
-    const input = document.getElementById(inputId);
-    const eyeOpen = document.getElementById(openId);
-    const eyeClosed = document.getElementById(closedId);
-
-    btn.addEventListener('click', () => {
-      const isPassword = input.type === 'password';
-      input.type = isPassword ? 'text' : 'password';
-      eyeOpen.style.display = isPassword ? 'none' : 'block';
-      eyeClosed.style.display = isPassword ? 'block' : 'none';
-    });
-  }
-
-  setupToggle('togglePassword', 'password', 'eyeOpen', 'eyeClosed');
-  setupToggle('toggleConfirmPassword', 'confirmPassword', 'eyeOpenConfirm', 'eyeClosedConfirm');
-
-  // Password strength check
-  const passwordInput = document.getElementById('password');
-  const rules = {
-    length: /.{8,}/,
-    uppercase: /[A-Z]/,
-    lowercase: /[a-z]/,
-    number: /[0-9]/,
-    symbol: /[^A-Za-z0-9]/
-  };
-
-  passwordInput.addEventListener('input', () => {
-    for (const [rule, regex] of Object.entries(rules)) {
-      const el = document.getElementById(rule);
-      if (regex.test(passwordInput.value)) {
-        el.classList.add('valid');
-        el.classList.remove('invalid');
-      } else {
-        el.classList.add('invalid');
-        el.classList.remove('valid');
-      }
-    }
-  });
-</script>
-
-<%- include('../partials/footer') %>
+<script src="/public/js/auth.js"></script>
