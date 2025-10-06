@@ -1,0 +1,119 @@
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f9;
+    color: #0e3e81;
+  }
+
+  .layout {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  #main-content {
+    padding: 20px;
+    background: #f9fafb;
+    flex: 1;
+    overflow-y: auto;
+    margin-left: 270px;
+  }
+
+  #course-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #1b2e55;
+  }
+
+  #course-description {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #4b5563;
+    line-height: 1.6;
+  }
+
+  #assignments-heading {
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 30px;
+    margin-bottom: 10px;
+    color: #111827;
+  }
+
+  #assignments-list {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .assignment-item {
+    padding: 12px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .assignment-title {
+    font-weight: bold;
+    color: #111827;
+  }
+
+  .assignment-status {
+    color: #2563eb;
+    font-weight: bold;
+  }
+
+  .assignment-grade {
+    color: #16a34a;
+    font-weight: bold;
+  }
+
+  #no-assignments {
+    font-style: italic;
+    color: #6b7280;
+  }
+
+  footer {
+    background: #f1f5f9;
+    padding: 15px;
+    text-align: center;
+    margin-left: 260px;
+    border-top: 1px solid #e5e7eb;
+  }
+</style>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <%- include('../partials/sidebar') %>
+  </aside>
+
+  <!-- Main Content -->
+  <div id="main-content">
+    <h1 id="course-title"><%= course.title %></h1>
+    <p id="course-description"><%= course.description %></p>
+
+    <h2 id="assignments-heading">Assignments</h2>
+    <% if (assignments.length > 0) { %>
+      <ul id="assignments-list">
+        <% assignments.forEach(assignment => { %>
+          <li class="assignment-item">
+            <span class="assignment-title"><%= assignment.title %></span> -
+            Status: <span class="assignment-status"><%= assignment.submissionStatus %></span>
+            <% if (assignment.grade) { %>
+              - Grade: <span class="assignment-grade"><%= assignment.grade %></span>
+            <% } %>
+          </li>
+        <% }); %>
+      </ul>
+    <% } else { %>
+      <p id="no-assignments">No assignments found for this course.</p>
+    <% } %>
+  </div>
+</div>
+
+<footer><%- include('../partials/footer') %></footer>

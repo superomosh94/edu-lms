@@ -1,7 +1,7 @@
 const pool = require('../controllers/config/db');
 
 class Course {
-    static async findAll({ page = 1, limit = 10, status, category } = {}) {
+    static async findAll({ page = 1, limit = 10, status } = {}) {
         try {
             let query = 'SELECT * FROM courses';
             const params = [];
@@ -9,11 +9,6 @@ class Course {
             if (status) {
                 query += ' WHERE status = ?';
                 params.push(status);
-            }
-
-            if (category) {
-                query += status ? ' AND category = ?' : ' WHERE category = ?';
-                params.push(category);
             }
 
             query += ' LIMIT ? OFFSET ?';
@@ -80,15 +75,17 @@ class Course {
         }
     }
 
-    static async findByCategories(categories, limit, excludeStudentId) {
+    static async findByCategories(limit = 5, excludeStudentId) {
         try {
+            const safeLimit = parseInt(limit) > 0 ? parseInt(limit) : 5;
+
             const [rows] = await pool.query(`
                 SELECT DISTINCT c.*
                 FROM courses c
                 JOIN enrollments e ON c.id = e.course_id
-                WHERE c.category IN (?) AND e.student_id != ?
+                WHERE e.student_id != ?
                 LIMIT ?`,
-                [categories, excludeStudentId, limit]
+                [excludeStudentId, safeLimit]
             );
             return rows;
         } catch (error) {
@@ -97,8 +94,10 @@ class Course {
         }
     }
 
-    static async findPopular(limit) {
+    static async findPopular(limit = 5) {
         try {
+            const safeLimit = parseInt(limit) > 0 ? parseInt(limit) : 5;
+
             const [rows] = await pool.query(`
                 SELECT c.*, COUNT(e.student_id) AS enrollmentCount
                 FROM courses c
@@ -106,7 +105,7 @@ class Course {
                 GROUP BY c.id
                 ORDER BY enrollmentCount DESC
                 LIMIT ?`,
-                [limit]
+                [safeLimit]
             );
             return rows;
         } catch (error) {
@@ -193,7 +192,7 @@ class Course {
         }
     }
 
-    static async getCount({ status, category } = {}) {
+    static async getCount({ status } = {}) {
         try {
             let query = 'SELECT COUNT(*) AS count FROM courses';
             const params = [];
@@ -201,10 +200,6 @@ class Course {
             if (status) {
                 query += ' WHERE status = ?';
                 params.push(status);
-            }
-            if (category) {
-                query += status ? ' AND category = ?' : ' WHERE category = ?';
-                params.push(category);
             }
 
             const [rows] = await pool.query(query, params);
