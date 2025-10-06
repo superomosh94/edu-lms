@@ -1,36 +1,43 @@
-<%- include('../partials/header', { title: 'Dashboard - EDU LMS', headerTitle: 'Dashboard', adminName: user.name }) %>
+<%- include('../partials/header', { title: 'Dashboard - EDU LMS', headerTitle: 'Dashboard', adminName: '' }) %>
 <%- include('../partials/navigation') %>
 
-<div class="dashboard-container <%= user.role.toLowerCase() %>-theme">
+<div class="dashboard-container guest-theme">
   <!-- Sidebar -->
- 
   <div class="sidebar">
-  <%- include('../partials/sidebar', { user: user, activePage: 'dashboard' }) %>
-</div>
-
+    <%- include('../partials/sidebar', { user: { role: 'guest', name: 'Guest' }, activePage: 'dashboard' }) %>
+  </div>
 
   <!-- Main Content -->
   <main class="dashboard-main">
     <div class="dashboard-header">
       <div>
-        <h2>Welcome back, <%= user.name %>!</h2>
-        <p>Here's what's happening in your EDU LMS account today.</p>
+        <h2>Welcome to EDU LMS</h2>
+        <p>Explore our platform and view sample content without signing in.</p>
       </div>
     </div>
 
     <!-- Stats -->
     <div class="stats-grid">
-      <% if (data.stats) { %>
-        <% Object.keys(data.stats).forEach(function(key) { %>
-          <div class="stat-card">
-            <div class="stat-icon">📊</div>
-            <span class="stat-number"><%= data.stats[key] %></span>
-            <div class="stat-label"><%= key %></div>
-          </div>
-        <% }) %>
-      <% } else { %>
-        <p>No stats available.</p>
-      <% } %>
+      <div class="stat-card">
+        <div class="stat-icon">📚</div>
+        <span class="stat-number">50+</span>
+        <div class="stat-label">Available Courses</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">👩‍🎓</div>
+        <span class="stat-number">2K+</span>
+        <div class="stat-label">Students Enrolled</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📝</div>
+        <span class="stat-number">120+</span>
+        <div class="stat-label">Assignments</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">⚙️</div>
+        <span class="stat-number">5</span>
+        <div class="stat-label">Departments</div>
+      </div>
     </div>
 
     <!-- Quick Actions -->
@@ -41,17 +48,17 @@
           <div class="action-icon">📖</div>
           <h4>View Courses</h4>
         </a>
-        <a href="/assignments" class="action-card">
+        <a href="/register" class="action-card">
           <div class="action-icon">📝</div>
-          <h4>Submit Assignment</h4>
+          <h4>Register Account</h4>
         </a>
-        <a href="/grades" class="action-card">
-          <div class="action-icon">📊</div>
-          <h4>Check Grades</h4>
+        <a href="/about" class="action-card">
+          <div class="action-icon">ℹ️</div>
+          <h4>About EDU LMS</h4>
         </a>
-        <a href="/settings" class="action-card">
-          <div class="action-icon">⚙️</div>
-          <h4>Account Settings</h4>
+        <a href="/contact" class="action-card">
+          <div class="action-icon">✉️</div>
+          <h4>Contact Us</h4>
         </a>
       </div>
     </div>
@@ -59,19 +66,20 @@
     <!-- Recent Activity -->
     <div class="recent-activity">
       <h3>Recent Activity</h3>
-      <% if (data.recentActivity && data.recentActivity.length > 0) { %>
-        <% data.recentActivity.forEach(activity => { %>
-          <div class="activity-item">
-            <div class="activity-icon">🔔</div>
-            <div>
-              <p><%= activity.message || activity.action %></p>
-              <div class="activity-time"><%= activity.created_at || activity.time %></div>
-            </div>
-          </div>
-        <% }) %>
-      <% } else { %>
-        <p>No recent activity.</p>
-      <% } %>
+      <div class="activity-item">
+        <div class="activity-icon">🔔</div>
+        <div>
+          <p>New courses have been added for the upcoming semester.</p>
+          <div class="activity-time">Today</div>
+        </div>
+      </div>
+      <div class="activity-item">
+        <div class="activity-icon">🔔</div>
+        <div>
+          <p>Check out our latest free course previews.</p>
+          <div class="activity-time">2 days ago</div>
+        </div>
+      </div>
     </div>
   </main>
 </div>
@@ -115,13 +123,13 @@ body {
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
+  background: linear-gradient(135deg,#6c63ff,#00c4ff);
   color: white;
 }
 
 .stats-grid {
   display: flex;
   gap: 15px;
-  margin-bottom: 20px;
   flex-wrap: wrap;
 }
 
@@ -210,26 +218,9 @@ body {
   color: #888;
 }
 
-/* Role Themes */
-.dashboard-container.admin-theme .dashboard-header {
-  background: linear-gradient(135deg,#1f6feb,#10b981);
-}
-.dashboard-container.teacher-theme .dashboard-header {
-  background: linear-gradient(135deg,#10b981,#3b82f6);
-}
-.dashboard-container.student-theme .dashboard-header {
-  background: linear-gradient(135deg,#f59e0b,#f97316);
-}
-.dashboard-container.finance-theme .dashboard-header {
-  background: linear-gradient(135deg,#ef4444,#b91c1c);
-}
+/* Guest theme */
+.dashboard-container.guest-theme .stat-number { color: #6c63ff; }
 
-.dashboard-container.admin-theme .stat-number { color: #1f6feb; }
-.dashboard-container.teacher-theme .stat-number { color: #10b981; }
-.dashboard-container.student-theme .stat-number { color: #f59e0b; }
-.dashboard-container.finance-theme .stat-number { color: #ef4444; }
-
-/* Responsive */
 @media (max-width: 1024px) {
   .dashboard-container {
     flex-direction: column;
@@ -260,4 +251,3 @@ body {
 </style>
 
 <%- include('../partials/footer') %>
-

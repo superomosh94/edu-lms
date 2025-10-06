@@ -5,39 +5,141 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - EDU LMS</title>
   <%- include('../partials/header') %>
+
   <style>
-    .admin-stats .card {
-      transition: transform 0.3s ease;
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f9;
+      color: #333;
+    }
+
+    .container-fluid {
+      padding: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: #0d1117;
+      min-height: 100vh;
+      color: white;
+      padding-top: 20px;
+    }
+
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .sidebar a:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+    }
+
+    /* Cards */
+    .card {
       border: none;
       border-radius: 10px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .admin-stats .card:hover {
+
+    .card:hover {
       transform: translateY(-5px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .card-header {
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      font-weight: bold;
+    }
+
+    /* Admin stats cards */
+    .admin-stats .card {
+      background: white;
+    }
+
+    .text-primary { color: #4e73df !important; }
+    .text-success { color: #1cc88a !important; }
+    .text-info { color: #36b9cc !important; }
+    .text-warning { color: #f6c23e !important; }
+
+    .border-left-primary { border-left: 4px solid #4e73df !important; }
+    .border-left-success { border-left: 4px solid #1cc88a !important; }
+    .border-left-info { border-left: 4px solid #36b9cc !important; }
+    .border-left-warning { border-left: 4px solid #f6c23e !important; }
+
+    /* Quick actions */
     .quick-actions .btn {
       margin: 5px;
+      border-radius: 5px;
     }
-    .user-management table th {
+
+    .quick-actions .btn i {
+      margin-right: 5px;
+    }
+
+    /* Tables */
+    .user-management table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .user-management th, .user-management td {
+      padding: 12px;
+      text-align: left;
+    }
+
+    .user-management th {
+      font-weight: bold;
       border-top: none;
-      font-weight: 600;
+    }
+
+    .badge {
+      padding: 5px 8px;
+      font-size: 0.8em;
+    }
+
+    /* Alerts */
+    .list-group-item {
+      border: none;
+      padding: 15px;
+      background: white;
+      margin-bottom: 5px;
+      border-radius: 5px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+
+      main {
+        margin-left: 0;
+      }
     }
   </style>
 </head>
 <body>
-    
+
   <%- include('../partials/navigation') %>
 
   <div class="container-fluid py-4">
     <div class="row">
       <!-- Sidebar -->
-      <div class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+      <div class="col-md-3 col-lg-2 sidebar">
         <%- include('../partials/adminSidebar') %>
-
       </div>
 
       <!-- Main Content -->
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-        <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 border-bottom">
           <h1 class="h2">Admin Dashboard</h1>
           <div class="btn-toolbar mb-2 mb-md-0">
             <button class="btn btn-sm btn-outline-secondary dropdown-toggle">
@@ -51,13 +153,10 @@
           <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-primary shadow h-100 py-2">
               <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col mr-2">
-                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                      Total Users</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                      <%= data.stats.totalUsers || 0 %>
-                    </div>
+                <div class="row align-items-center">
+                  <div class="col">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Users</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"><%= data.stats.totalUsers || 0 %></div>
                   </div>
                   <div class="col-auto">
                     <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -70,13 +169,10 @@
           <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-success shadow h-100 py-2">
               <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col mr-2">
-                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                      Active Courses</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                      <%= data.stats.courses || 0 %>
-                    </div>
+                <div class="row align-items-center">
+                  <div class="col">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Active Courses</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"><%= data.stats.courses || 0 %></div>
                   </div>
                   <div class="col-auto">
                     <i class="fas fa-book fa-2x text-gray-300"></i>
@@ -89,13 +185,10 @@
           <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-info shadow h-100 py-2">
               <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col mr-2">
-                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                      Pending Approvals</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                      <%= data.stats.pendingApprovals || 0 %>
-                    </div>
+                <div class="row align-items-center">
+                  <div class="col">
+                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Pending Approvals</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"><%= data.stats.pendingApprovals || 0 %></div>
                   </div>
                   <div class="col-auto">
                     <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -108,13 +201,10 @@
           <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-left-warning shadow h-100 py-2">
               <div class="card-body">
-                <div class="row no-gutters align-items-center">
-                  <div class="col mr-2">
-                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                      System Health</div>
-                    <div class="h5 mb-0 font-weight-bold text-gray-800">
-                      <span class="text-success">Good</span>
-                    </div>
+                <div class="row align-items-center">
+                  <div class="col">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">System Health</div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"><span class="text-success">Good</span></div>
                   </div>
                   <div class="col-auto">
                     <i class="fas fa-heart fa-2x text-gray-300"></i>
@@ -130,21 +220,13 @@
           <div class="col-12">
             <div class="card shadow">
               <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                Quick Actions
               </div>
               <div class="card-body text-center quick-actions">
-                <a href="/admin/users/create" class="btn btn-primary">
-                  <i class="fas fa-user-plus me-2"></i>Add User
-                </a>
-                <a href="/courses/create" class="btn btn-success">
-                  <i class="fas fa-plus-circle me-2"></i>Create Course
-                </a>
-                <a href="/admin/reports" class="btn btn-info">
-                  <i class="fas fa-chart-bar me-2"></i>Generate Reports
-                </a>
-                <a href="/admin/system" class="btn btn-warning">
-                  <i class="fas fa-cogs me-2"></i>System Settings
-                </a>
+                <a href="/admin/users/create" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add User</a>
+                <a href="/courses/create" class="btn btn-success"><i class="fas fa-plus-circle"></i> Create Course</a>
+                <a href="/admin/reports" class="btn btn-info"><i class="fas fa-chart-bar"></i> Reports</a>
+                <a href="/admin/system" class="btn btn-warning"><i class="fas fa-cogs"></i> Settings</a>
               </div>
             </div>
           </div>
@@ -154,41 +236,24 @@
         <div class="row">
           <div class="col-md-6">
             <div class="card shadow mb-4">
-              <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">Recent Users</h6>
-                <a href="/admin/users" class="btn btn-sm btn-primary">View All</a>
-              </div>
+              <div class="card-header">Recent Users</div>
               <div class="card-body user-management">
                 <div class="table-responsive">
                   <table class="table table-hover">
                     <thead>
-                      <tr>
-                        <th>Name</th>
-                        <th>Role</th>
-                        <th>Status</th>
-                      </tr>
+                      <tr><th>Name</th><th>Role</th><th>Status</th></tr>
                     </thead>
                     <tbody>
                       <% if (data.recentUsers && data.recentUsers.length > 0) { %>
                         <% data.recentUsers.forEach(user => { %>
                           <tr>
                             <td><%= user.name %></td>
-                            <td>
-                              <span class="badge bg-<%= user.role === 'admin' ? 'danger' : user.role === 'teacher' ? 'warning' : 'info' %>">
-                                <%= user.role %>
-                              </span>
-                            </td>
-                            <td>
-                              <span class="badge bg-<%= user.status === 'active' ? 'success' : 'secondary' %>">
-                                <%= user.status %>
-                              </span>
-                            </td>
+                            <td><span class="badge bg-<%= user.role === 'admin' ? 'danger' : user.role === 'teacher' ? 'warning' : 'info' %>"><%= user.role %></span></td>
+                            <td><span class="badge bg-<%= user.status === 'active' ? 'success' : 'secondary' %>"><%= user.status %></span></td>
                           </tr>
                         <% }) %>
                       <% } else { %>
-                        <tr>
-                          <td colspan="3" class="text-center text-muted">No recent users</td>
-                        </tr>
+                        <tr><td colspan="3" class="text-center text-muted">No recent users</td></tr>
                       <% } %>
                     </tbody>
                   </table>
@@ -197,24 +262,19 @@
             </div>
           </div>
 
+          <!-- System Alerts -->
           <div class="col-md-6">
             <div class="card shadow mb-4">
-              <div class="card-header py-3 d-flex justify-content-between align-items-center">
-                <h6 class="m-0 font-weight-bold text-primary">System Alerts</h6>
-                <span class="badge bg-danger"><%= (data.alerts && data.alerts.length) || 0 %></span>
+              <div class="card-header d-flex justify-content-between">
+                System Alerts <span class="badge bg-danger"><%= (data.alerts && data.alerts.length) || 0 %></span>
               </div>
               <div class="card-body">
                 <% if (data.alerts && data.alerts.length > 0) { %>
                   <div class="list-group list-group-flush">
                     <% data.alerts.forEach(alert => { %>
-                      <div class="list-group-item d-flex justify-content-between align-items-start">
-                        <div class="ms-2 me-auto">
-                          <div class="fw-bold"><%= alert.title %></div>
-                          <%= alert.message %>
-                        </div>
-                        <span class="badge bg-<%= alert.type %> rounded-pill">
-                          <%= alert.priority %>
-                        </span>
+                      <div class="list-group-item d-flex justify-content-between">
+                        <div><strong><%= alert.title %></strong><br><%= alert.message %></div>
+                        <span class="badge bg-<%= alert.type %> rounded-pill"><%= alert.priority %></span>
                       </div>
                     <% }) %>
                   </div>
@@ -230,22 +290,21 @@
   </div>
 
   <%- include('../partials/footer') %>
+
   <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const toggle = document.getElementById('themeToggle');
-  const darkMode = localStorage.getItem('darkMode') === 'true';
-  
-  if (darkMode) {
-    document.body.classList.add('dark-mode');
-    toggle.checked = true;
-  }
+    document.addEventListener('DOMContentLoaded', () => {
+      const toggle = document.getElementById('themeToggle');
+      const darkMode = localStorage.getItem('darkMode') === 'true';
+      if (darkMode) document.body.classList.add('dark-mode');
+      if (toggle) toggle.checked = darkMode;
 
-  toggle.addEventListener('change', () => {
-    document.body.classList.toggle('dark-mode', toggle.checked);
-    localStorage.setItem('darkMode', toggle.checked);
-  });
-});
-</script>
-
+      if (toggle) {
+        toggle.addEventListener('change', () => {
+          document.body.classList.toggle('dark-mode', toggle.checked);
+          localStorage.setItem('darkMode', toggle.checked);
+        });
+      }
+    });
+  </script>
 </body>
 </html>

@@ -72,6 +72,7 @@
         
         html {
             scroll-behavior: smooth;
+            font-size: 16px;
         }
         
         body {
@@ -107,13 +108,13 @@
         }
         
         a {
-            color: black;
+            color: var(--dark-text);
             text-decoration: none;
             transition: color 0.3s ease;
         }
         
         a:hover {
-            color: var(white);
+            color: var(--primary-blue);
         }
         
         img {
@@ -303,6 +304,17 @@
             border: none;
             color: var(--dark-text);
             font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s ease;
+        }
+        
+        .hamburger:hover {
+            background-color: rgba(255, 255, 255, 0.05);
         }
         
         /* Hero Section */
@@ -867,7 +879,7 @@
         
         @media (max-width: 768px) {
             .hamburger {
-                display: block;
+                display: flex;
             }
             
             .nav-menu {
@@ -881,6 +893,7 @@
                 transition: 0.3s;
                 box-shadow: var(--shadow-lg);
                 padding: var(--space-lg) 0;
+                z-index: 999;
             }
             
             .nav-menu.active {
@@ -888,7 +901,20 @@
             }
             
             .nav-item {
-                margin: var(--space-md) 0;
+                margin: 0;
+                padding: var(--space-sm) 0;
+                border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            
+            .nav-item:last-child {
+                border-bottom: none;
+                padding-top: var(--space-md);
+            }
+            
+            .nav-link {
+                display: block;
+                padding: var(--space-sm) 0;
+                font-size: 1.1rem;
             }
             
             .hero {
@@ -898,9 +924,52 @@
             .section {
                 padding: var(--space-xl) 0;
             }
+            
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-text p {
+                font-size: 1.1rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+            
+            .features-grid,
+            .roles-grid,
+            .testimonials-container,
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .feature-card,
+            .role-card,
+            .testimonial-card,
+            .pricing-card {
+                padding: var(--space-md);
+            }
+            
+            .demo-image {
+                height: 300px;
+            }
+            
+            .contact-form {
+                padding: var(--space-lg);
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+            }
         }
         
         @media (max-width: 576px) {
+            html {
+                font-size: 14px;
+            }
+            
             h1 {
                 font-size: 1.8rem;
             }
@@ -916,6 +985,84 @@
             
             .btn {
                 width: 100%;
+                padding: 0.875rem 1.5rem;
+            }
+            
+            .btn-large {
+                padding: 1rem 2rem;
+            }
+            
+            .container {
+                padding: 0 var(--space-sm);
+            }
+            
+            .section {
+                padding: var(--space-lg) 0;
+            }
+            
+            .hero {
+                padding-top: 5rem;
+                padding-bottom: var(--space-xl);
+            }
+            
+            .hero-text h1 {
+                font-size: 1.8rem;
+            }
+            
+            .hero-text p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                margin-bottom: var(--space-lg);
+            }
+            
+            .section-title h2 {
+                font-size: 1.6rem;
+            }
+            
+            .feature-icon,
+            .role-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .role-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 1.5rem;
+            }
+            
+            .pricing-price {
+                font-size: 2.5rem;
+            }
+            
+            .info-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .info-icon {
+                margin-right: 0;
+                margin-bottom: var(--space-sm);
+            }
+        }
+        
+        @media (max-width: 400px) {
+            .hero-text h1 {
+                font-size: 1.6rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.4rem;
+            }
+            
+            .feature-card,
+            .role-card,
+            .testimonial-card,
+            .pricing-card {
+                padding: var(--space-md) var(--space-sm);
             }
         }
     </style>
@@ -926,7 +1073,7 @@
         <nav class="navbar container" aria-label="Main navigation">
             <a href="#" class="logo">Edu<span>LMS</span></a>
             
-            <button class="hamburger" aria-expanded="false" aria-controls="nav-menu">
+            <button class="hamburger" aria-expanded="false" aria-controls="nav-menu" aria-label="Toggle navigation menu">
                 <i class="fas fa-bars"></i>
             </button>
             

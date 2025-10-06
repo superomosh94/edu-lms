@@ -8,12 +8,10 @@
     background: #f4f6f9;
   }
 
-  /* Layout */
   .layout {
     display: flex;
   }
 
-  /* Sidebar */
   .sidebar {
     width: 250px;
     background: #0d1117;
@@ -31,7 +29,6 @@
     z-index: 1000;
   }
 
-  /* Hamburger Menu */
   .hamburger {
     display: none;
     font-size: 1.5rem;
@@ -41,9 +38,12 @@
     background: #1f6feb;
     border-radius: 8px;
     margin: 10px;
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1100;
   }
 
-  /* Main Content */
   .main-content {
     margin-left: 250px;
     padding: 20px;
@@ -51,7 +51,6 @@
     width: calc(100% - 250px);
   }
 
-  /* Brand */
   .brand {
     display: flex;
     align-items: center;
@@ -64,26 +63,12 @@
     background: linear-gradient(45deg, #1f6feb, #10b981);
     padding: 10px 14px;
     border-radius: 8px;
-    transition: background 0.3s ease;
   }
 
   .brand:hover {
     background: linear-gradient(45deg, #10b981, #1f6feb);
   }
 
-  .brand i {
-    font-size: 1.4rem;
-    color: #fff;
-  }
-
-  /* Divider */
-  .sidebar hr {
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin: 16px 0;
-  }
-
-  /* Navigation */
   .nav {
     list-style: none;
     padding: 0;
@@ -104,12 +89,6 @@
     transition: background 0.2s, color 0.2s;
   }
 
-  .nav-link i {
-    width: 20px;
-    text-align: center;
-    font-size: 1rem;
-  }
-
   .nav-link:hover {
     background: rgba(31, 111, 235, 0.2);
     color: #fff;
@@ -121,7 +100,6 @@
     font-weight: 500;
   }
 
-  /* User Info */
   .user-wrap {
     margin-top: auto;
     display: flex;
@@ -146,10 +124,6 @@
     border: 2px solid rgba(255, 255, 255, 0.15);
     flex-shrink: 0;
     text-decoration: none;
-  }
-
-  .avatar-initials {
-    text-transform: uppercase;
   }
 
   .online-dot {
@@ -201,6 +175,11 @@
   }
 </style>
 
+<!-- Hamburger Toggle -->
+<div class="hamburger" onclick="toggleSidebar()">
+  <i class="fas fa-bars"></i>
+</div>
+
 <div class="layout">
   <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
@@ -211,12 +190,12 @@
     <hr>
 
     <!-- Navigation -->
-    <ul class="nav nav-pills flex-column mb-auto">
+    <ul class="nav">
       <% if (menuItems && menuItems.length) { %>
         <% menuItems.forEach(item => { %>
           <li>
             <a href="<%= item.url %>" class="nav-link <%= activePage === item.page ? 'active' : '' %>">
-              <i class="fas fa-<%= item.icon %>"></i> <span style="padding-left: 4px;"><%= item.label %></span>
+              <i class="fas fa-<%= item.icon %>"></i> <span><%= item.label %></span>
             </a>
           </li>
         <% }) %>
@@ -245,13 +224,7 @@
     </div>
   </div>
 
-  <!-- Main Content -->
- 
-</div>
-
-<!-- Hamburger toggle -->
-<div class="hamburger" onclick="toggleSidebar()">
-  <i class="fas fa-bars"></i>
+  
 </div>
 
 <script>

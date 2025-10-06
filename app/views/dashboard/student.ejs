@@ -26,23 +26,58 @@
             background: var(--light-bg);
             font-family: 'Segoe UI', sans-serif;
             color: var(--text-color);
+            margin: 0;
         }
 
+        /* Sidebar */
         .sidebar {
             background: linear-gradient(180deg, var(--primary), var(--secondary));
-            color: #fff;
+            color: white;
             min-height: 100vh;
+            width: 250px;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
         }
 
         .sidebar a {
-            color: #fff;
-            transition: color 0.2s ease;
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
         }
 
         .sidebar a:hover {
-            color: var(--warning);
+            background: rgba(255, 255, 255, 0.1);
         }
 
+        /* Hamburger menu */
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            background: var(--secondary);
+            border-radius: 8px;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1100;
+        }
+
+        /* Main content */
+        main {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        /* Cards */
         .student-stats .card {
             background: var(--card-bg);
             border-radius: 12px;
@@ -55,41 +90,15 @@
             box-shadow: 0 8px 20px var(--shadow);
         }
 
-        .course-card {
-            border-radius: 12px;
-            background: linear-gradient(145deg, #ffffff, #f0f3f8);
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 6px var(--shadow);
-        }
-
-        .course-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px var(--shadow);
-        }
-
         .card-header {
             background: linear-gradient(90deg, var(--secondary), var(--primary));
-            color: #fff;
+            color: white;
             border-radius: 8px 8px 0 0;
             font-weight: 600;
+            padding: 10px;
         }
 
-        .progress {
-            height: 10px;
-            border-radius: 5px;
-        }
-
-        .progress-bar {
-            background: linear-gradient(90deg, var(--info), var(--success));
-        }
-
-        .deadline-badge {
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 12px;
-            color: #fff;
-        }
-
+        /* Buttons */
         .btn-outline-primary {
             border-color: var(--secondary);
             color: var(--secondary);
@@ -97,54 +106,46 @@
 
         .btn-outline-primary:hover {
             background: var(--secondary);
-            color: #fff;
+            color: white;
         }
 
-        .btn-outline-success {
-            border-color: var(--success);
-            color: var(--success);
-        }
-
-        .btn-outline-success:hover {
-            background: var(--success);
-            color: #fff;
-        }
-
-        .btn-outline-info {
-            border-color: var(--info);
-            color: var(--info);
-        }
-
-        .btn-outline-info:hover {
-            background: var(--info);
-            color: #fff;
-        }
-
-        .btn-outline-warning {
-            border-color: var(--warning);
-            color: var(--warning);
-        }
-
-        .btn-outline-warning:hover {
-            background: var(--warning);
-            color: #fff;
-        }
-
+        /* Table hover */
         .table-hover tbody tr:hover {
             background-color: rgba(41, 128, 185, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 <body>
     <%- include('../partials/navigation') %>
 
+    <div class="hamburger" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </div>
+
     <div class="container-fluid py-4">
         <div class="row">
             <!-- Sidebar -->
-           <!-- include the sidebar  -->
-            <%- include('../partials/sidebar', { user: user, activePage: activePage }) %>
+            <div class="col-auto p-0">
+                <%- include('../partials/sidebar', { user: user, activePage: activePage }) %>
+            </div>
+
             <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <main class="col px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Student Dashboard</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -164,61 +165,58 @@
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card shadow h-100 py-2">
                             <div class="card-body">
-                                <div class="row no-gutters align-items-center">
+                                <div class="row align-items-center">
                                     <div class="col">
                                         <div class="text-xs font-weight-bold text-primary mb-1">Enrolled Courses</div>
                                         <div class="h5 mb-0 font-weight-bold"><%= data.stats?.enrollments || 0 %></div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-book fa-2x text-gray-300"></i>
+                                        <i class="fas fa-book fa-2x"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card shadow h-100 py-2">
                             <div class="card-body">
-                                <div class="row no-gutters align-items-center">
+                                <div class="row align-items-center">
                                     <div class="col">
                                         <div class="text-xs font-weight-bold text-success mb-1">Completed Assignments</div>
                                         <div class="h5 mb-0 font-weight-bold"><%= data.stats?.completed || 0 %></div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+                                        <i class="fas fa-check-circle fa-2x"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card shadow h-100 py-2">
                             <div class="card-body">
-                                <div class="row no-gutters align-items-center">
+                                <div class="row align-items-center">
                                     <div class="col">
                                         <div class="text-xs font-weight-bold text-info mb-1">Pending Assignments</div>
                                         <div class="h5 mb-0 font-weight-bold"><%= data.stats?.pendingGrading || 0 %></div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                                        <i class="fas fa-tasks fa-2x"></i>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-xl-3 col-md-6 mb-4">
                         <div class="card shadow h-100 py-2">
                             <div class="card-body">
-                                <div class="row no-gutters align-items-center">
+                                <div class="row align-items-center">
                                     <div class="col">
                                         <div class="text-xs font-weight-bold text-warning mb-1">Average Grade</div>
                                         <div class="h5 mb-0 font-weight-bold">N/A</div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
+                                        <i class="fas fa-chart-bar fa-2x"></i>
                                     </div>
                                 </div>
                             </div>
@@ -230,5 +228,18 @@
     </div>
 
     <%- include('../partials/footer') %>
+
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+        }
+        document.addEventListener('click', function(e) {
+            const sidebar = document.querySelector('.sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
 </body>
 </html>

@@ -27,10 +27,18 @@
             color: var(--text-color);
         }
 
+        /* Sidebar */
         .sidebar {
             background: linear-gradient(180deg, var(--primary), var(--secondary));
             color: white;
             min-height: 100vh;
+            width: 250px;
+            padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: transform 0.3s ease-in-out;
+            z-index: 1000;
         }
 
         .sidebar a {
@@ -42,6 +50,22 @@
             color: var(--warning);
         }
 
+        /* Hamburger button */
+        .hamburger {
+            display: none;
+            font-size: 1.5rem;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            background: var(--secondary);
+            border-radius: 8px;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1100;
+        }
+
+        /* Teacher stats cards */
         .teacher-stats .card {
             background: var(--card-bg);
             border-radius: 12px;
@@ -80,19 +104,41 @@
         .list-group-item:hover {
             background: rgba(41, 128, 185, 0.1);
         }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            main {
+                margin-left: 0 !important;
+            }
+        }
     </style>
 </head>
 
 <body>
     <%- include('../partials/navigation') %>
 
+    <!-- Hamburger toggle -->
+    <div class="hamburger" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </div>
+
     <div class="container-fluid py-4">
         <div class="row">
             <!-- Sidebar -->
-            <%- include('../partials/sidebar') %>
+            <div class="col-auto p-0">
+                <%- include('../partials/sidebar') %>
+            </div>
 
             <!-- Main Content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <main class="col px-md-4" style=" margin-left: 260px; min-height: 100vh;">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Teacher Dashboard</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
@@ -178,5 +224,19 @@
     </div>
 
     <%- include('../partials/footer') %>
+
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+        }
+
+        document.addEventListener('click', function(e) {
+            const sidebar = document.querySelector('.sidebar');
+            const hamburger = document.querySelector('.hamburger');
+            if (!sidebar.contains(e.target) && !hamburger.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
 </body>
 </html>
