@@ -15,12 +15,27 @@ router.get('/', teacherController.showTeacherDashboard);
 // Courses
 router.get('/courses', teacherController.showCoursesPage);
 
+// Create Course
+router.get('/courses/create', teacherController.showCreateCoursePage);
+router.post('/courses/create', teacherController.createCourse);
+
 // Assignments
 router.get('/assignments', teacherController.showAssignmentsPage);
+
+// Create Assignment
+router.get('/assignments/create', teacherController.showCreateAssignmentPage);
+router.post(
+    '/assignments/create',
+    validationMiddleware.validateAssignment,
+    teacherController.createAssignment
+);
 
 // Submissions
 router.get('/submissions', teacherController.showSubmissionsPage);
 router.get('/submissions/:id', teacherController.getSubmission);
+
+// Grade Submission
+router.post('/submissions/:id/grade', teacherController.gradeSubmission);
 
 // Grades
 router.get('/grades', teacherController.showGradesPage);

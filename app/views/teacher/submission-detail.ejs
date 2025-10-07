@@ -1,0 +1,165 @@
+<%- include('../partials/header', { title: 'Submission Detail' }) %>
+<%- include('../partials/sidebar', { activePage: 'assignments' }) %>
+
+<div class="main-container" style="margin-left: 260px; min-height: 100vh; background: #121212; color: #f1f1f1; padding: 20px;">
+  <main class="content">
+    <div class="page-header">
+      <h2>Submission Detail</h2>
+      <a href="/teacher/submissions" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Submissions
+      </a>
+    </div>
+
+    <% if (submission) { %>
+      <div class="submission-card">
+        <h3><%= submission.title %></h3>
+        <p><strong>Course:</strong> <%= submission.course_name %></p>
+        <p><strong>Submitted By:</strong> <%= submission.student_name %></p>
+        <p><strong>Submitted On:</strong> <%= new Date(submission.submitted_at).toLocaleString() %></p>
+        <p><strong>Status:</strong> <%= submission.status %></p>
+
+        <hr>
+
+        <h4>Description</h4>
+        <p><%= submission.description %></p>
+
+        <h4>Submitted Work</h4>
+        <% if (submission.file_url) { %>
+          <a href="<%= submission.file_url %>" target="_blank" class="btn btn-primary">
+            <i class="fas fa-file-download"></i> Download Submission
+          </a>
+        <% } else { %>
+          <p>No file submitted. Text entry only.</p>
+        <% } %>
+
+        <hr>
+
+        <h4>Grade & Feedback</h4>
+        <form action="/teacher/submissions/<%= submission.id %>/grade" method="POST">
+          <div class="form-group">
+            <label for="grade">Grade</label>
+            <input type="number" id="grade" name="grade" value="<%= submission.grade || '' %>" class="form-control" min="0" required>
+          </div>
+
+          <div class="form-group">
+            <label for="feedback">Feedback</label>
+            <textarea id="feedback" name="feedback" class="form-control" rows="4"><%= submission.feedback || '' %></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-success">Submit Grade</button>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="empty">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>No submission details available.</p>
+      </div>
+    <% } %>
+  </main>
+</div>
+
+<%- include('../partials/footer') %>
+
+<style>
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #121212;
+    color: #f1f1f1;
+  }
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.4rem;
+  }
+
+  .submission-card {
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+  }
+
+  .submission-card h3 {
+    margin-bottom: 10px;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  input, textarea {
+    padding: 0.7rem;
+    border: 1px solid #333;
+    border-radius: 8px;
+    background: #2c2c2c;
+    color: #f1f1f1;
+    width: 100%;
+  }
+
+  textarea {
+    resize: vertical;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s ease;
+  }
+
+  .btn-primary {
+    background: #00bcd4;
+    color: #fff;
+  }
+
+  .btn-primary:hover {
+    background: #0097a7;
+  }
+
+  .btn-success {
+    background: #4caf50;
+    color: #fff;
+  }
+
+  .btn-success:hover {
+    background: #388e3c;
+  }
+
+  .btn-secondary {
+    background: #555;
+    color: #fff;
+  }
+
+  .btn-secondary:hover {
+    background: #333;
+  }
+
+  hr {
+    border: none;
+    border-top: 1px solid #333;
+    margin: 1rem 0;
+  }
+
+  .empty {
+    text-align: center;
+    padding: 2rem;
+    color: #aaa;
+  }
+
+  .empty i {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+</style>

@@ -1,8 +1,8 @@
 ﻿<%- include('../partials/header', { title: 'Assignments' }) %>
-
+<%- include('../partials/navigation') %>
 <%- include('../partials/sidebar', { activePage: 'assignments' }) %>
-<div class="main-container" style=" margin-left: 260px; min-height: 100vh;">
 
+<div class="main-container">
   <main class="content">
     <div class="page-header">
       <h2>Assignments</h2>
@@ -70,134 +70,157 @@
 <%- include('../partials/footer') %>
 
 <style>
-  :root {
-    --primary: #2563eb;
-    --primary-dark: #1e40af;
-    --bg: #f8fafc;
-    --card: #ffffff;
-    --border: #e2e8f0;
-    --text: #0f172a;
-    --muted: #64748b;
-    --radius: 8px;
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #27ac2e;
+  color: #f1f1f1;
+  margin: 0;
+}
+
+.main-container {
+  /* margin-left: 260px; */
+  min-height: 100vh;
+  padding: 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.content {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.6rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.btn-primary {
+  background: #00bcd4;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #0097a7;
+}
+
+.btn-icon {
+  background: none;
+  color: #00bcd4;
+  padding: 0.3rem;
+}
+
+.btn-icon:hover {
+  color: #0097a7;
+}
+
+select {
+  padding: 0.7rem;
+  border: 1px solid #333;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #2c2c2c;
+  color: #f1f1f1;
+  appearance: none;
+}
+
+option {
+  background: #2c2c2c;
+  color: #f1f1f1;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  background: #1e1e1e;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.data-table th,
+.data-table td {
+  border: 1px solid #333;
+  padding: 0.8rem;
+  text-align: left;
+}
+
+.data-table th {
+  background: #00bcd4;
+  color: #fff;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+tr:hover {
+  background: #2c2c2c;
+}
+
+.empty {
+  text-align: center;
+  padding: 2rem;
+  color: #aaa;
+}
+
+.empty i {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+input, textarea, select {
+  padding: 0.7rem;
+  border: 1px solid #333;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #2c2c2c;
+  color: #f1f1f1;
+}
+
+textarea {
+  resize: vertical;
+}
+
+hr {
+  margin: 2rem 0;
+  border: none;
+  border-top: 1px solid #333;
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    margin-left: 0;
+    padding: 15px;
   }
 
-  body {
-    font-family: 'Segoe UI', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    margin: 0;
+  .data-table th, .data-table td {
+    font-size: 0.85rem;
   }
-
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-  }
-
-  h2 {
-    margin: 0;
-    font-size: 1.4rem;
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.6rem 1rem;
-    border-radius: var(--radius);
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.2s ease;
-  }
-
-  .btn-primary {
-    background: var(--primary);
-    color: #fff;
-  }
-
-  .btn-primary:hover {
-    background: var(--primary-dark);
-  }
-
-  .btn-icon {
-    background: none;
-    color: var(--primary);
-    padding: 0.3rem;
-  }
-
-  .btn-icon:hover {
-    color: var(--primary-dark);
-  }
-
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    background: var(--card);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  }
-
-  .data-table th,
-  .data-table td {
-    border: 1px solid var(--border);
-    padding: 0.8rem;
-    text-align: left;
-  }
-
-  .data-table th {
-    background: var(--primary);
-    color: #fff;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-  }
-
-  tr:hover {
-    background: #f1f5f9;
-  }
-
-  .empty {
-    text-align: center;
-    padding: 2rem;
-    color: var(--muted);
-    font-size: 1rem;
-  }
-
-  .empty i {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-
-  form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  input, textarea, select {
-    padding: 0.7rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    font-size: 1rem;
-  }
-
-  textarea {
-    resize: vertical;
-  }
-
-  hr {
-    margin: 2rem 0;
-    border: none;
-    border-top: 1px solid var(--border);
-  }
-
-  @media (max-width: 768px) {
-    .data-table th, .data-table td {
-      font-size: 0.85rem;
-    }
-  }
+}
 </style>
