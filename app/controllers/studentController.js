@@ -45,9 +45,17 @@ const studentController = {
 
             const availableCourses = await Course.findAvailable();
 
+            // Mark courses with enrollment status
+            const coursesWithStatus = await Promise.all(
+                availableCourses.map(async (course) => {
+                    const isEnrolled = await Enrollment.isEnrolled(studentId, course.id);
+                    return { ...course, isEnrolled };
+                })
+            );
+
             res.render('student/enroll', {
                 title: "Enroll in a Course",
-                availableCourses,
+                availableCourses: coursesWithStatus,
                 user: req.user,
                 activePage: "enroll"
             });
@@ -61,7 +69,16 @@ const studentController = {
         try {
             const studentId = req.userId;
             const { courseId } = req.body;
+
             if (!studentId || !courseId) throw new Error('Missing enrollment data');
+
+            const alreadyEnrolled = await Enrollment.isEnrolled(studentId, courseId);
+            if (alreadyEnrolled) {
+                return res.status(400).render('error', {
+                    title: "Enrollment Error",
+                    message: "You are already enrolled in this course"
+                });
+            }
 
             await Enrollment.create({ studentId, courseId });
             await auditHelper.logAction(studentId, 'ENROLL_COURSE', `Enrolled in course ID ${courseId}`);

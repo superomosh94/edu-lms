@@ -19,14 +19,30 @@
 
       <!-- Left Menu -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item"><a class="nav-link px-3" href="/dashboard"><i class="fas fa-tachometer-alt me-1"></i>My Learning Space</a></li>
-        <li class="nav-item"><a class="nav-link px-3" href="/courses"><i class="fas fa-book me-1"></i>My Courses</a></li>
-        <li class="nav-item"><a class="nav-link px-3" href="/assignments"><i class="fas fa-tasks me-1"></i>Assignments</a></li>
-        <li class="nav-item"><a class="nav-link px-3" href="/grades"><i class="fas fa-chart-bar me-1"></i>Performance</a></li>
+        <li class="nav-item">
+          <a class="nav-link px-3 <%= activePage === 'dashboard' ? 'active' : '' %>" href="/dashboard">
+            <i class="fas fa-tachometer-alt me-1"></i>My Learning Space
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 <%= activePage === 'courses' ? 'active' : '' %>" href="/courses">
+            <i class="fas fa-book me-1"></i>My Courses
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 <%= activePage === 'assignments' ? 'active' : '' %>" href="/assignments">
+            <i class="fas fa-tasks me-1"></i>Assignments
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link px-3 <%= activePage === 'grades' ? 'active' : '' %>" href="/grades">
+            <i class="fas fa-chart-bar me-1"></i>Performance
+          </a>
+        </li>
 
         <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle px-3" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+          <a class="nav-link dropdown-toggle px-3 <%= activePage === 'management' ? 'active' : '' %>" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
             <i class="fas fa-cogs me-1"></i>Management
           </a>
           <ul class="dropdown-menu shadow-sm">
@@ -62,7 +78,8 @@
           </a>
           <ul id="notificationList" class="dropdown-menu dropdown-menu-end shadow">
             <li><h6 class="dropdown-header">Notifications</h6></li>
-            <li><a class="dropdown-item text-center text-muted" href="#">No notifications</a></li>
+            <div id="notifications"></div>
+            <li><a class="dropdown-item text-center" href="/notifications">View all notifications</a></li>
           </ul>
         </li>
 
@@ -70,18 +87,12 @@
         <li class="nav-item dropdown">
           <a class="nav-link position-relative px-3" href="#" id="messageDropdown" role="button" data-bs-toggle="dropdown">
             <i class="fas fa-envelope"></i>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">2</span>
+            <span id="messageBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">0</span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow">
             <li><h6 class="dropdown-header">Messages</h6></li>
-            <li><a class="dropdown-item" href="#">
-              <div class="d-flex w-100 justify-content-between">
-                <strong>Dr. Smith</strong>
-                <small class="text-muted">10 min ago</small>
-              </div>
-              <small class="text-muted">Regarding your assignment submission...</small>
-            </a></li>
-            <li><a class="dropdown-item text-center" href="#">View all messages</a></li>
+            <div id="messages"></div>
+            <li><a class="dropdown-item text-center" href="/messages">View all messages</a></li>
           </ul>
         </li>
 
@@ -89,7 +100,7 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle px-3 d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
             <i class="fas fa-user me-1"></i>
-            <% if (user) { %><span>Welcome, <%= user.firstName %>!</span><% } else { %>Guest<% } %>
+            <% if (user) { %><span>Welcome, <%= user.name %>!</span><% } else { %>Guest<% } %>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow">
             <li><a class="dropdown-item" href="/settings/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
@@ -102,13 +113,12 @@
       </ul>
 
       <!-- Search -->
-      <form class="d-flex ms-3">
+      <form class="d-flex ms-3 align-items-center">
         <div class="input-group">
           <input class="form-control form-control-sm rounded-start" type="search" placeholder="Search..." aria-label="Search">
           <button class="btn btn-outline-light btn-sm rounded-end" type="submit"><i class="fas fa-search"></i></button>
         </div>
       </form>
-
     </div>
   </div>
 </nav>
@@ -121,54 +131,32 @@
 }
 .navbar .nav-link {
   color: #e0e0e0;
-  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 10px 15px;
+  border-radius: 5px;
+  transition: all 0.3s ease;
 }
 .navbar .nav-link:hover {
   color: #ffd700;
-  transform: scale(1.05);
+  background: rgba(255, 215, 0, 0.15);
 }
-.navbar-brand {
-  font-size: 1.4rem;
-  letter-spacing: 1px;
-}
-.navbar-brand small {
-  font-size: 0.9rem;
-  color: #ff7f50;
+.navbar .nav-link.active {
+  background: linear-gradient(90deg, #1f6feb, #10b981);
+  color: white;
+  font-weight: bold;
 }
 .dropdown-menu {
-  background-color: #1e293b;
+  background: #1e293b;
+  border-radius: 5px;
+  padding: 0.5rem 0;
 }
 .dropdown-item {
   color: #e0e0e0;
+  padding: 8px 20px;
 }
 .dropdown-item:hover {
-  background-color: #2c3e50;
+  background: rgba(255, 215, 0, 0.15);
   color: #ffd700;
 }
-.badge {
-  font-size: 0.7rem;
-}
-
-/* Dark Mode */
-.dark-mode {
-  background-color: #0a0a0a !important;
-  color: #e0e0e0 !important;
-}
-.dark-mode .gradient-navbar {
-  background: linear-gradient(90deg, #0a0a0a, #1c1c1c);
-}
-.dark-mode .dropdown-menu {
-  background-color: #1c1c1c;
-  color: #f1f5f9;
-}
-.dark-mode .nav-link {
-  color: #e0e0e0;
-}
-.dark-mode .nav-link:hover {
-  color: #ffd700;
-}
-
-/* Dark Mode Switch */
 .switch {
   position: relative;
   display: inline-block;
@@ -183,7 +171,10 @@
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #555;
   transition: .4s;
   border-radius: 20px;
@@ -207,7 +198,7 @@ input:checked + .slider:before {
 }
 </style>
 
-<!-- Dark Mode Script -->
+<!-- JS for dark mode & notifications -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const toggle = document.getElementById('themeToggle');
@@ -219,5 +210,24 @@ document.addEventListener('DOMContentLoaded', () => {
     toggle.checked = true;
     document.body.classList.add('dark-mode');
   }
+
+  // Fetch notifications
+  fetch('/notifications/count')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('notificationBadge').textContent = data.count || 0;
+      const notifContainer = document.getElementById('notifications');
+      notifContainer.innerHTML = '';
+      if (data.notifications && data.notifications.length) {
+        data.notifications.forEach(n => {
+          const item = document.createElement('li');
+          item.innerHTML = `<a class="dropdown-item" href="${n.link}">${n.message}</a>`;
+          notifContainer.appendChild(item);
+        });
+      } else {
+        notifContainer.innerHTML = `<li><a class="dropdown-item text-center text-muted" href="#">No notifications</a></li>`;
+      }
+    })
+    .catch(err => console.error('Notifications fetch error', err));
 });
 </script>

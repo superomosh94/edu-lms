@@ -15,8 +15,8 @@ router.get('/courses', studentController.getMyCourses);
 router.get('/courses/:courseId', studentController.getCourse);
 
 // Enrollments
-router.get('/enroll', studentController.getEnrollPage); // New
-router.post('/enroll', studentController.postEnroll); // New
+router.get('/enroll', studentController.getEnrollPage); // New GET route for enroll page
+router.post('/enroll', studentController.postEnroll);  // New POST route for enrollment submission
 
 // Assignments
 router.get('/assignments', studentController.getAssignments);

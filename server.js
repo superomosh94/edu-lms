@@ -106,7 +106,7 @@ const assignmentRoutes = require('./app/routes/assignmentRoutes');
 const settingsRoutes = require('./app/routes/settingsRoutes');
 const adminRoutes = require('./app/routes/adminRoutes');
 const studentRoutes = require('./app/routes/studentRoutes');
-const teacherRoutes = require('./app/routes/teacherRoutes'); // <-- Added teacher routes
+const teacherRoutes = require('./app/routes/teacherRoutes');
 
 // Use routes
 app.use('/grades', gradesRoutes);
@@ -115,14 +115,16 @@ app.use('/dashboard', dashboardRoutes);
 app.use('/courses', courseRoutes);
 app.use('/assignments', assignmentRoutes);
 app.use('/settings', settingsRoutes);
-app.use('/teacher', teacherRoutes); // <-- Mount teacher routes
+app.use('/teacher', teacherRoutes); // Teacher routes
 
 // Protected routes with role restrictions
 app.use('/admin', roleMiddleware.restrictTo('Super Admin', 'Admin'), adminRoutes);
+
+// FIXED: Student routes mounted under /students
 app.use('/student', roleMiddleware.restrictTo('Student'), studentRoutes);
 
 // Test route for student routes
-app.get('/student/test', (req, res) => {
+app.get('/students/test', (req, res) => {
     res.send('✅ Student routes are working');
 });
 

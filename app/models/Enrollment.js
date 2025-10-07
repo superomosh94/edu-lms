@@ -19,10 +19,18 @@ class Enrollment {
 
     static async isEnrolled(studentId, courseId) {
         const [rows] = await pool.query(
-            "SELECT * FROM enrollments WHERE student_id = ? AND course_id = ?",
+            "SELECT 1 FROM enrollments WHERE student_id = ? AND course_id = ? LIMIT 1",
             [studentId, courseId]
         );
         return rows.length > 0;
+    }
+
+    static async exists(studentId, courseId) {
+        const [rows] = await pool.query(
+            "SELECT COUNT(*) AS count FROM enrollments WHERE student_id = ? AND course_id = ?",
+            [studentId, courseId]
+        );
+        return rows[0].count > 0;
     }
 }
 

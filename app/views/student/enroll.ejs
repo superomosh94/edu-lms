@@ -18,21 +18,26 @@
 
     <section class="page-content">
       <% if (availableCourses && availableCourses.length) { %>
-        <form action="/students/enroll" method="POST">
+        <form action="/student/enroll" method="POST">
           <div class="courses-list">
             <% availableCourses.forEach(function(course) { %>
               <div class="course-card">
                 <label>
-                  <input type="radio" name="courseId" value="<%= course.id %>" required>
+                  <input type="radio" name="courseId" value="<%= course.id %>" <%= course.isEnrolled ? "disabled" : "" %> required>
                   <span class="course-title"><i class="fas fa-book-open"></i> <%= course.title %></span>
                 </label>
                 <p><%= course.description %></p>
                 <p><strong>Instructor:</strong> <%= course.instructor || "N/A" %></p>
                 <p><strong>Status:</strong> <%= course.status %></p>
+                <p><strong>Enrollment Status:</strong>
+                  <span class="<%= course.isEnrolled ? 'enrolled' : 'not-enrolled' %>">
+                    <%= course.isEnrolled ? "Enrolled" : "Not Enrolled" %>
+                  </span>
+                </p>
               </div>
             <% }); %>
           </div>
-          <button type="submit" class="btn">Enroll</button>
+          <button type="submit" class="btn" <%= availableCourses.every(c => c.isEnrolled) ? "disabled" : "" %>>Enroll</button>
         </form>
       <% } else { %>
         <p>No available courses to enroll. Please check later.</p>
@@ -41,7 +46,9 @@
   </main>
 </div>
 
-<footer style="margin-left: 260px;"><%- include('../partials/footer') %></footer>
+<footer style="margin-left: 260px;">
+  <%- include('../partials/footer') %>
+</footer>
 
 <style>
 body.student-page {
@@ -52,7 +59,6 @@ body.student-page {
   min-height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
   width: 250px;
   background: #2c3e50;
@@ -66,7 +72,6 @@ body.student-page {
   box-shadow: 2px 0 5px rgba(0,0,0,0.5);
 }
 
-/* Main content */
 .content {
   margin-left: 250px;
   padding: 20px;
@@ -74,7 +79,6 @@ body.student-page {
   overflow-y: auto;
 }
 
-/* Header */
 header {
   display: flex;
   align-items: center;
@@ -100,7 +104,6 @@ header {
   margin-right: 5px;
 }
 
-/* Page content */
 .page-content {
   background: white;
   padding: 20px;
@@ -108,7 +111,6 @@ header {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Course list layout */
 .courses-list {
   display: flex;
   flex-wrap: wrap;
@@ -141,7 +143,16 @@ header {
   margin: 5px 0;
 }
 
-/* Button styling */
+.enrolled {
+  color: green;
+  font-weight: bold;
+}
+
+.not-enrolled {
+  color: red;
+  font-weight: bold;
+}
+
 .btn {
   display: inline-block;
   padding: 10px 15px;
@@ -157,7 +168,11 @@ header {
   background: #2980b9;
 }
 
-/* Responsive adjustments */
+.btn:disabled {
+  background: grey;
+  cursor: not-allowed;
+}
+
 @media (max-width: 1024px) {
   body.student-page {
     flex-direction: column;
