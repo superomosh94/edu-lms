@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edu-LMS | Modern Learning Management System</title>
-    <meta name="description" content="Edu-LMS is a comprehensive learning management system designed for educational institutions. Streamline courses, assignments, attendance, and more.">
+    <title>Edu-LMS | Modern Learning Management System for Kenya</title>
+    <meta name="description" content="Edu-LMS is a comprehensive learning management system designed for Kenyan educational institutions. Streamline courses, assignments, attendance, and more.">
     
     <!-- Open Graph / Social Media Metadata -->
     <meta property="og:title" content="Edu-LMS | Modern Learning Management System">
-    <meta property="og:description" content="Streamline educational processes with our comprehensive LMS solution.">
+    <meta property="og:description" content="Streamline educational processes with our comprehensive LMS solution designed for Kenyan institutions.">
     <meta property="og:type" content="website">
     
     <!-- Fonts -->
@@ -22,21 +22,21 @@
     <style>
         /* CSS Variables for consistent theming */
         :root {
-            /* Colors */
+            /* Colors - Updated with Kenyan theme */
             --primary-blue: #2563eb;
             --primary-blue-dark: #1d4ed8;
-            --secondary-purple: #7c3aed;
-            --secondary-purple-dark: #6d28d9;
+            --secondary-green: #10b981;
+            --secondary-green-dark: #059669;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
             --dark-bg: #0f172a;
             --dark-card: #1e293b;
             --dark-text: #f1f5f9;
             --light-text: #94a3b8;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
             --white: #ffffff;
-            --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--secondary-purple));
-            --gradient-secondary: linear-gradient(135deg, var(--secondary-purple), var(--primary-blue));
-            --gradient-hover: linear-gradient(135deg, var(--primary-blue-dark), var(--secondary-purple-dark));
+            --gradient-primary: linear-gradient(135deg, var(--primary-blue), var(--secondary-green));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-green), var(--primary-blue));
+            --gradient-hover: linear-gradient(135deg, var(--primary-blue-dark), var(--secondary-green-dark));
             
             /* Typography */
             --font-primary: 'Inter', sans-serif;
@@ -107,13 +107,13 @@
         }
         
         a {
-            color: black;
+            color: var(--primary-blue);
             text-decoration: none;
             transition: color 0.3s ease;
         }
         
         a:hover {
-            color: var(white);
+            color: var(--secondary-green);
         }
         
         img {
@@ -227,6 +227,17 @@
             font-size: 1.1rem;
         }
         
+        .btn-whatsapp {
+            background-color: #25D366;
+            color: white;
+        }
+        
+        .btn-whatsapp:hover {
+            background-color: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
         /* Header & Navigation */
         header {
             position: fixed;
@@ -279,6 +290,20 @@
         
         .nav-link:hover {
             color: var(--primary-blue);
+        }
+        
+        .nav-link.active {
+            color: var(--primary-blue);
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--gradient-primary);
         }
         
         .nav-link::after {
@@ -615,7 +640,7 @@
         }
         
         .pricing-features li i {
-            color: var(--accent-green);
+            color: var(--secondary-green);
             margin-right: var(--space-xs);
         }
         
@@ -930,18 +955,18 @@
                 <i class="fas fa-bars"></i>
             </button>
             
-            <ul class="nav-menu" id="nav-menu" role="menubar">
+            <ul class="nav-menu" id="nav-menu" role="menubar" style="align-items: center;">
+                <li class="nav-item" role="none">
+                    <a href="#home" class="nav-link active" role="menuitem">Home</a>
+                </li>
                 <li class="nav-item" role="none">
                     <a href="#features" class="nav-link" role="menuitem">Features</a>
                 </li>
                 <li class="nav-item" role="none">
-                    <a href="#roles" class="nav-link" role="menuitem">Roles</a>
+                    <a href="#pricing" class="nav-link" role="menuitem">Pricing</a>
                 </li>
                 <li class="nav-item" role="none">
                     <a href="#demo" class="nav-link" role="menuitem">Demo</a>
-                </li>
-                <li class="nav-item" role="none">
-                    <a href="#pricing" class="nav-link" role="menuitem">Pricing</a>
                 </li>
                 <li class="nav-item" role="none">
                     <a href="#contact" class="nav-link" role="menuitem">Contact</a>
@@ -959,10 +984,13 @@
             <div class="hero-content">
                 <div class="hero-text">
                     <h1>Transform Education with Modern LMS</h1>
-                    <p>Edu-LMS is a comprehensive learning management system designed to streamline educational processes for institutions of all sizes. Manage courses, assignments, attendance, and more in one unified platform.</p>
+                    <p>Edu-LMS is a comprehensive learning management system designed for Kenyan educational institutions. Streamline courses, assignments, attendance, and more in one unified platform.</p>
                     <div class="hero-buttons">
                         <a href="/auth/register" class="btn btn-primary btn-large">Get Started</a>
                         <a href="#demo" class="btn btn-secondary btn-large">View Demo</a>
+                        <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'm%20interested%20in%20your%20LMS%20solution" class="btn btn-whatsapp btn-large" target="_blank">
+                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
+                        </a>
                     </div>
                 </div>
                 <div class="hero-image">
@@ -1008,7 +1036,7 @@
                 <article class="feature-card">
                     <div class="feature-icon"><i class="fas fa-credit-card"></i></div>
                     <h3>Payment Processing</h3>
-                    <p>Handle tuition fees, course payments, and other transactions securely with integrated payment gateways.</p>
+                    <p>Handle tuition fees, course payments, and other transactions securely with integrated payment gateways including M-Pesa.</p>
                 </article>
                 
                 <article class="feature-card">
@@ -1071,7 +1099,10 @@
             </div>
             
             <div style="text-align: center; margin-top: var(--space-lg);">
-                <a href="#" class="btn btn-primary">Request Live Demo</a>
+                <a href="#contact" class="btn btn-primary btn-large">Request Live Demo</a>
+                <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'd%20like%20to%20schedule%20a%20demo" class="btn btn-whatsapp btn-large" target="_blank" style="margin-left: var(--space-md);">
+                    <i class="fab fa-whatsapp"></i> Schedule Demo via WhatsApp
+                </a>
             </div>
         </div>
     </section>
@@ -1080,8 +1111,8 @@
     <section class="section" id="testimonials">
         <div class="container">
             <div class="section-title">
-                <h2>What Our Clients Say</h2>
-                <p>Hear from educational institutions that have transformed their operations with Edu-LMS.</p>
+                <h2>What Kenyan Institutions Say</h2>
+                <p>Hear from educational institutions across Kenya that have transformed their operations with Edu-LMS.</p>
             </div>
             
             <div class="testimonials-container">
@@ -1093,7 +1124,7 @@
                         <div class="author-avatar">JS</div>
                         <div class="author-info">
                             <h4>Dr. Jane Smith</h4>
-                            <p>Principal, Lincoln High School</p>
+                            <p>Principal, Nairobi High School</p>
                         </div>
                     </div>
                 </article>
@@ -1106,7 +1137,7 @@
                         <div class="author-avatar">MJ</div>
                         <div class="author-info">
                             <h4>Michael Johnson</h4>
-                            <p>IT Director, Global University</p>
+                            <p>IT Director, Kenya University</p>
                         </div>
                     </div>
                 </article>
@@ -1119,7 +1150,7 @@
                         <div class="author-avatar">SD</div>
                         <div class="author-info">
                             <h4>Sarah Davis</h4>
-                            <p>Mathematics Teacher, Oakwood Academy</p>
+                            <p>Mathematics Teacher, Mombasa Academy</p>
                         </div>
                     </div>
                 </article>
@@ -1131,7 +1162,7 @@
     <section class="section" id="pricing">
         <div class="container">
             <div class="section-title">
-                <h2>Simple, Transparent Pricing</h2>
+                <h2>Affordable Pricing for Kenyan Institutions</h2>
                 <p>Choose the plan that fits your institution's needs. All plans include core features with scalable options.</p>
             </div>
             
@@ -1139,7 +1170,7 @@
                 <article class="pricing-card">
                     <div class="pricing-header">
                         <h3 class="pricing-name">Starter</h3>
-                        <div class="pricing-price">$29<span class="pricing-period">/month</span></div>
+                        <div class="pricing-price">KSh 2,900<span class="pricing-period">/month</span></div>
                         <p>Perfect for small schools and individual instructors</p>
                     </div>
                     <ul class="pricing-features">
@@ -1148,6 +1179,7 @@
                         <li><i class="fas fa-check"></i> Basic course management</li>
                         <li><i class="fas fa-check"></i> Assignment tracking</li>
                         <li><i class="fas fa-check"></i> Email support</li>
+                        <li><i class="fas fa-check"></i> Basic reports</li>
                     </ul>
                     <a href="/auth/register" class="btn btn-secondary">Get Started</a>
                 </article>
@@ -1156,7 +1188,7 @@
                     <div class="pricing-badge">Most Popular</div>
                     <div class="pricing-header">
                         <h3 class="pricing-name">Pro</h3>
-                        <div class="pricing-price">$79<span class="pricing-period">/month</span></div>
+                        <div class="pricing-price">KSh 7,900<span class="pricing-period">/month</span></div>
                         <p>Ideal for growing institutions</p>
                     </div>
                     <ul class="pricing-features">
@@ -1166,6 +1198,7 @@
                         <li><i class="fas fa-check"></i> Attendance tracking</li>
                         <li><i class="fas fa-check"></i> Priority support</li>
                         <li><i class="fas fa-check"></i> Custom branding</li>
+                        <li><i class="fas fa-check"></i> M-Pesa integration</li>
                     </ul>
                     <a href="/auth/register" class="btn btn-primary">Get Started</a>
                 </article>
@@ -1183,9 +1216,17 @@
                         <li><i class="fas fa-check"></i> Advanced security</li>
                         <li><i class="fas fa-check"></i> Dedicated account manager</li>
                         <li><i class="fas fa-check"></i> Custom integrations</li>
+                        <li><i class="fas fa-check"></i> On-premise deployment</li>
                     </ul>
-                    <a href="#contact" class="btn btn-secondary">Contact Sales</a>
+                    <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'm%20interested%20in%20the%20Enterprise%20plan" class="btn btn-secondary" target="_blank">Contact Sales</a>
                 </article>
+            </div>
+            
+            <div style="text-align: center; margin-top: var(--space-xl);">
+                <p>All plans include a 30-day free trial. Annual billing available with 15% discount.</p>
+                <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I%20have%20questions%20about%20your%20pricing%20plans" class="btn btn-whatsapp" target="_blank" style="margin-top: var(--space-md);">
+                    <i class="fab fa-whatsapp"></i> Chat with us on WhatsApp
+                </a>
             </div>
         </div>
     </section>
@@ -1209,7 +1250,7 @@
                 <article class="faq-item">
                     <div class="faq-question">Can we integrate Edu-LMS with our existing systems?</div>
                     <div class="faq-answer">
-                        <p>Yes, Edu-LMS offers API access and pre-built integrations for popular student information systems, payment gateways, and authentication providers. Our Enterprise plan includes custom integration services.</p>
+                        <p>Yes, Edu-LMS offers API access and pre-built integrations for popular student information systems, payment gateways including M-Pesa, and authentication providers. Our Enterprise plan includes custom integration services.</p>
                     </div>
                 </article>
                 
@@ -1259,6 +1300,11 @@
                         </div>
                         
                         <div class="form-group">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" id="phone" class="form-control" placeholder="e.g., 0712 345 678">
+                        </div>
+                        
+                        <div class="form-group">
                             <label for="institution" class="form-label">Institution Name</label>
                             <input type="text" id="institution" class="form-control">
                         </div>
@@ -1277,7 +1323,7 @@
                         <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
                         <div>
                             <h3>Our Office</h3>
-                            <p>123 Education Street<br>Learning City, LC 12345</p>
+                            <p>Westlands Business District<br>Nairobi, Kenya</p>
                         </div>
                     </div>
                     
@@ -1285,7 +1331,7 @@
                         <div class="info-icon"><i class="fas fa-phone"></i></div>
                         <div>
                             <h3>Phone Number</h3>
-                            <p>+1 (555) 123-4567<br>Mon-Fri from 8am to 6pm</p>
+                            <p>+254 712 345 678<br>Mon-Fri from 8am to 6pm</p>
                         </div>
                     </div>
                     
@@ -1293,7 +1339,18 @@
                         <div class="info-icon"><i class="fas fa-envelope"></i></div>
                         <div>
                             <h3>Email Address</h3>
-                            <p>info@edu-lms.com<br>We reply within 24 hours</p>
+                            <p>info@edulms.co.ke<br>We reply within 24 hours</p>
+                        </div>
+                    </div>
+                    
+                    <div class="info-item">
+                        <div class="info-icon"><i class="fab fa-whatsapp"></i></div>
+                        <div>
+                            <h3>WhatsApp</h3>
+                            <p>+254 712 345 678<br>Quick responses during business hours</p>
+                            <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'm%20interested%20in%20your%20services" class="btn btn-whatsapp" target="_blank" style="margin-top: var(--space-sm);">
+                                <i class="fab fa-whatsapp"></i> Message us on WhatsApp
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1307,7 +1364,7 @@
             <div class="footer-content">
                 <div class="footer-column">
                     <h3>Edu-LMS</h3>
-                    <p>Transforming education through innovative technology solutions designed for modern learning environments.</p>
+                    <p>Transforming education through innovative technology solutions designed for modern learning environments in Kenya.</p>
                     <div class="social-links">
                         <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                         <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
@@ -1344,7 +1401,7 @@
                         <li><a href="#faq">FAQ</a></li>
                         <li><a href="#">Help Center</a></li>
                         <li><a href="#">Community</a></li>
-                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#contact">Contact Us</a></li>
                         <li><a href="#">Documentation</a></li>
                     </ul>
                 </div>
@@ -1372,6 +1429,12 @@
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
                 hamburger.setAttribute('aria-expanded', 'false');
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(navLink => {
+                    navLink.classList.remove('active');
+                });
+                link.classList.add('active');
             });
         });
         
@@ -1415,6 +1478,28 @@
                         top: targetElement.offsetTop - 80,
                         behavior: 'smooth'
                     });
+                }
+            });
+        });
+        
+        // Update active nav link on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= (sectionTop - 100)) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active');
                 }
             });
         });

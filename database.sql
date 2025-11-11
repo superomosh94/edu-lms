@@ -158,6 +158,20 @@ CREATE TABLE `notifications` (
   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE settings (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    site_name VARCHAR(255) NOT NULL DEFAULT 'Edu LMS',
+    site_description TEXT,
+    site_email VARCHAR(255),
+    site_phone VARCHAR(50),
+    site_address TEXT,
+    maintenance_mode BOOLEAN DEFAULT FALSE,
+    max_file_size INT DEFAULT 10485760,
+    allowed_file_types VARCHAR(500) DEFAULT 'image/jpeg,image/png,image/gif,application/pdf',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 -- ==========================================
 -- SAMPLE DATA
 -- ==========================================
