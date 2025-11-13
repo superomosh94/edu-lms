@@ -1,0 +1,193 @@
+<!-- Head Content -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<!-- CSRF Token -->
+<% if (typeof csrfToken !== 'undefined' && csrfToken) { %>
+<meta name="csrf-token" content="<%= csrfToken %>">
+<% } %>
+
+<!-- Page Title -->
+<title>
+  <% if (typeof title !== 'undefined') { %>
+    <%= title %> - EDU-LMS
+  <% } else { %>
+    EDU-LMS - Learning Management System
+  <% } %>
+</title>
+
+<!-- Meta Description -->
+<meta name="description" content="<% if (typeof description !== 'undefined') { %><%= description %><% } else { %>EDU-LMS is a comprehensive learning management system for educational institutions, providing tools for course management, assignments, grading, and student engagement.<% } %>">
+
+<!-- Keywords -->
+<meta name="keywords" content="<% if (typeof keywords !== 'undefined') { %><%= keywords %><% } else { %>lms, learning management system, education, courses, assignments, grades, students, teachers<% } %>">
+
+<!-- Author -->
+<meta name="author" content="EDU-LMS Team">
+
+<!-- Theme Color -->
+<meta name="theme-color" content="#4f46e5">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="<% if (typeof canonicalUrl !== 'undefined') { %><%= canonicalUrl %><% } else if (typeof currentUrl !== 'undefined') { %><%= currentUrl %><% } else { %>/<% } %>">
+<meta property="og:title" content="<% if (typeof title !== 'undefined') { %><%= title %> - EDU-LMS<% } else { %>EDU-LMS - Learning Management System<% } %>">
+<meta property="og:description" content="<% if (typeof description !== 'undefined') { %><%= description %><% } else { %>EDU-LMS is a comprehensive learning management system for educational institutions.<% } %>">
+<meta property="og:image" content="<% if (typeof image !== 'undefined') { %><%= image %><% } else { %>/images/og-image.jpg<% } %>">
+<meta property="og:site_name" content="EDU-LMS">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="<% if (typeof canonicalUrl !== 'undefined') { %><%= canonicalUrl %><% } else if (typeof currentUrl !== 'undefined') { %><%= currentUrl %><% } else { %>/<% } %>">
+<meta property="twitter:title" content="<% if (typeof title !== 'undefined') { %><%= title %> - EDU-LMS<% } else { %>EDU-LMS - Learning Management System<% } %>">
+<meta property="twitter:description" content="<% if (typeof description !== 'undefined') { %><%= description %><% } else { %>EDU-LMS is a comprehensive learning management system for educational institutions.<% } %>">
+<meta property="twitter:image" content="<% if (typeof image !== 'undefined') { %><%= image %><% } else { %>/images/twitter-image.jpg<% } %>">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="<% if (typeof canonicalUrl !== 'undefined') { %><%= canonicalUrl %><% } else if (typeof currentUrl !== 'undefined') { %><%= currentUrl %><% } else { %>/<% } %>">
+
+<!-- Favicon -->
+<link rel="apple-touch-icon" sizes="180x180" href="/images/favicon_io/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_io/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/images/favicon_io/favicon-16x16.png">
+<link rel="manifest" href="/images/favicon_io/site.webmanifest">
+<link rel="shortcut icon" href="/images/favicon_io/favicon.ico">
+
+<!-- Preload critical resources -->
+<link rel="preload" href="/css/style.css" as="style">
+<link rel="preload" href="/js/main.js" as="script">
+
+<!-- DNS prefetch for external domains -->
+<link rel="dns-prefetch" href="//fonts.googleapis.com">
+<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+
+<!-- Preconnect to external domains -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<!-- Stylesheets -->
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/theme.css">
+<link rel="stylesheet" href="/css/index.css">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- Additional page-specific styles -->
+<% if (typeof stylesheets !== 'undefined' && stylesheets && Array.isArray(stylesheets)) { %>
+  <% stylesheets.forEach(function(stylesheet) { %>
+    <link rel="stylesheet" href="<%= stylesheet %>">
+  <% }); %>
+<% } %>
+
+<!-- Inline critical CSS -->
+<style>
+  /* Critical above-the-fold styles */
+  .loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f4f6;
+    border-top: 4px solid #4f46e5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  /* Ensure content is hidden until loaded */
+  .main-content {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .main-content.loaded {
+    opacity: 1;
+  }
+</style>
+
+<!-- JSON-LD structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "EDU-LMS",
+  "description": "<% if (typeof description !== 'undefined') { %><%= description %><% } else { %>Learning Management System for educational institutions<% } %>",
+  "url": "<% if (typeof canonicalUrl !== 'undefined') { %><%= canonicalUrl %><% } else if (typeof currentUrl !== 'undefined') { %><%= currentUrl %><% } else { %>/<% } %>",
+  "applicationCategory": "EducationApplication",
+  "operatingSystem": "Web Browser",
+  "permissions": "browser",
+  "author": {
+    "@type": "Organization",
+    "name": "EDU-LMS Team"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+
+<!-- Additional meta tags for specific pages -->
+<% if (typeof noindex !== 'undefined' && noindex) { %>
+  <meta name="robots" content="noindex, nofollow">
+<% } %>
+
+<% if (typeof prevPage !== 'undefined' && prevPage) { %>
+  <link rel="prev" href="<%= prevPage %>">
+<% } %>
+
+<% if (typeof nextPage !== 'undefined' && nextPage) { %>
+  <link rel="next" href="<%= nextPage %>">
+<% } %>
+
+<!-- iOS specific meta tags -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="EDU-LMS">
+
+<!-- Windows specific meta tags -->
+<meta name="msapplication-TileColor" content="#4f46e5">
+<meta name="msapplication-config" content="/images/favicon_io/browserconfig.xml">
+
+<!-- PWA manifest -->
+<link rel="manifest" href="/manifest.json">
+
+<!-- Theme color for address bar -->
+<meta name="theme-color" content="#4f46e5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#1f2937" media="(prefers-color-scheme: dark)">
+
+<!-- Dark mode support -->
+<meta name="color-scheme" content="light dark">
+
+<!-- Preload critical fonts -->
+<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+</noscript>
+
+<!-- Additional head content for specific layouts -->
+<% if (typeof additionalHead !== 'undefined' && additionalHead) { %>
+  <%- additionalHead %>
+<% } %>

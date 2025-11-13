@@ -1,0 +1,781 @@
+<div class="search-filter" data-search-config='<%= JSON.stringify(config || {}) %>'>
+    <style>
+        .search-filter {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .search-filter.compact {
+            padding: 16px;
+        }
+
+        .filter-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 1px solid #4f46e5;
+        }
+
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-ghost:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .search-row {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .search-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            color: #6b7280;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .clear-search {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            padding: 4px;
+            display: none;
+        }
+
+        .search-input:not(:placeholder-shown) + .clear-search {
+            display: block;
+        }
+
+        .filter-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .filter-select, .filter-input {
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: #f9fafb;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .date-range {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .filter-tag {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 16px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .remove-tag {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-tag:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .advanced-filters {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .advanced-toggle {
+            background: none;
+            border: none;
+            color: #4f46e5;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 0;
+        }
+
+        .advanced-content {
+            display: none;
+            margin-top: 16px;
+        }
+
+        .advanced-content.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sort-options {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sort-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        .results-count {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+
+        .filter-collapse {
+            display: none;
+        }
+
+        .filter-collapse-btn {
+            background: none;
+            border: none;
+            color: #4f46e5;
+            font-size: 0.9rem;
+            cursor: pointer;
+            padding: 8px 0;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .search-filter {
+                padding: 16px;
+            }
+
+            .filter-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .search-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .filter-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .date-range {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+
+            .filter-collapse {
+                display: block;
+                margin-top: 16px;
+            }
+
+            .filter-content {
+                display: none;
+            }
+
+            .filter-content.show {
+                display: block;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .search-filter {
+                background: #1f2937;
+                border-color: #374151;
+            }
+
+            .filter-title {
+                color: #f9fafb;
+            }
+
+            .search-input, .filter-select, .filter-input {
+                background: #374151;
+                border-color: #4b5563;
+                color: #f9fafb;
+            }
+
+            .search-input:focus, .filter-select:focus, .filter-input:focus {
+                background: #1f2937;
+            }
+
+            .advanced-filters {
+                border-top-color: #374151;
+            }
+
+            .btn-ghost {
+                background: #374151;
+                border-color: #4b5563;
+                color: #d1d5db;
+            }
+
+            .btn-ghost:hover {
+                background: #4b5563;
+            }
+        }
+
+        /* Loading state */
+        .search-filter.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .search-filter.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Custom range slider */
+        .range-slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .range-values {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+    </style>
+
+    <div class="filter-header">
+        <h3 class="filter-title"><%= title || 'Search & Filter' %></h3>
+        <div class="filter-actions">
+            <button type="button" class="btn btn-primary" onclick="applyFilters()">
+                🔍 Search
+            </button>
+            <button type="button" class="btn btn-outline" onclick="resetFilters()">
+                🔄 Reset
+            </button>
+            <% if (showExport) { %>
+            <button type="button" class="btn btn-ghost" onclick="exportResults()">
+                📥 Export
+            </button>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="search-row">
+        <div class="search-input-group">
+            <span class="search-icon">🔍</span>
+            <input 
+                type="text" 
+                class="search-input" 
+                placeholder="<%= searchPlaceholder || 'Search...' %>" 
+                value="<%= searchQuery || '' %>"
+                onkeypress="handleSearchKeypress(event)"
+                id="searchInput"
+            >
+            <button type="button" class="clear-search" onclick="clearSearch()">✕</button>
+        </div>
+        
+        <div class="sort-options">
+            <span class="sort-label">Sort by:</span>
+            <select class="sort-select" onchange="handleSortChange(this.value)" id="sortSelect">
+                <option value="newest" <%= sortBy === 'newest' ? 'selected' : '' %>>Newest First</option>
+                <option value="oldest" <%= sortBy === 'oldest' ? 'selected' : '' %>>Oldest First</option>
+                <option value="name_asc" <%= sortBy === 'name_asc' ? 'selected' : '' %>>Name A-Z</option>
+                <option value="name_desc" <%= sortBy === 'name_desc' ? 'selected' : '' %>>Name Z-A</option>
+                <% if (customSortOptions) { %>
+                    <% customSortOptions.forEach(option => { %>
+                        <option value="<%= option.value %>" <%= sortBy === option.value ? 'selected' : '' %>>
+                            <%= option.label %>
+                        </option>
+                    <% }); %>
+                <% } %>
+            </select>
+            
+            <% if (totalResults !== undefined) { %>
+            <span class="results-count" id="resultsCount">
+                <%= totalResults.toLocaleString() %> results
+            </span>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="filter-collapse">
+        <button type="button" class="filter-collapse-btn" onclick="toggleFilters()">
+            📋 Show Filters
+        </button>
+    </div>
+
+    <div class="filter-content <%= showFilters ? 'show' : '' %>" id="filterContent">
+        <div class="filter-row">
+            <% filters.forEach(filter => { %>
+            <div class="filter-group">
+                <label class="filter-label"><%= filter.label %></label>
+                <% if (filter.type === 'select') { %>
+                <select 
+                    class="filter-select" 
+                    id="<%= filter.id %>"
+                    <%= filter.multiple ? 'multiple' : '' %>
+                    data-filter-type="<%= filter.type %>"
+                >
+                    <option value="">All <%= filter.label %></option>
+                    <% filter.options.forEach(option => { %>
+                    <option 
+                        value="<%= option.value %>" 
+                        <%= (Array.isArray(filter.value) ? filter.value.includes(option.value) : filter.value === option.value) ? 'selected' : '' %>
+                    >
+                        <%= option.label %>
+                    </option>
+                    <% }); %>
+                </select>
+                <% } else if (filter.type === 'date') { %>
+                <input 
+                    type="date" 
+                    class="filter-input" 
+                    id="<%= filter.id %>"
+                    value="<%= filter.value %>"
+                    data-filter-type="<%= filter.type %>"
+                >
+                <% } else if (filter.type === 'date-range') { %>
+                <div class="date-range">
+                    <input 
+                        type="date" 
+                        class="filter-input" 
+                        id="<%= filter.id %>_from"
+                        placeholder="From"
+                        value="<%= filter.value?.from %>"
+                    >
+                    <input 
+                        type="date" 
+                        class="filter-input" 
+                        id="<%= filter.id %>_to"
+                        placeholder="To"
+                        value="<%= filter.value?.to %>"
+                    >
+                </div>
+                <% } else if (filter.type === 'text') { %>
+                <input 
+                    type="text" 
+                    class="filter-input" 
+                    id="<%= filter.id %>"
+                    placeholder="<%= filter.placeholder || 'Enter ' + filter.label.toLowerCase() %>"
+                    value="<%= filter.value %>"
+                    data-filter-type="<%= filter.type %>"
+                >
+                <% } else if (filter.type === 'number') { %>
+                <input 
+                    type="number" 
+                    class="filter-input" 
+                    id="<%= filter.id %>"
+                    placeholder="<%= filter.placeholder || 'Enter ' + filter.label.toLowerCase() %>"
+                    value="<%= filter.value %>"
+                    data-filter-type="<%= filter.type %>"
+                >
+                <% } %>
+            </div>
+            <% }); %>
+        </div>
+
+        <% if (showAdvanced) { %>
+        <div class="advanced-filters">
+            <button type="button" class="advanced-toggle" onclick="toggleAdvancedFilters()">
+                ⚙️ Advanced Filters
+                <span id="advancedArrow">▼</span>
+            </button>
+            <div class="advanced-content" id="advancedContent">
+                <div class="filter-row">
+                    <!-- Advanced filters would go here -->
+                    <div class="filter-group">
+                        <label class="filter-label">Status</label>
+                        <select class="filter-select" id="statusFilter">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Date Range</label>
+                        <div class="date-range">
+                            <input type="date" class="filter-input" id="dateFrom" placeholder="From">
+                            <input type="date" class="filter-input" id="dateTo" placeholder="To">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <% } %>
+    </div>
+
+    <% if (activeFilters && activeFilters.length > 0) { %>
+    <div class="filter-tags" id="activeFilterTags">
+        <% activeFilters.forEach(filter => { %>
+        <span class="filter-tag">
+            <%= filter.label %>: <%= filter.value %>
+            <button type="button" class="remove-tag" onclick="removeFilter('<%= filter.id %>')">✕</button>
+        </span>
+        <% }); %>
+    </div>
+    <% } %>
+</div>
+
+<script>
+    let searchTimeout;
+
+    function handleSearchKeypress(event) {
+        if (event.key === 'Enter') {
+            applyFilters();
+        } else {
+            // Debounced search
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                if (event.target.value.length >= 3 || event.target.value.length === 0) {
+                    applyFilters();
+                }
+            }, 500);
+        }
+    }
+
+    function clearSearch() {
+        document.getElementById('searchInput').value = '';
+        applyFilters();
+    }
+
+    function handleSortChange(sortBy) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('sort', sortBy);
+        window.location.href = url.toString();
+    }
+
+    function applyFilters() {
+        const searchFilter = document.querySelector('.search-filter');
+        const formData = new FormData();
+        
+        // Get search query
+        const searchQuery = document.getElementById('searchInput').value;
+        if (searchQuery) {
+            formData.append('search', searchQuery);
+        }
+        
+        // Get sort
+        const sortBy = document.getElementById('sortSelect').value;
+        formData.append('sort', sortBy);
+        
+        // Get filter values
+        const filterInputs = searchFilter.querySelectorAll('[data-filter-type]');
+        filterInputs.forEach(input => {
+            if (input.type === 'select-multiple') {
+                const selectedOptions = Array.from(input.selectedOptions).map(option => option.value);
+                if (selectedOptions.length > 0) {
+                    formData.append(input.id, selectedOptions.join(','));
+                }
+            } else if (input.value) {
+                formData.append(input.id, input.value);
+            }
+        });
+        
+        // Build URL with filters
+        const url = new URL(window.location.href);
+        url.search = new URLSearchParams(formData).toString();
+        
+        // Show loading state
+        searchFilter.classList.add('loading');
+        
+        // Navigate or use AJAX
+        if (searchFilter.hasAttribute('data-ajax')) {
+            fetch(url.toString(), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.text())
+            .then(html => {
+                const target = searchFilter.getAttribute('data-target');
+                if (target) {
+                    document.querySelector(target).innerHTML = html;
+                }
+                updateResultsCount();
+            })
+            .catch(error => {
+                console.error('Filter error:', error);
+                window.location.href = url.toString();
+            })
+            .finally(() => {
+                searchFilter.classList.remove('loading');
+            });
+        } else {
+            window.location.href = url.toString();
+        }
+    }
+
+    function resetFilters() {
+        const url = new URL(window.location.href);
+        // Remove all filter parameters
+        const paramsToRemove = ['search', 'sort', 'page'];
+        document.querySelectorAll('[data-filter-type]').forEach(input => {
+            paramsToRemove.push(input.id);
+        });
+        
+        paramsToRemove.forEach(param => {
+            url.searchParams.delete(param);
+        });
+        
+        window.location.href = url.toString();
+    }
+
+    function toggleAdvancedFilters() {
+        const content = document.getElementById('advancedContent');
+        const arrow = document.getElementById('advancedArrow');
+        
+        content.classList.toggle('show');
+        arrow.textContent = content.classList.contains('show') ? '▲' : '▼';
+    }
+
+    function toggleFilters() {
+        const content = document.getElementById('filterContent');
+        const btn = document.querySelector('.filter-collapse-btn');
+        
+        content.classList.toggle('show');
+        btn.textContent = content.classList.contains('show') ? '📋 Hide Filters' : '📋 Show Filters';
+    }
+
+    function removeFilter(filterId) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete(filterId);
+        window.location.href = url.toString();
+    }
+
+    function exportResults() {
+        const url = new URL(window.location.href);
+        url.searchParams.set('export', 'true');
+        window.open(url.toString(), '_blank');
+    }
+
+    function updateResultsCount() {
+        // This would be called after AJAX updates to refresh the results count
+        const countElement = document.getElementById('resultsCount');
+        if (countElement) {
+            // You would typically get this from the AJAX response
+            // For now, we'll just simulate an update
+            const currentCount = parseInt(countElement.textContent) || 0;
+            // This would be updated with real data from the server
+        }
+    }
+
+    // Initialize filter state from URL
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        // Set search input value
+        const searchQuery = urlParams.get('search');
+        if (searchQuery) {
+            document.getElementById('searchInput').value = searchQuery;
+        }
+        
+        // Update active filter tags
+        updateActiveFilterTags();
+        
+        // Handle responsive behavior
+        function handleResize() {
+            const searchFilter = document.querySelector('.search-filter');
+            if (window.innerWidth < 768) {
+                searchFilter.classList.add('compact');
+            } else {
+                searchFilter.classList.remove('compact');
+                // Ensure filters are visible on desktop
+                document.getElementById('filterContent').classList.add('show');
+            }
+        }
+        
+        handleResize();
+        window.addEventListener('resize', handleResize);
+    });
+
+    function updateActiveFilterTags() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const activeFilters = [];
+        
+        urlParams.forEach((value, key) => {
+            if (!['page', 'limit'].includes(key)) {
+                activeFilters.push({
+                    id: key,
+                    label: key.charAt(0).toUpperCase() + key.slice(1),
+                    value: value
+                });
+            }
+        });
+        
+        // Update the active filter tags display
+        const tagsContainer = document.getElementById('activeFilterTags');
+        if (tagsContainer && activeFilters.length > 0) {
+            tagsContainer.innerHTML = activeFilters.map(filter => `
+                <span class="filter-tag">
+                    ${filter.label}: ${filter.value}
+                    <button type="button" class="remove-tag" onclick="removeFilter('${filter.id}')">✕</button>
+                </span>
+            `).join('');
+        }
+    }
+</script>

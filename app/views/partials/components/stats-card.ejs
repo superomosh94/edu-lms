@@ -1,0 +1,505 @@
+<div class="stats-card" data-stat-type="<%= stat.type %>">
+    <style>
+        .stats-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stats-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .stats-card.primary { border-left: 4px solid #4f46e5; }
+        .stats-card.success { border-left: 4px solid #10b981; }
+        .stats-card.warning { border-left: 4px solid #f59e0b; }
+        .stats-card.danger { border-left: 4px solid #ef4444; }
+        .stats-card.info { border-left: 4px solid #3b82f6; }
+
+        .stats-header {
+            display: flex;
+            justify-content: between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stats-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0;
+        }
+
+        .stats-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .icon-primary { background: #e0e7ff; color: #4f46e5; }
+        .icon-success { background: #d1fae5; color: #10b981; }
+        .icon-warning { background: #fef3c7; color: #f59e0b; }
+        .icon-danger { background: #fee2e2; color: #ef4444; }
+        .icon-info { background: #dbeafe; color: #3b82f6; }
+
+        .stats-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 8px 0;
+            line-height: 1;
+        }
+
+        .stats-change {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .change-positive { color: #10b981; }
+        .change-negative { color: #ef4444; }
+        .change-neutral { color: #6b7280; }
+
+        .stats-description {
+            color: #6b7280;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .stats-progress {
+            margin-top: 16px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f3f4f6;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-primary { background: linear-gradient(90deg, #4f46e5, #7c3aed); }
+        .progress-success { background: linear-gradient(90deg, #10b981, #34d399); }
+        .progress-warning { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .progress-danger { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .progress-info { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .stats-comparison {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .comparison-item {
+            text-align: center;
+        }
+
+        .comparison-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .comparison-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stats-trend {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
+
+        .trend-chart {
+            width: 60px;
+            height: 30px;
+            opacity: 0.7;
+        }
+
+        .stats-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stats-card:hover .stats-actions {
+            opacity: 1;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 1px solid #4f46e5;
+        }
+
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .stats-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-new { background: #fef3c7; color: #92400e; }
+        .badge-updated { background: #d1fae5; color: #065f46; }
+        .badge-featured { background: #e0e7ff; color: #3730a3; }
+
+        /* Sparkline animation */
+        @keyframes drawChart {
+            from {
+                stroke-dasharray: 1000;
+                stroke-dashoffset: 1000;
+            }
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .trend-chart path {
+            animation: drawChart 1.5s ease-in-out;
+        }
+
+        /* Loading state */
+        .stats-card.loading {
+            pointer-events: none;
+        }
+
+        .stats-card.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Compact variant */
+        .stats-card.compact {
+            padding: 16px;
+        }
+
+        .stats-card.compact .stats-value {
+            font-size: 1.5rem;
+        }
+
+        .stats-card.compact .stats-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 1.2rem;
+        }
+
+        /* Large variant */
+        .stats-card.large {
+            padding: 32px;
+        }
+
+        .stats-card.large .stats-value {
+            font-size: 2.5rem;
+        }
+
+        .stats-card.large .stats-icon {
+            width: 64px;
+            height: 64px;
+            font-size: 2rem;
+        }
+
+        /* Clickable card */
+        .stats-card.clickable {
+            cursor: pointer;
+        }
+
+        .stats-card.clickable:hover {
+            border-color: #4f46e5;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .stats-card {
+                padding: 20px;
+            }
+
+            .stats-value {
+                font-size: 1.75rem;
+            }
+
+            .stats-actions {
+                opacity: 1;
+            }
+
+            .stats-comparison {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .comparison-item {
+                text-align: left;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .stats-card {
+                background: #1f2937;
+                border-color: #374151;
+            }
+
+            .stats-value {
+                color: #f9fafb;
+            }
+
+            .progress-bar {
+                background: #374151;
+            }
+
+            .stats-comparison {
+                border-top-color: #374151;
+            }
+
+            .comparison-value {
+                color: #f9fafb;
+            }
+        }
+    </style>
+
+    <% if (stat.badge) { %>
+    <div class="stats-badge badge-<%= stat.badge.type %>">
+        <%= stat.badge.text %>
+    </div>
+    <% } %>
+
+    <div class="stats-header">
+        <h3 class="stats-title"><%= stat.title %></h3>
+        <div class="stats-icon icon-<%= stat.type || 'primary' %>">
+            <%= stat.icon || '📊' %>
+        </div>
+    </div>
+
+    <div class="stats-value">
+        <%= typeof stat.value === 'number' ? stat.value.toLocaleString() : stat.value %>
+        <% if (stat.unit) { %>
+        <span style="font-size: 1rem; color: #6b7280;"><%= stat.unit %></span>
+        <% } %>
+    </div>
+
+    <% if (stat.change !== undefined) { %>
+    <div class="stats-change change-<%= stat.change >= 0 ? 'positive' : 'negative' %>">
+        <% if (stat.change > 0) { %>↗️<% } %>
+        <% if (stat.change < 0) { %>↘️<% } %>
+        <% if (stat.change === 0) { %>➡️<% } %>
+        <%= Math.abs(stat.change) %>% from last period
+    </div>
+    <% } %>
+
+    <% if (stat.description) { %>
+    <div class="stats-description">
+        <%= stat.description %>
+    </div>
+    <% } %>
+
+    <% if (stat.progress !== undefined) { %>
+    <div class="stats-progress">
+        <div class="progress-bar">
+            <div 
+                class="progress-fill progress-<%= stat.type || 'primary' %>" 
+                style="width: <%= stat.progress %>%;"
+            ></div>
+        </div>
+        <div class="progress-label">
+            <span>Progress</span>
+            <span><%= stat.progress %>%</span>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (stat.comparison) { %>
+    <div class="stats-comparison">
+        <% stat.comparison.forEach(item => { %>
+        <div class="comparison-item">
+            <div class="comparison-value"><%= item.value %></div>
+            <div class="comparison-label"><%= item.label %></div>
+        </div>
+        <% }); %>
+    </div>
+    <% } %>
+
+    <% if (stat.trend) { %>
+    <div class="stats-trend">
+        <svg class="trend-chart" viewBox="0 0 60 30">
+            <path 
+                d="<%= generateSparkline(stat.trend) %>" 
+                fill="none" 
+                stroke="<%= getTrendColor(stat.trend) %>" 
+                stroke-width="2"
+            />
+        </svg>
+    </div>
+    <% } %>
+
+    <% if (stat.actions) { %>
+    <div class="stats-actions">
+        <% stat.actions.forEach(action => { %>
+        <a 
+            href="<%= action.url %>" 
+            class="btn btn-outline"
+            <%= action.external ? 'target="_blank"' : '' %>
+        >
+            <%= action.icon %> <%= action.label %>
+        </a>
+        <% }); %>
+    </div>
+    <% } %>
+</div>
+
+<script>
+    function generateSparkline(data) {
+        if (!data || !Array.isArray(data)) return '';
+        
+        const points = data.map((value, index) => {
+            const x = (index / (data.length - 1)) * 60;
+            const y = 30 - (value / 100) * 30; // Assuming values are 0-100
+            return `${x},${y}`;
+        });
+        
+        return `M${points.join(' L')}`;
+    }
+
+    function getTrendColor(trend) {
+        if (!trend || !Array.isArray(trend)) return '#6b7280';
+        
+        const first = trend[0];
+        const last = trend[trend.length - 1];
+        
+        if (last > first) return '#10b981';
+        if (last < first) return '#ef4444';
+        return '#6b7280';
+    }
+
+    // Add click handler for clickable cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.stats-card.clickable');
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                if (url) {
+                    window.location.href = url;
+                }
+            });
+        });
+
+        // Animate progress bars
+        const progressBars = document.querySelectorAll('.progress-fill');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        });
+
+        // Update stats in real-time (example for dynamic data)
+        function updateStats() {
+            // This would typically fetch new data from an API
+            console.log('Updating stats...');
+        }
+
+        // Auto-update every 30 seconds if needed
+        // setInterval(updateStats, 30000);
+    });
+
+    // Utility function to format large numbers
+    function formatNumber(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        }
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toString();
+    }
+
+    // Export functionality for stats
+    function exportStat(statId) {
+        const card = document.querySelector(`[data-stat-type="${statId}"]`);
+        const title = card.querySelector('.stats-title').textContent;
+        const value = card.querySelector('.stats-value').textContent;
+        
+        // Create a simple CSV export
+        const csvContent = `data:text/csv;charset=utf-8,${title},${value}\n`;
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement('a');
+        link.setAttribute('href', encodedUri);
+        link.setAttribute('download', `${title.toLowerCase().replace(/\s+/g, '_')}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+</script>

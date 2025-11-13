@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Course - Admin</title>
+    <%- include('../partials/header') %>
+</head>
+<body class="admin-layout">
+    <%- include('../partials/admin-sidebar') %>
+    
+    <div class="main-content">
+        <%- include('../partials/admin-header') %>
+
+        <div class="container-fluid py-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Edit Course</h1>
+                <a href="/admin/courses" class="btn btn-secondary">Back to Courses</a>
+            </div>
+
+            <!-- Flash Messages -->
+            <% if (success_msg && success_msg.length > 0) { %>
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <%= success_msg %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+            <% if (error_msg && error_msg.length > 0) { %>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <%= error_msg %>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            <% } %>
+
+            <div class="card">
+                <div class="card-body">
+                    <form action="/admin/courses/<%= course.id %>/update" method="POST">
+                        <div class="mb-3">
+                            <label class="form-label">Course Title</label>
+                            <input type="text" class="form-control" name="title" value="<%= course.title %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="4" required><%= course.description %></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Teacher</label>
+                            <select class="form-select" name="teacher_id" required>
+                                <% teachers.forEach(teacher => { %>
+                                    <option value="<%= teacher.id %>" <%= course.teacher_id == teacher.id ? 'selected' : '' %>>
+                                        <%= teacher.name %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="status" required>
+                                <option value="active" <%= course.status === 'active' ? 'selected' : '' %>>Active</option>
+                                <option value="inactive" <%= course.status === 'inactive' ? 'selected' : '' %>>Inactive</option>
+                                <option value="pending" <%= course.status === 'pending' ? 'selected' : '' %>>Pending</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Course</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>

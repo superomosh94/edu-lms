@@ -32,7 +32,7 @@ router.post(
     validationMiddleware.validateUserCreate || ((req, res, next) => next()),
     adminController.addUser
 );
-router.get('/users/:id/edit', adminController.showEditUserForm); // Edit form
+router.get('/users/:id/edit', adminController.showEditUserForm);
 
 // PUT route for updating user
 router.put(
@@ -50,6 +50,12 @@ router.post(
     '/courses/add',
     validationMiddleware.validateCourseCreate || ((req, res, next) => next()),
     adminController.addCourse
+);
+router.get('/courses/:id/edit', adminController.showEditCourseForm);
+router.put(
+    '/courses/:id',
+    validationMiddleware.validateCourseUpdate || ((req, res, next) => next()),
+    adminController.updateCourse
 );
 router.post(
     '/courses/moderate/:id',

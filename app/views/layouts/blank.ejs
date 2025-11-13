@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'EDU-LMS' %></title>
+    
+    <!-- Internal CSS for Blank Layout -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1f2937;
+            line-height: 1.6;
+        }
+
+        .blank-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blank-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 16px 0;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4f46e5;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #6b7280;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #4f46e5;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+
+        .blank-content {
+            flex: 1;
+            padding: 40px 20px;
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .blank-footer {
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            padding: 24px 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-link {
+            color: #6b7280;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .footer-link:hover {
+            color: #4f46e5;
+        }
+
+        .copyright {
+            color: #9ca3af;
+            font-size: 0.85rem;
+        }
+
+        /* Utility classes */
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        
+        .mt-1 { margin-top: 0.25rem; }
+        .mt-2 { margin-top: 0.5rem; }
+        .mt-4 { margin-top: 1rem; }
+        .mt-8 { margin-top: 2rem; }
+        
+        .mb-1 { margin-bottom: 0.25rem; }
+        .mb-2 { margin-bottom: 0.5rem; }
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        
+        .p-4 { padding: 1rem; }
+        .p-6 { padding: 1.5rem; }
+        .p-8 { padding: 2rem; }
+
+        .bg-white { background: white; }
+        .bg-gray-50 { background: #f9fafb; }
+        .bg-gray-100 { background: #f3f4f6; }
+
+        .rounded { border-radius: 6px; }
+        .rounded-lg { border-radius: 8px; }
+        .rounded-xl { border-radius: 12px; }
+
+        .shadow { box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+        .shadow-md { box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .shadow-lg { box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+
+        .border { border: 1px solid #e5e7eb; }
+        .border-t { border-top: 1px solid #e5e7eb; }
+        .border-b { border-bottom: 1px solid #e5e7eb; }
+
+        /* Alert styles */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            border-color: #16a34a;
+            color: #166534;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border-color: #dc2626;
+            color: #991b1b;
+        }
+
+        .alert-warning {
+            background: #fffbeb;
+            border-color: #d97706;
+            color: #92400e;
+        }
+
+        .alert-info {
+            background: #f0f9ff;
+            border-color: #0ea5e9;
+            color: #075985;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+
+            .blank-content {
+                padding: 20px 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .blank-header,
+            .blank-footer {
+                display: none;
+            }
+
+            .blank-content {
+                padding: 0;
+            }
+
+            body {
+                background: white;
+            }
+        }
+    </style>
+    
+    <!-- Additional head content from partial -->
+    <%- include('../partials/head-content') %>
+</head>
+<body>
+    <div class="blank-container">
+        <% if (!hideHeader) { %>
+        <header class="blank-header">
+            <div class="header-content">
+                <a href="/" class="logo">EDU-LMS</a>
+                <nav class="nav-links">
+                    <% if (user) { %>
+                        <a href="/dashboard" class="nav-link">Dashboard</a>
+                        <a href="/profile" class="nav-link">Profile</a>
+                        <a href="/auth/logout" class="btn btn-secondary">Logout</a>
+                    <% } else { %>
+                        <a href="/auth/login" class="nav-link">Login</a>
+                        <a href="/auth/register" class="btn btn-primary">Sign Up</a>
+                    <% } %>
+                </nav>
+            </div>
+        </header>
+        <% } %>
+
+        <main class="blank-content">
+            <div class="content-wrapper">
+                <!-- Flash messages -->
+                <% if (messages && messages.error) { %>
+                    <div class="alert alert-error">
+                        <%= messages.error %>
+                    </div>
+                <% } %>
+                
+                <% if (messages && messages.success) { %>
+                    <div class="alert alert-success">
+                        <%= messages.success %>
+                    </div>
+                <% } %>
+                
+                <% if (messages && messages.warning) { %>
+                    <div class="alert alert-warning">
+                        <%= messages.warning %>
+                    </div>
+                <% } %>
+                
+                <% if (messages && messages.info) { %>
+                    <div class="alert alert-info">
+                        <%= messages.info %>
+                    </div>
+                <% } %>
+
+                <!-- Main content -->
+                <%- body %>
+            </div>
+        </main>
+
+        <% if (!hideFooter) { %>
+        <footer class="blank-footer">
+            <div class="footer-content">
+                <div class="copyright">
+                    &copy; 2024 EDU-LMS. All rights reserved.
+                </div>
+                <div class="footer-links">
+                    <a href="/about" class="footer-link">About</a>
+                    <a href="/contact" class="footer-link">Contact</a>
+                    <a href="/privacy" class="footer-link">Privacy</a>
+                    <a href="/terms" class="footer-link">Terms</a>
+                </div>
+            </div>
+        </footer>
+        <% } %>
+    </div>
+
+    <!-- Footer scripts -->
+    <%- include('../partials/footer-scripts') %>
+</body>
+</html>

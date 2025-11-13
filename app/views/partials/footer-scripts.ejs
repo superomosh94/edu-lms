@@ -1,0 +1,451 @@
+<!-- Footer Scripts -->
+<script>
+    // Global configuration
+    window.EDU_LMS_CONFIG = {
+        apiBaseUrl: '<%= typeof apiBaseUrl !== "undefined" ? apiBaseUrl : "/api/v1" %>',
+        environment: '<%= typeof environment !== "undefined" ? environment : "development" %>',
+        version: '<%= typeof version !== "undefined" ? version : "1.0.0" %>',
+        features: <%= typeof features !== "undefined" ? JSON.stringify(features) : "{}" %>,
+        user: <%= typeof user !== "undefined" ? JSON.stringify(user) : "{}" %>
+    };
+
+    // Error tracking
+    window.addEventListener('error', function(e) {
+        if (EDU_LMS_CONFIG.environment !== 'production') {
+            console.error('Application Error:', e.error);
+        }
+        
+        // Send to error tracking service
+        if (typeof gtag !== 'undefined') {
+            gtag('event', 'exception', {
+                description: e.error?.message || 'Unknown error',
+                fatal: false
+            });
+        }
+    });
+
+    // Performance monitoring
+    window.addEventListener('load', function() {
+        // Report page load time
+        if (typeof performance !== 'undefined' && performance.timing) {
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            if (typeof gtag !== 'undefined') {
+                gtag('event', 'timing_complete', {
+                    name: 'page_load',
+                    value: loadTime,
+                    event_category: 'Performance'
+                });
+            }
+        }
+    });
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator && EDU_LMS_CONFIG.environment === 'production') {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+                console.log('SW registered: ', registration);
+            })
+            .catch(function(registrationError) {
+                console.log('SW registration failed: ', registrationError);
+            });
+    }
+
+    // AJAX CSRF Token Setup
+    const csrfToken = document.querySelector('meta[name="csrf-token"]');
+    if (csrfToken && csrfToken.getAttribute('content')) {
+        // jQuery AJAX setup
+        if (typeof $ !== 'undefined') {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+                }
+            });
+        }
+
+        // Fetch API setup
+        const originalFetch = window.fetch;
+        window.fetch = function(...args) {
+            const [resource, config = {}] = args;
+            const newConfig = {
+                ...config,
+                headers: {
+                    ...config.headers,
+                    'X-CSRF-TOKEN': csrfToken.getAttribute('content')
+                }
+            };
+            return originalFetch(resource, newConfig);
+        };
+    }
+
+    // Global utility functions
+    window.EDU_LMS_UTILS = {
+        // Format date
+        formatDate: function(date, options = {}) {
+            if (!date) return '';
+            const defaultOptions = {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            };
+            return new Date(date).toLocaleDateString('en-US', { ...defaultOptions, ...options });
+        },
+
+        // Format time
+        formatTime: function(date) {
+            if (!date) return '';
+            return new Date(date).toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        },
+
+        // Format relative time
+        formatRelativeTime: function(date) {
+            if (!date) return '';
+            const now = new Date();
+            const diffInMs = now - new Date(date);
+            const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+            const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+            const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+            if (diffInMinutes < 1) return 'Just now';
+            if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+            if (diffInHours < 24) return `${diffInHours}h ago`;
+            if (diffInDays < 7) return `${diffInDays}d ago`;
+            return this.formatDate(date);
+        },
+
+        // Debounce function
+        debounce: function(func, wait, immediate) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    timeout = null;
+                    if (!immediate) func(...args);
+                };
+                const callNow = immediate && !timeout;
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+                if (callNow) func(...args);
+            };
+        },
+
+        // Throttle function
+        throttle: function(func, limit) {
+            let inThrottle;
+            return function(...args) {
+                if (!inThrottle) {
+                    func.apply(this, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            };
+        },
+
+        // Copy to clipboard
+        copyToClipboard: function(text) {
+            if (!text) return Promise.resolve(false);
+            return navigator.clipboard.writeText(text).then(() => {
+                return true;
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    return true;
+                } catch (err) {
+                    return false;
+                } finally {
+                    document.body.removeChild(textArea);
+                }
+            });
+        },
+
+        // Generate unique ID
+        generateId: function() {
+            return 'id_' + Math.random().toString(36).substr(2, 9);
+        },
+
+        // Validate email
+        isValidEmail: function(email) {
+            if (!email) return false;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        },
+
+        // Format file size
+        formatFileSize: function(bytes) {
+            if (!bytes || bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        },
+
+        // Sanitize HTML
+        sanitizeHTML: function(html) {
+            if (!html) return '';
+            const temp = document.createElement('div');
+            temp.textContent = html;
+            return temp.innerHTML;
+        },
+
+        // Get query parameters
+        getQueryParams: function() {
+            const params = {};
+            const urlParams = new URLSearchParams(window.location.search);
+            for (const [key, value] of urlParams) {
+                params[key] = value;
+            }
+            return params;
+        },
+
+        // Update query parameters
+        updateQueryParams: function(params) {
+            const url = new URL(window.location);
+            Object.keys(params).forEach(key => {
+                if (params[key] === null || params[key] === undefined) {
+                    url.searchParams.delete(key);
+                } else {
+                    url.searchParams.set(key, params[key]);
+                }
+            });
+            window.history.pushState({}, '', url);
+        }
+    };
+
+    // Notification system
+    window.EDU_LMS_NOTIFICATIONS = {
+        show: function(message, type = 'info', duration = 5000) {
+            console.log(`[${type.toUpperCase()}] ${message}`);
+            
+            // Simple native notification fallback
+            if (Notification.permission === 'granted') {
+                new Notification('EDU-LMS', {
+                    body: message,
+                    icon: '/images/favicon_io/favicon-32x32.png'
+                });
+            }
+            
+            // You can integrate with Toastify, Noty, or similar libraries here
+        },
+
+        getNotificationColor: function(type) {
+            const colors = {
+                success: '#10b981',
+                error: '#ef4444',
+                warning: '#f59e0b',
+                info: '#3b82f6'
+            };
+            return colors[type] || colors.info;
+        }
+    };
+
+    // API service
+    window.EDU_LMS_API = {
+        request: async function(endpoint, options = {}) {
+            const url = `${EDU_LMS_CONFIG.apiBaseUrl}${endpoint}`;
+            const defaultOptions = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include'
+            };
+
+            try {
+                const response = await fetch(url, { ...defaultOptions, ...options });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'API request failed');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                EDU_LMS_NOTIFICATIONS.show(error.message, 'error');
+                throw error;
+            }
+        },
+
+        get: function(endpoint) {
+            return this.request(endpoint);
+        },
+
+        post: function(endpoint, data) {
+            return this.request(endpoint, {
+                method: 'POST',
+                body: JSON.stringify(data)
+            });
+        },
+
+        put: function(endpoint, data) {
+            return this.request(endpoint, {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            });
+        },
+
+        delete: function(endpoint) {
+            return this.request(endpoint, {
+                method: 'DELETE'
+            });
+        }
+    };
+
+    // Analytics tracking
+    window.EDU_LMS_ANALYTICS = {
+        track: function(event, properties = {}) {
+            // Google Analytics
+            if (typeof gtag !== 'undefined') {
+                gtag('event', event, properties);
+            }
+
+            // Facebook Pixel
+            if (typeof fbq !== 'undefined') {
+                fbq('track', event, properties);
+            }
+
+            // Custom analytics
+            console.log(`[Analytics] ${event}`, properties);
+        },
+
+        trackPageView: function(page) {
+            this.track('page_view', { page: page || window.location.pathname });
+        },
+
+        trackEvent: function(category, action, label) {
+            this.track('custom_event', { category, action, label });
+        }
+    };
+
+    // Initialize analytics on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        EDU_LMS_ANALYTICS.trackPageView();
+    });
+
+    // Handle browser back/forward buttons
+    window.addEventListener('popstate', function() {
+        EDU_LMS_ANALYTICS.trackPageView();
+    });
+
+    // Offline detection
+    window.addEventListener('online', function() {
+        EDU_LMS_NOTIFICATIONS.show('Connection restored', 'success');
+        document.body.classList.remove('offline');
+    });
+
+    window.addEventListener('offline', function() {
+        EDU_LMS_NOTIFICATIONS.show('You are offline', 'warning');
+        document.body.classList.add('offline');
+    });
+
+    // Print functionality
+    window.EDU_LMS_PRINT = {
+        print: function(elementId) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                const printWindow = window.open('', '_blank');
+                printWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>Print</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            @media print {
+                                .no-print { display: none !important; }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        ${element.innerHTML}
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+            }
+        }
+    };
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        // Ctrl/Cmd + K for search
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            const searchInput = document.querySelector('[data-search-input]');
+            if (searchInput) {
+                searchInput.focus();
+            }
+        }
+
+        // Escape to close modals
+        if (e.key === 'Escape') {
+            const openModal = document.querySelector('.modal.show');
+            if (openModal) {
+                openModal.classList.remove('show');
+            }
+        }
+    });
+
+    // Export for use in other scripts
+    window.EDU_LMS = {
+        config: EDU_LMS_CONFIG,
+        utils: EDU_LMS_UTILS,
+        notifications: EDU_LMS_NOTIFICATIONS,
+        api: EDU_LMS_API,
+        analytics: EDU_LMS_ANALYTICS,
+        print: EDU_LMS_PRINT
+    };
+
+    console.log('EDU-LMS application scripts loaded successfully');
+</script>
+
+<!-- Third-party scripts -->
+<% if (typeof environment !== 'undefined' && environment === 'production') { %>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+
+    <!-- Facebook Pixel -->
+    <script>
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', 'FB_PIXEL_ID');
+        fbq('track', 'PageView');
+    </script>
+<% } %>
+
+<!-- Application-specific scripts -->
+<script src="/js/main.js"></script>
+
+<!-- Initialize any third-party libraries -->
+<script>
+    // Initialize tooltips if using Bootstrap
+    if (typeof bootstrap !== 'undefined') {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+
+    // Initialize any other third-party libraries here
+    document.addEventListener('DOMContentLoaded', function() {
+        // Your custom initialization code here
+    });
+</script>

@@ -1,0 +1,596 @@
+<div class="notification-item" data-notification-id="<%= notification._id %>">
+    <style>
+        .notification-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-item:hover {
+            border-color: #4f46e5;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification-item.unread {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+        }
+
+        .notification-item.important {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+
+        .notification-item.urgent {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            animation: pulse 2s infinite;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .notification-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+            line-height: 1.4;
+        }
+
+        .notification-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .notification-time {
+            white-space: nowrap;
+        }
+
+        .notification-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-unread { background: #3b82f6; color: white; }
+        .badge-important { background: #ef4444; color: white; }
+        .badge-urgent { background: #f59e0b; color: white; }
+        .badge-info { background: #6b7280; color: white; }
+
+        .notification-content {
+            color: #4b5563;
+            line-height: 1.5;
+            margin-bottom: 12px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .notification-item:hover .notification-actions {
+            opacity: 1;
+        }
+
+        .btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 1px solid #4f46e5;
+        }
+
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-ghost:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .icon-assignment { background: #e0e7ff; color: #3730a3; }
+        .icon-grade { background: #d1fae5; color: #065f46; }
+        .icon-announcement { background: #fef3c7; color: #92400e; }
+        .icon-system { background: #e5e7eb; color: #374151; }
+        .icon-course { background: #fce7f3; color: #be185d; }
+        .icon-payment { background: #dcfce7; color: #166534; }
+
+        .notification-body {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .notification-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .notification-source {
+            font-size: 0.8rem;
+            color: #6b7280;
+        }
+
+        .notification-attachments {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .attachment {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: #f3f4f6;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-decoration: none;
+        }
+
+        .attachment:hover {
+            background: #e5e7eb;
+        }
+
+        .notification-expand {
+            color: #4f46e5;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .notification-expand:hover {
+            text-decoration: underline;
+        }
+
+        .notification-full-content {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .notification-full-content.show {
+            display: block;
+        }
+
+        /* Priority indicators */
+        .priority-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6b7280;
+            flex-shrink: 0;
+            margin-right: 8px;
+        }
+
+        .priority-high { background: #ef4444; }
+        .priority-medium { background: #f59e0b; }
+        .priority-low { background: #10b981; }
+
+        /* Animation for new notifications */
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
+        }
+
+        .notification-item.new {
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Compact view */
+        .notification-item.compact {
+            padding: 12px;
+            margin-bottom: 8px;
+        }
+
+        .notification-item.compact .notification-content {
+            margin-bottom: 8px;
+            -webkit-line-clamp: 1;
+        }
+
+        .notification-item.compact .notification-actions {
+            opacity: 1;
+        }
+
+        /* Grouped notifications */
+        .notification-group {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .notification-group-header {
+            background: #f8fafc;
+            padding: 12px 16px;
+            font-weight: 600;
+            color: #374151;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .notification-group-items {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .notification-item {
+                padding: 12px;
+            }
+
+            .notification-header {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .notification-meta {
+                flex-direction: column;
+                gap: 4px;
+                align-items: flex-start;
+            }
+
+            .notification-actions {
+                opacity: 1;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                font-size: 0.7rem;
+                padding: 3px 6px;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .notification-item {
+                background: #1f2937;
+                border-color: #374151;
+            }
+
+            .notification-item.unread {
+                background: #1e3a8a;
+            }
+
+            .notification-item.important {
+                background: #7f1d1d;
+            }
+
+            .notification-item.urgent {
+                background: #78350f;
+            }
+
+            .notification-title {
+                color: #f9fafb;
+            }
+
+            .notification-content {
+                color: #d1d5db;
+            }
+
+            .notification-full-content {
+                background: #374151;
+            }
+
+            .attachment {
+                background: #374151;
+                color: #d1d5db;
+            }
+
+            .notification-footer {
+                border-top-color: #374151;
+            }
+        }
+    </style>
+
+    <div style="display: flex; align-items: flex-start;">
+        <div class="notification-icon icon-<%= notification.type %>">
+            <%= getNotificationIcon(notification.type) %>
+        </div>
+        
+        <div class="notification-body">
+            <div class="notification-header">
+                <h4 class="notification-title">
+                    <span class="priority-dot priority-<%= notification.priority || 'medium' %>"></span>
+                    <%= notification.title %>
+                </h4>
+                <div class="notification-meta">
+                    <span class="notification-time" title="<%= new Date(notification.createdAt).toLocaleString() %>">
+                        <%= formatNotificationTime(notification.createdAt) %>
+                    </span>
+                    <% if (!notification.read) { %>
+                        <span class="notification-badge badge-unread">New</span>
+                    <% } %>
+                    <% if (notification.priority === 'high') { %>
+                        <span class="notification-badge badge-important">Important</span>
+                    <% } %>
+                    <% if (notification.priority === 'urgent') { %>
+                        <span class="notification-badge badge-urgent">Urgent</span>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="notification-content">
+                <%= notification.message %>
+            </div>
+
+            <% if (notification.attachments && notification.attachments.length > 0) { %>
+            <div class="notification-attachments">
+                <% notification.attachments.forEach(attachment => { %>
+                <a href="<%= attachment.url %>" class="attachment" target="_blank">
+                    📎 <%= attachment.name %>
+                </a>
+                <% }); %>
+            </div>
+            <% } %>
+
+            <% if (notification.fullMessage && notification.fullMessage.length > 150) { %>
+            <div class="notification-expand" onclick="toggleNotificationContent(this)">
+                📖 Read more
+            </div>
+            <div class="notification-full-content">
+                <%= notification.fullMessage %>
+            </div>
+            <% } %>
+
+            <div class="notification-footer">
+                <div class="notification-source">
+                    From: <%= notification.sender || 'System' %>
+                    <% if (notification.course) { %>
+                    • Course: <%= notification.course.name %>
+                    <% } %>
+                </div>
+                <div class="notification-actions">
+                    <% if (!notification.read) { %>
+                    <button class="btn btn-primary" onclick="markAsRead('<%= notification._id %>', this)">
+                        ✅ Mark Read
+                    </button>
+                    <% } %>
+                    <% if (notification.actionUrl) { %>
+                    <a href="<%= notification.actionUrl %>" class="btn btn-outline">
+                        🔗 View
+                    </a>
+                    <% } %>
+                    <button class="btn btn-ghost" onclick="deleteNotification('<%= notification._id %>', this)">
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function getNotificationIcon(type) {
+        const icons = {
+            'assignment': '📝',
+            'grade': '📊',
+            'announcement': '📢',
+            'system': '⚙️',
+            'course': '📚',
+            'payment': '💳',
+            'message': '💬',
+            'deadline': '⏰',
+            'reminder': '🔔'
+        };
+        return icons[type] || '📄';
+    }
+
+    function formatNotificationTime(timestamp) {
+        const now = new Date();
+        const notificationTime = new Date(timestamp);
+        const diffInMinutes = Math.floor((now - notificationTime) / (1000 * 60));
+        
+        if (diffInMinutes < 1) return 'Just now';
+        if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+        if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+        if (diffInMinutes < 10080) return `${Math.floor(diffInMinutes / 1440)}d ago`;
+        return notificationTime.toLocaleDateString();
+    }
+
+    function toggleNotificationContent(element) {
+        const content = element.nextElementSibling;
+        const isExpanded = content.classList.contains('show');
+        
+        if (isExpanded) {
+            content.classList.remove('show');
+            element.textContent = '📖 Read more';
+        } else {
+            content.classList.add('show');
+            element.textContent = '📕 Show less';
+        }
+    }
+
+    function markAsRead(notificationId, button) {
+        fetch(`/api/notifications/${notificationId}/read`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const notificationItem = button.closest('.notification-item');
+                notificationItem.classList.remove('unread');
+                notificationItem.querySelector('.badge-unread')?.remove();
+                button.remove();
+                
+                // Update notification count in header
+                updateNotificationCount(-1);
+            }
+        })
+        .catch(error => {
+            console.error('Error marking notification as read:', error);
+        });
+    }
+
+    function deleteNotification(notificationId, button) {
+        if (confirm('Are you sure you want to delete this notification?')) {
+            fetch(`/api/notifications/${notificationId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const notificationItem = button.closest('.notification-item');
+                    notificationItem.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => {
+                        notificationItem.remove();
+                        updateNotificationCount(-1);
+                    }, 300);
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting notification:', error);
+            });
+        }
+    }
+
+    function updateNotificationCount(change) {
+        const countElement = document.querySelector('.notification-count');
+        if (countElement) {
+            const currentCount = parseInt(countElement.textContent) || 0;
+            const newCount = Math.max(0, currentCount + change);
+            countElement.textContent = newCount;
+            
+            if (newCount === 0) {
+                countElement.style.display = 'none';
+            } else {
+                countElement.style.display = 'flex';
+            }
+        }
+    }
+
+    // Add click handler for entire notification
+    document.addEventListener('DOMContentLoaded', function() {
+        const notifications = document.querySelectorAll('.notification-item');
+        notifications.forEach(notification => {
+            notification.addEventListener('click', function(e) {
+                // Don't trigger if action button was clicked
+                if (!e.target.closest('.notification-actions') && 
+                    !e.target.closest('.notification-expand')) {
+                    
+                    const notificationId = this.getAttribute('data-notification-id');
+                    const actionUrl = this.querySelector('[href]')?.getAttribute('href');
+                    
+                    if (actionUrl) {
+                        window.location.href = actionUrl;
+                    }
+                    
+                    // Mark as read if unread
+                    if (this.classList.contains('unread')) {
+                        const markAsReadBtn = this.querySelector('[onclick*="markAsRead"]');
+                        if (markAsReadBtn) {
+                            markAsRead(notificationId, markAsReadBtn);
+                        }
+                    }
+                }
+            });
+        });
+    });
+
+    // Add CSS for slideOut animation
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideOut {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+                height: 0;
+                margin-bottom: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+        }
+    `;
+    document.head.appendChild(style);
+</script>

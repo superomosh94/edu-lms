@@ -1,4 +1,4 @@
-const pool = require('./config/db'); // correct path
+const pool = require('./config/db');
 const auditHelper = require('../helpers/auditHelper');
 
 const adminController = {
@@ -6,7 +6,11 @@ const adminController = {
     getDashboard: async (req, res) => {
         try {
             const stats = await adminController.getSystemStats();
-            res.render('admin/dashboard', { stats });
+            res.render('admin/dashboard', { 
+                stats,
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error('Dashboard error:', error);
             res.status(500).send('Internal server error');
@@ -16,7 +20,11 @@ const adminController = {
     getSystemOverview: async (req, res) => {
         try {
             const stats = await adminController.getSystemStats();
-            res.render('admin/systemOverview', { stats });
+            res.render('admin/systemOverview', { 
+                stats,
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error('System Overview error:', error);
             res.status(500).send('Error loading system overview');
@@ -66,7 +74,9 @@ const adminController = {
             const stats = await adminController.getSystemStats();
             res.render('admin/stats', {
                 totalUsers: stats.users.total,
-                totalCourses: stats.courses.total
+                totalCourses: stats.courses.total,
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
             });
         } catch (error) {
             console.error(error);
@@ -77,7 +87,11 @@ const adminController = {
     getAuditLogs: async (req, res) => {
         try {
             const [logs] = await pool.query('SELECT * FROM audit_logs ORDER BY created_at DESC');
-            res.render('admin/auditLogs', { logs });
+            res.render('admin/auditLogs', { 
+                logs,
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error(error);
             res.status(500).send('Error loading audit logs');
@@ -87,7 +101,11 @@ const adminController = {
     generateReport: async (req, res) => {
         try {
             const [reportData] = await pool.query('SELECT * FROM reports ORDER BY created_at DESC');
-            res.render('admin/reports', { reportData });
+            res.render('admin/reports', { 
+                reportData,
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error(error);
             res.status(500).send('Error generating report');
@@ -97,7 +115,11 @@ const adminController = {
     // SETTINGS
     showSettings: async (req, res) => {
         try {
-            res.render('admin/settings', { activePage: 'settings' });
+            res.render('admin/settings', { 
+                activePage: 'settings',
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error('Show settings error:', error);
             res.status(500).send('Error loading settings');
@@ -127,14 +149,23 @@ const adminController = {
                 FROM users u 
                 JOIN roles r ON u.role_id = r.id
             `);
-            res.render('admin/users', { users, activePage: 'users', userSession: req.session });
+            res.render('admin/users', { 
+                users, 
+                activePage: 'users', 
+                userSession: req.session,
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error(error);
             res.status(500).send('Error loading users');
         }
     },
 
-    showAddUserForm: (req, res) => res.render('admin/addUser'),
+    showAddUserForm: (req, res) => res.render('admin/addUser', {
+        success_msg: req.flash ? req.flash('success_msg') : [],
+        error_msg: req.flash ? req.flash('error_msg') : []
+    }),
 
     showEditUserForm: async (req, res) => {
         try {
@@ -147,7 +178,14 @@ const adminController = {
             `, [id]);
             if (!user) return res.status(404).send('User not found');
             const [roles] = await pool.query('SELECT name FROM roles');
-            res.render('admin/editUser', { user, roles, activePage: 'users', userSession: req.session });
+            res.render('admin/editUser', { 
+                user, 
+                roles, 
+                activePage: 'users', 
+                userSession: req.session,
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error(error);
             res.status(500).send('Internal server error');
@@ -202,34 +240,112 @@ const adminController = {
         }
     },
 
-    // COURSES
+    // COURSES - FIXED: Only one showAddCourseForm method
     showAddCourseForm: async (req, res) => {
         try {
             const [teachers] = await pool.query(`
                 SELECT u.id, u.name FROM users u
                 JOIN roles r ON u.role_id = r.id
-                WHERE r.name = 'Teacher'
+                WHERE r.name = 'Teacher' OR r.name = 'instructor'
             `);
-            res.render('admin/addCourse', { teachers });
+            
+            res.render('admin/addCourse', { 
+                teachers: teachers || [],
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error(error);
-            res.status(500).send('Error loading add course form');
+            req.flash('error_msg', 'Error loading add course form');
+            res.redirect('/admin/courses');
+        }
+    },
+
+    // ADD MISSING METHODS
+    showEditCourseForm: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const [[course]] = await pool.query(`
+                SELECT c.*, u.name as teacher_name 
+                FROM courses c 
+                JOIN users u ON c.teacher_id = u.id 
+                WHERE c.id = ?
+            `, [id]);
+            
+            if (!course) {
+                return res.status(404).send('Course not found');
+            }
+
+            const [teachers] = await pool.query(`
+                SELECT u.id, u.name FROM users u
+                JOIN roles r ON u.role_id = r.id
+                WHERE r.name = 'Teacher' OR r.name = 'instructor'
+            `);
+
+            res.render('admin/editCourse', {
+                course,
+                teachers: teachers || [],
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error loading course edit form');
+        }
+    },
+
+    updateCourse: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { title, description, teacher_id, status } = req.body;
+
+            await pool.query(
+                'UPDATE courses SET title = ?, description = ?, teacher_id = ?, status = ? WHERE id = ?',
+                [title, description, teacher_id, status, id]
+            );
+
+            await auditHelper.logAudit(req.userId, 'ADMIN_UPDATE_COURSE', { courseId: id, title });
+            res.redirect('/admin/courses');
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error updating course');
+        }
+    },
+
+    updateCourseStatus: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { status } = req.body;
+            
+            await pool.query('UPDATE courses SET status = ? WHERE id = ?', [status, id]);
+            await auditHelper.logAudit(req.userId, 'ADMIN_UPDATE_COURSE_STATUS', { courseId: id, status });
+            res.redirect('/admin/courses');
+        } catch (error) {
+            console.error(error);
+            res.status(500).send('Error updating course status');
         }
     },
 
     addCourse: async (req, res) => {
         try {
             const { title, description, teacher_id } = req.body;
-            if (!title || !description || !teacher_id) return res.status(400).send('Missing fields');
+            if (!title || !description || !teacher_id) {
+                req.flash('error_msg', 'All fields are required');
+                return res.redirect('/admin/courses/add');
+            }
+            
             const [result] = await pool.query(
                 'INSERT INTO courses (title, description, teacher_id, status) VALUES (?, ?, ?, ?)',
                 [title, description, teacher_id, 'pending']
             );
+            
             await auditHelper.logAudit(req.userId, 'ADMIN_CREATE_COURSE', { courseId: result.insertId, title });
+            req.flash('success_msg', 'Course created successfully');
             res.redirect('/admin/courses');
         } catch (error) {
             console.error(error);
-            res.status(500).send('Internal server error');
+            req.flash('error_msg', 'Error creating course');
+            res.redirect('/admin/courses/add');
         }
     },
 
@@ -239,10 +355,12 @@ const adminController = {
             const { status } = req.body;
             await pool.query('UPDATE courses SET status = ? WHERE id = ?', [status, id]);
             await auditHelper.logAudit(req.userId, 'ADMIN_MODERATE_COURSE', { courseId: id, status });
+            req.flash('success_msg', 'Course status updated successfully');
             res.redirect('/admin/courses');
         } catch (error) {
             console.error(error);
-            res.status(500).send('Error moderating course');
+            req.flash('error_msg', 'Error moderating course');
+            res.redirect('/admin/courses');
         }
     },
 
@@ -250,12 +368,18 @@ const adminController = {
         try {
             const { id } = req.params;
             const [result] = await pool.query('DELETE FROM courses WHERE id = ?', [id]);
-            if (result.affectedRows === 0) return res.status(404).send('Course not found');
+            if (result.affectedRows === 0) {
+                req.flash('error_msg', 'Course not found');
+                return res.redirect('/admin/courses');
+            }
+            
             await auditHelper.logAudit(req.userId, 'ADMIN_DELETE_COURSE', { courseId: id });
+            req.flash('success_msg', 'Course deleted successfully');
             res.redirect('/admin/courses');
         } catch (error) {
             console.error(error);
-            res.status(500).send('Error deleting course');
+            req.flash('error_msg', 'Error deleting course');
+            res.redirect('/admin/courses');
         }
     },
 
@@ -267,10 +391,17 @@ const adminController = {
                 JOIN users u ON c.teacher_id = u.id
                 ORDER BY c.id DESC
             `);
-            res.render('admin/courses', { courses, activePage: 'courses', userSession: req.session });
+            res.render('admin/courses', { 
+                courses: courses || [], 
+                activePage: 'courses', 
+                userSession: req.session,
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error(error);
-            res.status(500).send('Error loading courses');
+            req.flash('error_msg', 'Error loading courses');
+            res.redirect('/admin/dashboard');
         }
     },
 
@@ -278,7 +409,11 @@ const adminController = {
     getAnnouncements: async (req, res) => {
         try {
             const [announcements] = await pool.query('SELECT * FROM announcements ORDER BY created_at DESC');
-            res.render('admin/announcements', { announcements });
+            res.render('admin/announcements', { 
+                announcements: announcements || [],
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error('Error loading announcements:', error);
             res.status(500).send('Error loading announcements');
@@ -287,7 +422,10 @@ const adminController = {
 
     showAddAnnouncementForm: (req, res) => {
         try {
-            res.render('admin/addAnnouncement');
+            res.render('admin/addAnnouncement', {
+                success_msg: req.flash ? req.flash('success_msg') : [],
+                error_msg: req.flash ? req.flash('error_msg') : []
+            });
         } catch (error) {
             console.error('Error showing add announcement form:', error);
             res.status(500).send('Error loading form');

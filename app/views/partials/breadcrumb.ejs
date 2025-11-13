@@ -1,0 +1,275 @@
+<nav class="breadcrumb" aria-label="Breadcrumb">
+    <style>
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 0;
+            margin-bottom: 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .breadcrumb-item:not(:last-child)::after {
+            content: '›';
+            margin-left: 8px;
+            color: #d1d5db;
+        }
+
+        .breadcrumb-link {
+            color: #6b7280;
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .breadcrumb-link:hover {
+            color: #4f46e5;
+        }
+
+        .breadcrumb-link.current {
+            color: #1f2937;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .breadcrumb-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+        }
+
+        .breadcrumb-home {
+            color: #4f46e5;
+        }
+
+        .breadcrumb-home:hover {
+            color: #4338ca;
+        }
+
+        /* Compact variant */
+        .breadcrumb.compact {
+            padding: 12px 0;
+            margin-bottom: 16px;
+        }
+
+        .breadcrumb.compact .breadcrumb-item {
+            font-size: 0.85rem;
+        }
+
+        /* No border variant */
+        .breadcrumb.no-border {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        /* With background */
+        .breadcrumb.with-bg {
+            background: #f8fafc;
+            padding: 16px 20px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .breadcrumb {
+                flex-wrap: wrap;
+                gap: 4px;
+            }
+
+            .breadcrumb-item {
+                font-size: 0.8rem;
+            }
+
+            .breadcrumb.compact .breadcrumb-item {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .breadcrumb {
+                border-bottom-color: #374151;
+            }
+
+            .breadcrumb-link.current {
+                color: #f9fafb;
+            }
+
+            .breadcrumb.with-bg {
+                background: #374151;
+                border-color: #4b5563;
+            }
+        }
+
+        /* Animation for current page */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .breadcrumb-link.current {
+            animation: pulse 2s infinite;
+        }
+    </style>
+
+    <div class="breadcrumb-item">
+        <a href="/" class="breadcrumb-link breadcrumb-home" title="Home">
+            <span class="breadcrumb-icon">🏠</span>
+            Home
+        </a>
+    </div>
+
+    <% breadcrumbs.forEach((crumb, index) => { %>
+    <div class="breadcrumb-item">
+        <% if (index === breadcrumbs.length - 1) { %>
+            <span class="breadcrumb-link current">
+                <% if (crumb.icon) { %>
+                <span class="breadcrumb-icon"><%= crumb.icon %></span>
+                <% } %>
+                <%= crumb.title %>
+            </span>
+        <% } else { %>
+            <a href="<%= crumb.url %>" class="breadcrumb-link">
+                <% if (crumb.icon) { %>
+                <span class="breadcrumb-icon"><%= crumb.icon %></span>
+                <% } %>
+                <%= crumb.title %>
+            </a>
+        <% } %>
+    </div>
+    <% }); %>
+</nav>
+
+<script>
+    // Auto-generate breadcrumbs based on current URL
+    function generateBreadcrumbs() {
+        const path = window.location.pathname;
+        const segments = path.split('/').filter(segment => segment);
+        
+        const breadcrumbs = [
+            { title: 'Home', url: '/', icon: '🏠' }
+        ];
+        
+        let currentUrl = '';
+        segments.forEach((segment, index) => {
+            currentUrl += '/' + segment;
+            const isLast = index === segments.length - 1;
+            
+            // Convert segment to readable title
+            const title = segment
+                .split('-')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+            
+            breadcrumbs.push({
+                title: title,
+                url: isLast ? null : currentUrl,
+                icon: getBreadcrumbIcon(segment)
+            });
+        });
+        
+        return breadcrumbs;
+    }
+
+    function getBreadcrumbIcon(segment) {
+        const icons = {
+            'dashboard': '📊',
+            'courses': '📚',
+            'assignments': '📝',
+            'grades': '📊',
+            'students': '👥',
+            'teachers': '👨‍🏫',
+            'admin': '⚙️',
+            'profile': '👤',
+            'settings': '⚙️',
+            'messages': '💬',
+            'notifications': '🔔',
+            'help': '❓',
+            'about': 'ℹ️'
+        };
+        
+        return icons[segment] || '📄';
+    }
+
+    // Update breadcrumb dynamically
+    function updateBreadcrumb(customBreadcrumbs) {
+        const breadcrumbContainer = document.querySelector('.breadcrumb');
+        if (!breadcrumbContainer) return;
+        
+        const breadcrumbs = customBreadcrumbs || generateBreadcrumbs();
+        
+        let breadcrumbHTML = `
+            <div class="breadcrumb-item">
+                <a href="/" class="breadcrumb-link breadcrumb-home" title="Home">
+                    <span class="breadcrumb-icon">🏠</span>
+                    Home
+                </a>
+            </div>
+        `;
+        
+        breadcrumbs.slice(1).forEach((crumb, index) => {
+            const isLast = index === breadcrumbs.length - 2;
+            
+            breadcrumbHTML += `
+                <div class="breadcrumb-item">
+                    ${isLast ? 
+                        `<span class="breadcrumb-link current">
+                            ${crumb.icon ? `<span class="breadcrumb-icon">${crumb.icon}</span>` : ''}
+                            ${crumb.title}
+                        </span>` :
+                        `<a href="${crumb.url}" class="breadcrumb-link">
+                            ${crumb.icon ? `<span class="breadcrumb-icon">${crumb.icon}</span>` : ''}
+                            ${crumb.title}
+                        </a>`
+                    }
+                </div>
+            `;
+        });
+        
+        breadcrumbContainer.innerHTML = breadcrumbHTML;
+    }
+
+    // Initialize breadcrumb
+    document.addEventListener('DOMContentLoaded', function() {
+        // If no breadcrumbs are provided via EJS, generate them automatically
+        if (!document.querySelector('.breadcrumb-item:not(:first-child)')) {
+            updateBreadcrumb();
+        }
+        
+        // Add responsive behavior
+        function handleResize() {
+            const breadcrumb = document.querySelector('.breadcrumb');
+            if (window.innerWidth < 768) {
+                breadcrumb.classList.add('compact');
+            } else {
+                breadcrumb.classList.remove('compact');
+            }
+        }
+        
+        handleResize();
+        window.addEventListener('resize', handleResize);
+    });
+
+    // Utility function to update breadcrumb for SPA navigation
+    function setBreadcrumb(breadcrumbs) {
+        updateBreadcrumb(breadcrumbs);
+    }
+
+    // Export for use in other scripts
+    window.Breadcrumb = {
+        update: updateBreadcrumb,
+        set: setBreadcrumb
+    };
+</script>

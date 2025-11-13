@@ -1,0 +1,493 @@
+<header class="page-header">
+    <style>
+        .page-header {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 24px 0;
+            margin-bottom: 32px;
+        }
+
+        .page-header.compact {
+            padding: 16px 0;
+            margin-bottom: 24px;
+        }
+
+        .page-header.no-border {
+            border-bottom: none;
+        }
+
+        .page-header.with-bg {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+        }
+
+        .page-header.with-bg .page-title,
+        .page-header.with-bg .page-subtitle {
+            color: white;
+        }
+
+        .page-header.with-bg .breadcrumb-link {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .page-header.with-bg .breadcrumb-link:hover {
+            color: white;
+        }
+
+        .page-header.with-bg .breadcrumb-link.current {
+            color: white;
+        }
+
+        .page-header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-title-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .page-title-group {
+            flex: 1;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 8px;
+            line-height: 1.2;
+        }
+
+        .page-header.compact .page-title {
+            font-size: 1.5rem;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            color: #6b7280;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .page-header.compact .page-subtitle {
+            font-size: 1rem;
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-shrink: 0;
+            margin-left: 24px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 1px solid #4f46e5;
+        }
+
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-ghost:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .page-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid #4f46e5;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .page-tabs {
+            margin-top: 24px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .tab-list {
+            display: flex;
+            gap: 8px;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .tab-item {
+            margin-bottom: -1px;
+        }
+
+        .tab-link {
+            display: block;
+            padding: 12px 20px;
+            color: #6b7280;
+            text-decoration: none;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .tab-link:hover {
+            color: #374151;
+        }
+
+        .tab-link.active {
+            color: #4f46e5;
+            border-bottom-color: #4f46e5;
+        }
+
+        .page-breadcrumb {
+            margin-bottom: 16px;
+        }
+
+        .page-meta {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: #6b7280;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .page-alert {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .alert-info {
+            background: #f0f9ff;
+            color: #075985;
+            border: 1px solid #bae6fd;
+        }
+
+        .alert-warning {
+            background: #fffbeb;
+            color: #92400e;
+            border: 1px solid #fed7aa;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 20px 0;
+                margin-bottom: 24px;
+            }
+
+            .page-title-section {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .page-actions {
+                margin-left: 0;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+            }
+
+            .page-stats {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .tab-list {
+                flex-wrap: wrap;
+            }
+
+            .tab-link {
+                padding: 8px 16px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .page-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .page-header {
+                background: #1f2937;
+                border-bottom-color: #374151;
+            }
+
+            .page-title {
+                color: #f9fafb;
+            }
+
+            .stat-card {
+                background: #374151;
+            }
+
+            .stat-value {
+                color: #f9fafb;
+            }
+
+            .page-tabs {
+                border-bottom-color: #374151;
+            }
+
+            .tab-link {
+                color: #d1d5db;
+            }
+
+            .tab-link:hover {
+                color: #f9fafb;
+            }
+
+            .btn-ghost {
+                background: #374151;
+                border-color: #4b5563;
+                color: #d1d5db;
+            }
+
+            .btn-ghost:hover {
+                background: #4b5563;
+            }
+        }
+    </style>
+
+    <div class="page-header-container">
+        <% if (breadcrumbs !== false) { %>
+        <div class="page-breadcrumb">
+            <%- include('./breadcrumb', { breadcrumbs: breadcrumbs }) %>
+        </div>
+        <% } %>
+
+        <div class="page-title-section">
+            <div class="page-title-group">
+                <h1 class="page-title">
+                    <% if (icon) { %>
+                    <span style="margin-right: 12px;"><%= icon %></span>
+                    <% } %>
+                    <%= title %>
+                </h1>
+                
+                <% if (subtitle) { %>
+                <p class="page-subtitle"><%= subtitle %></p>
+                <% } %>
+
+                <% if (meta) { %>
+                <div class="page-meta">
+                    <% meta.forEach(item => { %>
+                    <div class="meta-item">
+                        <span><%= item.icon %></span>
+                        <span><%= item.text %></span>
+                    </div>
+                    <% }); %>
+                </div>
+                <% } %>
+            </div>
+
+            <% if (actions && actions.length > 0) { %>
+            <div class="page-actions">
+                <% actions.forEach(action => { %>
+                <a 
+                    href="<%= action.url %>" 
+                    class="btn <%= action.primary ? 'btn-primary' : action.type === 'outline' ? 'btn-outline' : 'btn-ghost' %>"
+                    <%= action.external ? 'target="_blank"' : '' %>
+                    <%= action.id ? `id="${action.id}"` : '' %>
+                >
+                    <%= action.icon %> <%= action.label %>
+                </a>
+                <% }); %>
+            </div>
+            <% } %>
+        </div>
+
+        <% if (alert) { %>
+        <div class="page-alert alert-<%= alert.type || 'info' %>">
+            <%= alert.message %>
+        </div>
+        <% } %>
+
+        <% if (stats && stats.length > 0) { %>
+        <div class="page-stats">
+            <% stats.forEach(stat => { %>
+            <div class="stat-card">
+                <span class="stat-value"><%= stat.value %></span>
+                <span class="stat-label"><%= stat.label %></span>
+            </div>
+            <% }); %>
+        </div>
+        <% } %>
+
+        <% if (tabs && tabs.length > 0) { %>
+        <nav class="page-tabs">
+            <ul class="tab-list">
+                <% tabs.forEach(tab => { %>
+                <li class="tab-item">
+                    <a 
+                        href="<%= tab.url %>" 
+                        class="tab-link <%= tab.active ? 'active' : '' %>"
+                        <%= tab.id ? `id="${tab.id}"` : '' %>
+                    >
+                        <%= tab.label %>
+                    </a>
+                </li>
+                <% }); %>
+            </ul>
+        </nav>
+        <% } %>
+    </div>
+</header>
+
+<script>
+    // Handle tab interactions
+    document.addEventListener('DOMContentLoaded', function() {
+        const tabLinks = document.querySelectorAll('.tab-link');
+        tabLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                    
+                    // Update active tab
+                    tabLinks.forEach(tab => tab.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Trigger custom event
+                    const tabId = this.getAttribute('id');
+                    if (tabId) {
+                        const event = new CustomEvent('tabChange', {
+                            detail: { tabId: tabId }
+                        });
+                        document.dispatchEvent(event);
+                    }
+                }
+            });
+        });
+
+        // Handle responsive behavior
+        function handleResize() {
+            const pageHeader = document.querySelector('.page-header');
+            if (window.innerWidth < 768) {
+                pageHeader.classList.add('compact');
+            } else {
+                pageHeader.classList.remove('compact');
+            }
+        }
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+    });
+
+    // Utility function to update page header
+    function updatePageHeader(options) {
+        const header = document.querySelector('.page-header');
+        if (!header) return;
+
+        if (options.title) {
+            const titleElement = header.querySelector('.page-title');
+            if (titleElement) {
+                titleElement.textContent = options.title;
+            }
+        }
+
+        if (options.subtitle) {
+            const subtitleElement = header.querySelector('.page-subtitle');
+            if (subtitleElement) {
+                subtitleElement.textContent = options.subtitle;
+            }
+        }
+
+        if (options.stats) {
+            const statsContainer = header.querySelector('.page-stats');
+            if (statsContainer) {
+                statsContainer.innerHTML = options.stats.map(stat => `
+                    <div class="stat-card">
+                        <span class="stat-value">${stat.value}</span>
+                        <span class="stat-label">${stat.label}</span>
+                    </div>
+                `).join('');
+            }
+        }
+    }
+
+    // Export for use in other scripts
+    window.PageHeader = {
+        update: updatePageHeader
+    };
+</script>

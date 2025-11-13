@@ -1,0 +1,413 @@
+<div class="card <%= size ? 'card-' + size : '' %> <%= variant ? 'card-' + variant : '' %>" 
+     <%= id ? 'id="' + id + '"' : '' %>>
+    <style>
+        .card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 20px 24px 0;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-subtitle {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .card-body {
+            padding: 0 24px 24px;
+        }
+
+        .card-footer {
+            padding: 16px 24px;
+            background: #f8fafc;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Sizes */
+        .card-sm .card-header,
+        .card-sm .card-body,
+        .card-sm .card-footer {
+            padding: 12px 16px;
+        }
+
+        .card-sm .card-title {
+            font-size: 1.1rem;
+        }
+
+        .card-lg .card-header,
+        .card-lg .card-body,
+        .card-lg .card-footer {
+            padding: 24px 32px;
+        }
+
+        .card-lg .card-title {
+            font-size: 1.5rem;
+        }
+
+        /* Variants */
+        .card-bordered {
+            border: 2px solid #e5e7eb;
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-shadow:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-flat {
+            border: none;
+            box-shadow: none;
+        }
+
+        .card-flat:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .card-primary {
+            border-left: 4px solid #4f46e5;
+        }
+
+        .card-success {
+            border-left: 4px solid #10b981;
+        }
+
+        .card-warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .card-danger {
+            border-left: 4px solid #ef4444;
+        }
+
+        /* With image */
+        .card-with-image .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card-with-image .card-header {
+            padding-top: 0;
+        }
+
+        /* Interactive card */
+        .card-clickable {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .card-clickable:hover {
+            border-color: #4f46e5;
+        }
+
+        /* Card actions */
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 1px solid #4f46e5;
+        }
+
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        /* Card stats */
+        .card-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .stat {
+            text-align: center;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Card loading state */
+        .card.loading {
+            pointer-events: none;
+        }
+
+        .card.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Card badges */
+        .card-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+        }
+
+        .badge-new { background: #fef3c7; color: #92400e; }
+        .badge-updated { background: #d1fae5; color: #065f46; }
+        .badge-featured { background: #e0e7ff; color: #3730a3; }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .card-header,
+            .card-body,
+            .card-footer {
+                padding: 16px 20px;
+            }
+
+            .card-lg .card-header,
+            .card-lg .card-body,
+            .card-lg .card-footer {
+                padding: 20px 24px;
+            }
+
+            .card-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .card-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .card {
+                background: #1f2937;
+                border-color: #374151;
+            }
+
+            .card-title {
+                color: #f9fafb;
+            }
+
+            .card-footer {
+                background: #374151;
+                border-top-color: #4b5563;
+            }
+
+            .stat {
+                background: #374151;
+            }
+
+            .stat-value {
+                color: #f9fafb;
+            }
+        }
+    </style>
+
+    <% if (badge) { %>
+    <div class="card-badge badge-<%= badge.type %>">
+        <%= badge.text %>
+    </div>
+    <% } %>
+
+    <% if (image) { %>
+    <img src="<%= image %>" alt="<%= imageAlt || 'Card image' %>" class="card-image">
+    <% } %>
+
+    <% if (title || subtitle) { %>
+    <div class="card-header">
+        <% if (title) { %>
+        <h3 class="card-title">
+            <% if (icon) { %>
+            <span><%= icon %></span>
+            <% } %>
+            <%= title %>
+        </h3>
+        <% } %>
+        <% if (subtitle) { %>
+        <p class="card-subtitle"><%= subtitle %></p>
+        <% } %>
+    </div>
+    <% } %>
+
+    <div class="card-body">
+        <%= body %>
+        
+        <% if (stats) { %>
+        <div class="card-stats">
+            <% stats.forEach(stat => { %>
+            <div class="stat">
+                <span class="stat-value"><%= stat.value %></span>
+                <span class="stat-label"><%= stat.label %></span>
+            </div>
+            <% }); %>
+        </div>
+        <% } %>
+        
+        <% if (actions) { %>
+        <div class="card-actions">
+            <% actions.forEach(action => { %>
+            <a 
+                href="<%= action.url %>" 
+                class="btn <%= action.primary ? 'btn-primary' : 'btn-outline' %>"
+                <%= action.external ? 'target="_blank"' : '' %>
+            >
+                <%= action.icon %> <%= action.label %>
+            </a>
+            <% }); %>
+        </div>
+        <% } %>
+    </div>
+
+    <% if (footer) { %>
+    <div class="card-footer">
+        <%= footer %>
+    </div>
+    <% } %>
+</div>
+
+<script>
+    // Add click handler for clickable cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const clickableCards = document.querySelectorAll('.card-clickable');
+        clickableCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const url = this.getAttribute('data-url');
+                if (url) {
+                    window.location.href = url;
+                }
+            });
+        });
+
+        // Initialize card interactions
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            // Add hover effects
+            card.addEventListener('mouseenter', function() {
+                this.style.zIndex = '10';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.zIndex = '';
+            });
+        });
+    });
+
+    // Utility function to update card content
+    function updateCard(cardId, content) {
+        const card = document.getElementById(cardId);
+        if (card) {
+            const body = card.querySelector('.card-body');
+            if (body) {
+                body.innerHTML = content;
+            }
+        }
+    }
+
+    // Utility function to set card loading state
+    function setCardLoading(cardId, isLoading) {
+        const card = document.getElementById(cardId);
+        if (card) {
+            if (isLoading) {
+                card.classList.add('loading');
+            } else {
+                card.classList.remove('loading');
+            }
+        }
+    }
+
+    // Export for use in other scripts
+    window.Card = {
+        update: updateCard,
+        setLoading: setCardLoading
+    };
+</script>

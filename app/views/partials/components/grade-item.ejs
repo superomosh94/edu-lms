@@ -1,0 +1,524 @@
+<div class="grade-item" data-grade-id="<%= grade._id %>">
+    <style>
+        .grade-item {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .grade-item:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .grade-item.excellent { border-left: 4px solid #10b981; }
+        .grade-item.good { border-left: 4px solid #22c55e; }
+        .grade-item.average { border-left: 4px solid #f59e0b; }
+        .grade-item.poor { border-left: 4px solid #ef4444; }
+        .grade-item.failing { border-left: 4px solid #dc2626; }
+
+        .grade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .grade-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 0;
+            flex: 1;
+        }
+
+        .grade-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: right;
+        }
+
+        .grade-percentage {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .grade-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .meta-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .grade-details {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .detail-value {
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .grade-breakdown {
+            margin-top: 16px;
+        }
+
+        .breakdown-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .breakdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .breakdown-category {
+            color: #6b7280;
+            font-size: 0.85rem;
+        }
+
+        .breakdown-score {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .grade-comments {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .comments-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .comments-content {
+            background: #f8fafc;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: #4b5563;
+        }
+
+        .grade-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 1px solid #4f46e5;
+        }
+
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .grade-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: 8px;
+        }
+
+        .badge-passed { background: #d1fae5; color: #065f46; }
+        .badge-failed { background: #fee2e2; color: #991b1b; }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+
+        .grade-trend {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        .trend-up { color: #10b981; }
+        .trend-down { color: #ef4444; }
+        .trend-stable { color: #6b7280; }
+
+        .weight-indicator {
+            font-size: 0.75rem;
+            color: #6b7280;
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-left: 8px;
+        }
+
+        /* Progress circle for overall grade */
+        .grade-circle {
+            width: 60px;
+            height: 60px;
+            position: relative;
+            margin-left: 16px;
+        }
+
+        .circle-bg {
+            fill: none;
+            stroke: #f3f4f6;
+            stroke-width: 3;
+        }
+
+        .circle-progress {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.3s ease;
+        }
+
+        .circle-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-anchor: middle;
+        }
+
+        /* Color coding based on grade */
+        .grade-A { color: #10b981; }
+        .grade-B { color: #22c55e; }
+        .grade-C { color: #f59e0b; }
+        .grade-D { color: #ef4444; }
+        .grade-F { color: #dc2626; }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .grade-item {
+                padding: 16px;
+            }
+
+            .grade-header {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .grade-score {
+                text-align: left;
+                align-self: flex-start;
+            }
+
+            .grade-meta {
+                gap: 12px;
+            }
+
+            .grade-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* Animation for new grades */
+        @keyframes highlightGrade {
+            0% { background-color: rgba(79, 70, 229, 0.1); }
+            100% { background-color: transparent; }
+        }
+
+        .grade-item.new {
+            animation: highlightGrade 2s ease;
+        }
+
+        /* Print styles */
+        @media print {
+            .grade-item {
+                border: 1px solid #000;
+                break-inside: avoid;
+            }
+
+            .grade-actions {
+                display: none;
+            }
+        }
+    </style>
+
+    <div class="grade-header">
+        <div>
+            <h3 class="grade-title">
+                <%= grade.assignment ? grade.assignment.title : grade.title %>
+                <% if (grade.status) { %>
+                    <span class="grade-badge badge-<%= grade.status %>">
+                        <%= grade.status %>
+                    </span>
+                <% } %>
+            </h3>
+            <div class="grade-meta">
+                <% if (grade.course) { %>
+                <div class="meta-item">
+                    <span class="meta-icon">📚</span>
+                    <span><%= grade.course.name %></span>
+                </div>
+                <% } %>
+                <div class="meta-item">
+                    <span class="meta-icon">📅</span>
+                    <span>Graded: <%= new Date(grade.gradedAt).toLocaleDateString() %></span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-icon">👨‍🏫</span>
+                    <span>By: <%= grade.gradedBy.name %></span>
+                </div>
+                <% if (grade.weight) { %>
+                <div class="meta-item">
+                    <span class="weight-indicator">
+                        Weight: <%= grade.weight %>%
+                    </span>
+                </div>
+                <% } %>
+            </div>
+        </div>
+        
+        <div class="grade-score">
+            <div class="grade-<%= grade.letterGrade %>">
+                <%= grade.score %>/<%= grade.maxScore %>
+                <% if (grade.letterGrade) { %>
+                    <div class="grade-letter" style="font-size: 1rem; color: inherit;">
+                        (<%= grade.letterGrade %>)
+                    </div>
+                <% } %>
+            </div>
+            <div class="grade-percentage">
+                <%= grade.percentage %>% 
+                <% if (grade.trend) { %>
+                    <div class="grade-trend trend-<%= grade.trend %>">
+                        <% if (grade.trend === 'up') { %>↗️<% } %>
+                        <% if (grade.trend === 'down') { %>↘️<% } %>
+                        <% if (grade.trend === 'stable') { %>➡️<% } %>
+                        <%= grade.trendChange || '' %>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <% if (grade.breakdown && grade.breakdown.length > 0) { %>
+    <div class="grade-breakdown">
+        <div class="breakdown-title">Score Breakdown</div>
+        <% grade.breakdown.forEach(item => { %>
+        <div class="breakdown-item">
+            <span class="breakdown-category"><%= item.category %></span>
+            <span class="breakdown-score"><%= item.score %>/<%= item.maxScore %></span>
+        </div>
+        <% }); %>
+    </div>
+    <% } %>
+
+    <div class="grade-details">
+        <div class="detail-row">
+            <span class="detail-label">Submission Date</span>
+            <span class="detail-value"><%= new Date(grade.submittedAt).toLocaleDateString() %></span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Graded Date</span>
+            <span class="detail-value"><%= new Date(grade.gradedAt).toLocaleDateString() %></span>
+        </div>
+        <% if (grade.timeSpent) { %>
+        <div class="detail-row">
+            <span class="detail-label">Time Spent</span>
+            <span class="detail-value"><%= grade.timeSpent %> minutes</span>
+        </div>
+        <% } %>
+        <div class="detail-row">
+            <span class="detail-label">Class Average</span>
+            <span class="detail-value"><%= grade.classAverage %>%</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Percentile</span>
+            <span class="detail-value"><%= grade.percentile %>%</span>
+        </div>
+    </div>
+
+    <% if (grade.comments) { %>
+    <div class="grade-comments">
+        <div class="comments-title">Instructor Comments</div>
+        <div class="comments-content">
+            <%= grade.comments %>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (grade.feedback) { %>
+    <div class="grade-comments">
+        <div class="comments-title">Feedback</div>
+        <div class="comments-content">
+            <%= grade.feedback %>
+            <% if (grade.improvementSuggestions) { %>
+            <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #e5e7eb;">
+                <strong>Suggestions for improvement:</strong><br>
+                <%= grade.improvementSuggestions %>
+            </div>
+            <% } %>
+        </div>
+    </div>
+    <% } %>
+
+    <div class="grade-actions">
+        <% if (grade.assignment) { %>
+        <a href="/assignments/view/<%= grade.assignment._id %>" class="btn btn-outline">
+            📝 View Assignment
+        </a>
+        <% } %>
+        <% if (user.role === 'student') { %>
+        <button class="btn btn-primary" onclick="requestRegrade('<%= grade._id %>')">
+            🔄 Request Regrade
+        </button>
+        <% } %>
+        <% if (user.role === 'teacher' || user.role === 'admin') { %>
+        <button class="btn btn-outline" onclick="editGrade('<%= grade._id %>')">
+            ✏️ Edit Grade
+        </button>
+        <% } %>
+        <button class="btn btn-outline" onclick="downloadGradeReport('<%= grade._id %>')">
+            📥 Download Report
+        </button>
+    </div>
+</div>
+
+<script>
+    function requestRegrade(gradeId) {
+        const reason = prompt('Please provide a reason for the regrade request:');
+        if (reason) {
+            fetch(`/api/grades/${gradeId}/regrade-request`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({ reason: reason })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Regrade request submitted successfully!');
+                } else {
+                    alert('Failed to submit regrade request: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while submitting the request.');
+            });
+        }
+    }
+
+    function editGrade(gradeId) {
+        window.location.href = `/grades/edit/${gradeId}`;
+    }
+
+    function downloadGradeReport(gradeId) {
+        window.open(`/api/grades/${gradeId}/report`, '_blank');
+    }
+
+    // Initialize grade circles
+    document.addEventListener('DOMContentLoaded', function() {
+        const gradeItems = document.querySelectorAll('.grade-item');
+        gradeItems.forEach(item => {
+            const percentage = parseInt(item.querySelector('.grade-percentage').textContent);
+            const circle = item.querySelector('.circle-progress');
+            if (circle) {
+                const radius = circle.getAttribute('r');
+                const circumference = 2 * Math.PI * radius;
+                const offset = circumference - (percentage / 100) * circumference;
+                circle.style.strokeDasharray = circumference;
+                circle.style.strokeDashoffset = offset;
+                
+                // Set color based on percentage
+                if (percentage >= 90) circle.style.stroke = '#10b981';
+                else if (percentage >= 80) circle.style.stroke = '#22c55e';
+                else if (percentage >= 70) circle.style.stroke = '#f59e0b';
+                else if (percentage >= 60) circle.style.stroke = '#ef4444';
+                else circle.style.stroke = '#dc2626';
+            }
+        });
+    });
+</script>

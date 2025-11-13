@@ -1,0 +1,746 @@
+<div class="user-card" data-user-id="<%= user._id %>">
+    <style>
+        .user-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            position: relative;
+            text-align: center;
+        }
+
+        .user-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: #4f46e5;
+        }
+
+        .user-card.compact {
+            padding: 16px;
+            text-align: left;
+        }
+
+        .user-card.large {
+            padding: 32px;
+        }
+
+        .user-card.online::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 12px;
+            height: 12px;
+            background: #10b981;
+            border: 2px solid white;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .user-card.offline::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 12px;
+            height: 12px;
+            background: #6b7280;
+            border: 2px solid white;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+            border: 4px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-card.compact .user-avatar {
+            width: 48px;
+            height: 48px;
+            font-size: 1.2rem;
+            margin: 0 16px 0 0;
+            float: left;
+        }
+
+        .user-card.large .user-avatar {
+            width: 120px;
+            height: 120px;
+            font-size: 3rem;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            margin-bottom: 16px;
+        }
+
+        .user-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin: 0 0 4px;
+            line-height: 1.3;
+        }
+
+        .user-card.compact .user-name {
+            font-size: 1rem;
+            margin-bottom: 2px;
+        }
+
+        .user-role {
+            color: #4f46e5;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .user-email {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+            padding: 16px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .user-card.compact .user-stats {
+            grid-template-columns: 1fr;
+            gap: 8px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1f2937;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .user-bio {
+            color: #4b5563;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 16px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .user-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 16px 0;
+            justify-content: center;
+        }
+
+        .user-card.compact .user-skills {
+            justify-content: flex-start;
+        }
+
+        .skill-tag {
+            padding: 4px 8px;
+            background: #e0e7ff;
+            color: #3730a3;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+            justify-content: center;
+        }
+
+        .user-card.compact .user-actions {
+            justify-content: flex-start;
+            margin-top: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #4f46e5;
+            border: 1px solid #4f46e5;
+        }
+
+        .btn-outline:hover {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: #6b7280;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-ghost:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .user-badges {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .user-card.compact .user-badges {
+            justify-content: flex-start;
+        }
+
+        .badge {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .badge-premium { background: #f59e0b; color: white; }
+        .badge-verified { background: #10b981; color: white; }
+        .badge-staff { background: #ef4444; color: white; }
+        .badge-contributor { background: #8b5cf6; color: white; }
+
+        .user-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .status-active { background: #d1fae5; color: #065f46; }
+        .status-inactive { background: #f3f4f6; color: #6b7280; }
+        .status-suspended { background: #fee2e2; color: #991b1b; }
+
+        .user-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin: 12px 0;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .user-course-progress {
+            margin: 16px 0;
+        }
+
+        .progress-item {
+            margin-bottom: 8px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f3f4f6;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        /* Hover effects */
+        .user-card.clickable {
+            cursor: pointer;
+        }
+
+        .user-card.clickable:hover {
+            border-color: #4f46e5;
+        }
+
+        /* Loading state */
+        .user-card.loading {
+            pointer-events: none;
+        }
+
+        .user-card.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+            animation: loading 1.5s infinite;
+            border-radius: 16px;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Achievement showcase */
+        .achievements {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+
+        .achievement {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            position: relative;
+        }
+
+        .achievement.has-achievement {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .achievement-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+
+        .achievement:hover .achievement-tooltip {
+            opacity: 1;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .user-card {
+                padding: 20px;
+            }
+
+            .user-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .user-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .user-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .user-avatar {
+                width: 64px;
+                height: 64px;
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            .user-card {
+                background: #1f2937;
+                border-color: #374151;
+            }
+
+            .user-name {
+                color: #f9fafb;
+            }
+
+            .user-stats {
+                background: #374151;
+            }
+
+            .stat-value {
+                color: #f9fafb;
+            }
+
+            .user-bio {
+                color: #d1d5db;
+            }
+
+            .skill-tag {
+                background: #3730a3;
+                color: #e0e7ff;
+            }
+
+            .btn-ghost {
+                background: #374151;
+                border-color: #4b5563;
+                color: #d1d5db;
+            }
+
+            .btn-ghost:hover {
+                background: #4b5563;
+            }
+
+            .progress-bar {
+                background: #374151;
+            }
+        }
+    </style>
+
+    <% if (user.status) { %>
+    <div class="user-status status-<%= user.status %>">
+        <%= user.status %>
+    </div>
+    <% } %>
+
+    <div class="user-avatar">
+        <% if (user.avatar) { %>
+            <img src="<%= user.avatar %>" alt="<%= user.name %>">
+        <% } else { %>
+            <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+        <% } %>
+    </div>
+
+    <div class="user-info">
+        <h3 class="user-name"><%= user.name %></h3>
+        <div class="user-role"><%= user.role %></div>
+        <p class="user-email"><%= user.email %></p>
+    </div>
+
+    <% if (user.badges && user.badges.length > 0) { %>
+    <div class="user-badges">
+        <% user.badges.forEach(badge => { %>
+        <div class="badge badge-<%= badge.type %>" title="<%= badge.title %>">
+            <%= badge.icon || '⭐' %>
+        </div>
+        <% }); %>
+    </div>
+    <% } %>
+
+    <% if (user.bio) { %>
+    <div class="user-bio">
+        <%= user.bio %>
+    </div>
+    <% } %>
+
+    <% if (user.skills && user.skills.length > 0) { %>
+    <div class="user-skills">
+        <% user.skills.slice(0, 5).forEach(skill => { %>
+        <span class="skill-tag"><%= skill %></span>
+        <% }); %>
+        <% if (user.skills.length > 5) { %>
+        <span class="skill-tag">+<%= user.skills.length - 5 %> more</span>
+        <% } %>
+    </div>
+    <% } %>
+
+    <% if (user.stats) { %>
+    <div class="user-stats">
+        <div class="stat-item">
+            <span class="stat-value"><%= user.stats.courses || 0 %></span>
+            <span class="stat-label">Courses</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value"><%= user.stats.completed || 0 %></span>
+            <span class="stat-label">Completed</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-value"><%= user.stats.grade || 'A-' %></span>
+            <span class="stat-label">Avg Grade</span>
+        </div>
+    </div>
+    <% } %>
+
+    <% if (user.courseProgress && user.courseProgress.length > 0) { %>
+    <div class="user-course-progress">
+        <h4 style="font-size: 0.9rem; color: #374151; margin-bottom: 12px;">Course Progress</h4>
+        <% user.courseProgress.slice(0, 3).forEach(course => { %>
+        <div class="progress-item">
+            <div class="progress-label">
+                <span><%= course.name %></span>
+                <span><%= course.progress %>%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: <%= course.progress %>%;"></div>
+            </div>
+        </div>
+        <% }); %>
+    </div>
+    <% } %>
+
+    <% if (user.achievements) { %>
+    <div class="achievements">
+        <% user.achievements.forEach(achievement => { %>
+        <div class="achievement <%= achievement.earned ? 'has-achievement' : '' %>" title="<%= achievement.name %>">
+            <%= achievement.icon %>
+            <% if (achievement.earned) { %>
+            <div class="achievement-tooltip">
+                <%= achievement.name %>
+            </div>
+            <% } %>
+        </div>
+        <% }); %>
+    </div>
+    <% } %>
+
+    <% if (user.meta) { %>
+    <div class="user-meta">
+        <% if (user.meta.joined) { %>
+        <div class="meta-item">
+            <span>📅</span>
+            <span>Joined <%= new Date(user.meta.joined).toLocaleDateString() %></span>
+        </div>
+        <% } %>
+        <% if (user.meta.lastActive) { %>
+        <div class="meta-item">
+            <span>🕒</span>
+            <span>Last active <%= formatLastActive(user.meta.lastActive) %></span>
+        </div>
+        <% } %>
+        <% if (user.meta.location) { %>
+        <div class="meta-item">
+            <span>📍</span>
+            <span><%= user.meta.location %></span>
+        </div>
+        <% } %>
+    </div>
+    <% } %>
+
+    <div class="user-actions">
+        <a href="/users/profile/<%= user._id %>" class="btn btn-primary">
+            👤 View Profile
+        </a>
+        <button class="btn btn-outline" onclick="sendMessage('<%= user._id %>')">
+            💬 Message
+        </button>
+        <% if (user.role === 'student' && currentUser.role === 'teacher') { %>
+        <button class="btn btn-ghost" onclick="viewProgress('<%= user._id %>')">
+            📊 Progress
+        </button>
+        <% } %>
+    </div>
+</div>
+
+<script>
+    function formatLastActive(timestamp) {
+        const now = new Date();
+        const lastActive = new Date(timestamp);
+        const diffInMinutes = Math.floor((now - lastActive) / (1000 * 60));
+        
+        if (diffInMinutes < 1) return 'just now';
+        if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+        if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h ago`;
+        if (diffInMinutes < 10080) return `${Math.floor(diffInMinutes / 1440)}d ago`;
+        return lastActive.toLocaleDateString();
+    }
+
+    function sendMessage(userId) {
+        // Open messaging modal or redirect to messages
+        const message = prompt('Enter your message:');
+        if (message) {
+            fetch(`/api/messages/send`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                },
+                body: JSON.stringify({
+                    to: userId,
+                    message: message
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Message sent successfully!');
+                } else {
+                    alert('Failed to send message: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error sending message:', error);
+                alert('An error occurred while sending the message.');
+            });
+        }
+    }
+
+    function viewProgress(userId) {
+        window.location.href = `/progress/student/${userId}`;
+    }
+
+    // Add click handler for clickable cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.user-card.clickable');
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                const userId = this.getAttribute('data-user-id');
+                window.location.href = `/users/profile/${userId}`;
+            });
+        });
+
+        // Animate progress bars
+        const progressBars = document.querySelectorAll('.progress-fill');
+        progressBars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+            }, 100);
+        });
+
+        // Initialize tooltips for achievements
+        const achievements = document.querySelectorAll('.achievement');
+        achievements.forEach(achievement => {
+            achievement.addEventListener('mouseenter', function() {
+                const tooltip = this.querySelector('.achievement-tooltip');
+                if (tooltip) {
+                    tooltip.style.opacity = '1';
+                }
+            });
+            
+            achievement.addEventListener('mouseleave', function() {
+                const tooltip = this.querySelector('.achievement-tooltip');
+                if (tooltip) {
+                    tooltip.style.opacity = '0';
+                }
+            });
+        });
+    });
+
+    // Follow/Unfollow functionality
+    function toggleFollow(userId, button) {
+        const isFollowing = button.textContent.includes('Unfollow');
+        
+        fetch(`/api/users/${userId}/follow`, {
+            method: isFollowing ? 'DELETE' : 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                if (isFollowing) {
+                    button.innerHTML = '👤 Follow';
+                    button.classList.remove('btn-ghost');
+                    button.classList.add('btn-outline');
+                } else {
+                    button.innerHTML = '✅ Following';
+                    button.classList.remove('btn-outline');
+                    button.classList.add('btn-ghost');
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error toggling follow:', error);
+        });
+    }
+
+    // Export user data
+    function exportUserData(userId) {
+        if (confirm('Export this user\'s data?')) {
+            window.open(`/api/users/${userId}/export`, '_blank');
+        }
+    }
+</script>

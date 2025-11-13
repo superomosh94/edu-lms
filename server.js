@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const flash = require('connect-flash'); // ADD THIS
 const path = require('path');
 const dotenv = require('dotenv');
 const methodOverride = require('method-override');
@@ -78,6 +79,9 @@ app.use(
     })
 );
 
+// Flash middleware - MUST be after session and before routes
+app.use(flash()); // ADD THIS
+
 // Attach session user to req.user and res.locals.user
 app.use((req, res, next) => {
     if (req.session.userId) {
@@ -91,6 +95,13 @@ app.use((req, res, next) => {
         req.user = null;
     }
     res.locals.user = req.user || null;
+    
+    // Make flash messages available to all templates
+    res.locals.success_msg = req.flash('success_msg');
+    res.locals.error_msg = req.flash('error_msg');
+    res.locals.info_msg = req.flash('info_msg');
+    res.locals.warning_msg = req.flash('warning_msg');
+    
     next();
 });
 

@@ -2,17 +2,20 @@
 <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-sm gradient-navbar">
   <div class="container-fluid">
 
-    <!-- Brand -->
-    <a class="navbar-brand d-flex align-items-center fw-bold" href="/dashboard">
-      <i class="fas fa-graduation-cap me-2" style="color: #ffd700;"></i>
-      EDU LMS
-      <small class="text-light ms-2 fw-normal">Learn. Grow. Achieve.</small>
-    </a>
+    <!-- Brand & Mobile Toggle Container -->
+    <div class="navbar-header-container">
+      <!-- Brand -->
+      <a class="navbar-brand d-flex align-items-center fw-bold" href="/dashboard">
+        <i class="fas fa-graduation-cap me-2 text-gold"></i>
+        EDU LMS
+        <small class="text-light ms-2 fw-normal d-none d-sm-inline">Learn. Grow. Achieve.</small>
+      </a>
 
-    <!-- Mobile Toggle -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+      <!-- Mobile Toggle -->
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
 
     <!-- Navbar Content -->
     <div class="collapse navbar-collapse" id="navbarContent">
@@ -20,29 +23,29 @@
       <!-- Left Menu -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link px-3 <%= activePage === 'dashboard' ? 'active' : '' %>" href="/dashboard">
+          <a class="nav-link px-3<%= activePage === 'dashboard' ? ' active' : '' %>" href="/dashboard">
             <i class="fas fa-tachometer-alt me-1"></i>My Learning Space
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3 <%= activePage === 'courses' ? 'active' : '' %>" href="/courses">
+          <a class="nav-link px-3<%= activePage === 'courses' ? ' active' : '' %>" href="/courses">
             <i class="fas fa-book me-1"></i>My Courses
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3 <%= activePage === 'assignments' ? 'active' : '' %>" href="/assignments">
+          <a class="nav-link px-3<%= activePage === 'assignments' ? ' active' : '' %>" href="/assignments">
             <i class="fas fa-tasks me-1"></i>Assignments
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link px-3 <%= activePage === 'grades' ? 'active' : '' %>" href="/grades">
+          <a class="nav-link px-3<%= activePage === 'grades' ? ' active' : '' %>" href="/grades">
             <i class="fas fa-chart-bar me-1"></i>Performance
           </a>
         </li>
 
         <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle px-3 <%= activePage === 'management' ? 'active' : '' %>" href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
+          <a class="nav-link dropdown-toggle px-3<%= activePage === 'management' ? ' active' : '' %>" href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
             <i class="fas fa-cogs me-1"></i>Management
           </a>
           <ul class="dropdown-menu shadow-sm">
@@ -58,51 +61,75 @@
         <% } %>
       </ul>
 
+      <!-- Search -->
+      <form class="d-flex align-items-center search-container">
+        <div class="input-group">
+          <input class="form-control form-control-sm rounded-start" type="search" placeholder="Search courses, assignments..." aria-label="Search">
+          <button class="btn btn-outline-light btn-sm rounded-end" type="submit"><i class="fas fa-search"></i></button>
+        </div>
+      </form>
+
       <!-- Right Menu -->
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+      <ul class="navbar-nav mb-2 mb-lg-0 align-items-center right-menu-container">
 
         <!-- Dark Mode Switch -->
-        <li class="nav-item d-flex align-items-center px-3">
-          <label class="switch mb-0">
+        <li class="nav-item d-flex align-items-center dark-mode-container">
+          <label class="switch mb-0 me-2" title="Toggle dark mode">
             <input type="checkbox" id="themeToggle">
             <span class="slider round"></span>
           </label>
-          <small class="text-light ms-2">Dark Mode</small>
+          <small class="text-light d-none d-lg-block">Dark Mode</small>
         </li>
 
         <!-- Notifications -->
-        <li class="nav-item dropdown">
-          <a class="nav-link position-relative px-3" href="javascript:void(0)" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
-            <i class="fas fa-bell"></i>
+        <li class="nav-item dropdown notification-container">
+          <a class="nav-link position-relative" href="javascript:void(0)" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-bell fa-lg"></i>
             <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
           </a>
-          <ul id="notificationList" class="dropdown-menu dropdown-menu-end shadow">
+          <ul id="notificationList" class="dropdown-menu dropdown-menu-end shadow notification-dropdown">
             <li><h6 class="dropdown-header">Notifications</h6></li>
-            <div id="notifications"></div>
-            <li><a class="dropdown-item text-center" id="viewAllNotifications" href="javascript:void(0)">View all notifications</a></li>
+            <ul id="notifications" class="notification-content list-unstyled mb-0"></ul>
+            <li><a class="dropdown-item text-center view-all-link" id="viewAllNotifications" href="javascript:void(0)">View all notifications</a></li>
           </ul>
         </li>
 
         <!-- Messages -->
-        <li class="nav-item dropdown">
-          <a class="nav-link position-relative px-3" href="javascript:void(0)" id="messageDropdown" role="button" data-bs-toggle="dropdown">
-            <i class="fas fa-envelope"></i>
+        <li class="nav-item dropdown message-container">
+          <a class="nav-link position-relative" href="javascript:void(0)" id="messageDropdown" role="button" data-bs-toggle="dropdown">
+            <i class="fas fa-envelope fa-lg"></i>
             <span id="messageBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">0</span>
           </a>
-          <ul id="messageList" class="dropdown-menu dropdown-menu-end shadow">
+          <ul id="messageList" class="dropdown-menu dropdown-menu-end shadow message-dropdown">
             <li><h6 class="dropdown-header">Messages</h6></li>
-            <div id="messages"></div>
-            <li><a class="dropdown-item text-center" href="#">View all messages</a></li>
+            <ul id="messages" class="message-content list-unstyled mb-0"></ul>
+            <li><a class="dropdown-item text-center view-all-link" href="/messages">View all messages</a></li>
           </ul>
         </li>
 
         <!-- User Profile -->
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle px-3 d-flex align-items-center" href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
-            <i class="fas fa-user me-1"></i>
-            <% if (user) { %><span>Welcome, <%= user.name %>!</span><% } else { %>Guest<% } %>
+        <li class="nav-item dropdown profile-container">
+          <a class="nav-link dropdown-toggle d-flex align-items-center user-profile-link" href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
+            <div class="user-avatar me-2">
+              <i class="fas fa-user-circle fa-lg"></i>
+            </div>
+            <span class="user-name d-none d-md-inline">
+              <% if (user) { %>Welcome, <%= user.name %>!<% } else { %>Guest<% } %>
+            </span>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
+          <ul class="dropdown-menu dropdown-menu-end shadow profile-dropdown">
+            <li class="dropdown-header user-info">
+              <div class="d-flex align-items-center">
+                <div class="user-avatar-lg me-2">
+                  <i class="fas fa-user-circle fa-2x"></i>
+                </div>
+                <div>
+                  <div class="fw-bold"><%= user ? user.name : 'Guest' %></div>
+                  <small class="text-muted"><%= user ? user.email : '' %></small>
+                </div>
+              </div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="/settings/profile"><i class="fas fa-user me-2"></i>My Profile</a></li>
             <li><a class="dropdown-item" href="/settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
             <li><a class="dropdown-item" href="/settings/help"><i class="fas fa-question-circle me-2"></i>Help & Support</a></li>
@@ -111,88 +138,513 @@
           </ul>
         </li>
       </ul>
-
-      <!-- Search -->
-      <form class="d-flex ms-3 align-items-center">
-        <div class="input-group">
-          <input class="form-control form-control-sm rounded-start" type="search" placeholder="Search..." aria-label="Search">
-          <button class="btn btn-outline-light btn-sm rounded-end" type="submit"><i class="fas fa-search"></i></button>
-        </div>
-      </form>
     </div>
   </div>
 </nav>
 
 <style>
-.gradient-navbar { background: linear-gradient(90deg, #0b0c10, #1f2937); transition: background 0.4s ease; }
-.navbar .nav-link { color: #e0e0e0; padding: 10px 15px; border-radius: 5px; transition: all 0.3s ease; }
-.navbar .nav-link:hover { color: #ffd700; background: rgba(255, 215, 0, 0.15); }
-.navbar .nav-link.active { background: linear-gradient(90deg, #1f6feb, #10b981); color: white; font-weight: bold; }
-.dropdown-menu { background: #1e293b; border-radius: 5px; padding: 0.5rem 0; }
-.dropdown-item { color: #e0e0e0; padding: 8px 20px; }
-.dropdown-item:hover { background: rgba(255, 215, 0, 0.15); color: #ffd700; }
-.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #555; transition: .4s; border-radius: 20px; }
-.slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-input:checked + .slider { background-color: #667eea; }
-input:checked + .slider:before { transform: translateX(20px); }
+:root {
+  --primary: #1f3a93;
+  --secondary: #4a69bd;
+  --success: #27ae60;
+  --info: #16a085;
+  --warning: #f39c12;
+  --danger: #c0392b;
+  --light-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --text-color: #2c3e50;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* Base Navbar Styles */
+.gradient-navbar { 
+  background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+  transition: all 0.4s ease; 
+  padding: 0.5rem 0;
+  border-bottom: 3px solid rgba(255, 215, 0, 0.3);
+}
+
+/* Header Container - Brand + Toggle */
+.navbar-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  transition: transform 0.3s ease;
+  margin-right: auto;
+}
+
+.navbar-brand:hover {
+  transform: scale(1.05);
+}
+
+.text-gold {
+  color: #ffd700 !important;
+}
+
+/* Main Navbar Layout */
+.navbar .container-fluid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Left Menu Positioning */
+.navbar-nav.me-auto {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Search Bar Positioning */
+.search-container {
+  flex: 0 1 auto;
+  min-width: 250px;
+  max-width: 400px;
+}
+
+/* Right Menu Container */
+.right-menu-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+/* Individual Right Menu Items */
+.dark-mode-container,
+.notification-container,
+.message-container,
+.profile-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Navigation Links */
+.navbar .nav-link { 
+  color: rgba(255, 255, 255, 0.9); 
+  padding: 10px 15px; 
+  border-radius: 8px; 
+  transition: all 0.3s ease; 
+  font-weight: 500;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.navbar .nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #ffd700;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navbar .nav-link:hover::before {
+  width: 80%;
+}
+
+.navbar .nav-link:hover { 
+  color: #ffd700; 
+  background: rgba(255, 215, 0, 0.1); 
+}
+
+.navbar .nav-link.active { 
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1)); 
+  color: #ffd700; 
+  font-weight: 600;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.navbar .nav-link.active::before {
+  width: 80%;
+  background: #ffd700;
+}
+
+/* Dropdown Positioning */
+.dropdown-menu { 
+  background: #1e293b; 
+  border-radius: 10px; 
+  padding: 0.5rem 0; 
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 200px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Notification & Message Dropdowns */
+.notification-dropdown,
+.message-dropdown {
+  width: min(320px, 90vw);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-content,
+.message-content {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Badge Positioning */
+.badge {
+  font-size: 0.6rem;
+  padding: 4px 6px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-60%, -40%);
+}
+
+/* User Profile Positioning */
+.user-profile-link {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  padding: 8px 15px !important;
+  transition: all 0.3s ease;
+}
+
+.user-profile-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Search Bar Styling */
+.search-container .input-group {
+  width: 100%;
+}
+
+.search-container .form-control {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.search-container .form-control::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.search-container .btn {
+  border-color: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.search-container .btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Dark Mode Switch */
+.switch { 
+  position: relative; 
+  display: inline-block; 
+  width: 50px; 
+  height: 24px; 
+}
+.switch input { 
+  opacity: 0; 
+  width: 0; 
+  height: 0; 
+}
+.slider { 
+  position: absolute; 
+  cursor: pointer; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  background: linear-gradient(135deg, #555, #777);
+  transition: .4s; 
+  border-radius: 24px; 
+}
+.slider:before { 
+  position: absolute; 
+  content: ""; 
+  height: 18px; 
+  width: 18px; 
+  left: 3px; 
+  bottom: 3px; 
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  transition: .4s; 
+  border-radius: 50%; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+input:checked + .slider { 
+  background: linear-gradient(135deg, var(--secondary), var(--primary)); 
+}
+input:checked + .slider:before { 
+  transform: translateX(26px); 
+}
+
+/* ========== RESPONSIVE POSITIONING ========== */
+
+/* Large Desktop (1200px+) */
+@media (min-width: 1200px) {
+  .navbar .container-fluid {
+    gap: 2rem;
+  }
+  
+  .search-container {
+    min-width: 300px;
+  }
+}
+
+/* Tablet (992px - 1199px) */
+@media (max-width: 1199.98px) {
+  .navbar .container-fluid {
+    gap: 0.75rem;
+  }
+  
+  .search-container {
+    min-width: 200px;
+  }
+  
+  .nav-link {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Mobile Landscape (768px - 991px) */
+@media (max-width: 991.98px) {
+  .navbar-header-container {
+    width: auto;
+  }
+  
+  .navbar .container-fluid {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .search-container {
+    order: 2;
+    width: 100%;
+    max-width: 100%;
+    margin: 0.5rem 0;
+  }
+  
+  .right-menu-container {
+    order: 3;
+    width: 100%;
+    justify-content: space-between;
+    margin: 0.5rem 0 0 0;
+    padding: 0.5rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .navbar-nav.me-auto {
+    order: 1;
+    width: 100%;
+    justify-content: flex-start;
+    margin: 0.5rem 0;
+  }
+  
+  .notification-dropdown,
+  .message-dropdown {
+    width: 280px;
+    right: 0 !important;
+    left: auto !important;
+  }
+}
+
+/* Mobile Portrait (576px - 767px) */
+@media (max-width: 767.98px) {
+  .navbar-brand small {
+    display: none;
+  }
+  
+  .nav-link {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+  
+  .user-name {
+    display: none !important;
+  }
+  
+  .notification-dropdown,
+  .message-dropdown {
+    width: 250px;
+  }
+  
+  .right-menu-container {
+    gap: 0.5rem;
+  }
+}
+
+/* Small Mobile (< 576px) */
+@media (max-width: 575.98px) {
+  .navbar-brand {
+    font-size: 1.25rem;
+  }
+  
+  .nav-link span:not(.badge) {
+    display: none;
+  }
+  
+  .nav-link i {
+    margin-right: 0 !important;
+    font-size: 1.1rem;
+  }
+  
+  .notification-dropdown,
+  .message-dropdown {
+    width: 220px;
+  }
+  
+  .dark-mode-container small {
+    display: none !important;
+  }
+  
+  .search-container .form-control::placeholder {
+    font-size: 0.8rem;
+  }
+}
+
+/* Animation for dropdowns */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-menu {
+  animation: slideDown 0.3s ease;
+}
+
+/* Badge Pulse Animation */
+@keyframes pulse {
+  0% { transform: translate(-60%, -40%) scale(1); }
+  50% { transform: translate(-60%, -40%) scale(1.1); }
+  100% { transform: translate(-60%, -40%) scale(1); }
+}
+
+.badge.pulse {
+  animation: pulse 2s infinite;
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Dark Mode
+  // Dark Mode Toggle
   const toggle = document.getElementById('themeToggle');
   toggle.addEventListener('change', () => {
     document.body.classList.toggle('dark-mode', toggle.checked);
     localStorage.setItem('darkMode', toggle.checked);
   });
+  
+  // Initialize dark mode
   if (localStorage.getItem('darkMode') === 'true') {
     toggle.checked = true;
     document.body.classList.add('dark-mode');
   }
 
+  // Notification and Message Fetching
   const role = "<%= user ? user.role : 'guest' %>";
-  let notificationPath = "/notifications/count";
-  if (role === "student") notificationPath = "/student/notifications/count";
-  else if (role === "teacher") notificationPath = "/teacher/notifications/count";
-  else if (role === "admin") notificationPath = "/admin/notifications/count";
+  const paths = {
+    student: "/student/notifications/count",
+    teacher: "/teacher/notifications/count", 
+    admin: "/admin/notifications/count",
+    guest: "/notifications/count"
+  };
 
-  // Notifications
-  fetch(notificationPath)
+  // Load notifications
+  fetch(paths[role] || paths.guest)
     .then(res => res.json())
     .then(data => {
-      document.getElementById('notificationBadge').textContent = data.count || 0;
+      const badge = document.getElementById('notificationBadge');
+      badge.textContent = data.count || 0;
+      
+      if (data.count > 0) {
+        badge.classList.add('pulse');
+      }
+      
       const notifContainer = document.getElementById('notifications');
       notifContainer.innerHTML = '';
-      if (data.notifications && data.notifications.length) {
+      
+      if (data.notifications?.length) {
         data.notifications.forEach(n => {
           const item = document.createElement('li');
-          item.innerHTML = `<a class="dropdown-item" href="${n.link}">${n.message}</a>`;
+          item.innerHTML = `
+            <a class="dropdown-item d-flex align-items-center" href="${n.link}">
+              <i class="fas fa-bell me-2 text-warning"></i>
+              <div>
+                <div class="fw-semibold">${n.title || 'Notification'}</div>
+                <small class="text-muted">${n.message}</small>
+              </div>
+            </a>
+          `;
           notifContainer.appendChild(item);
         });
       } else {
-        notifContainer.innerHTML = `<li><a class="dropdown-item text-center text-muted" href="javascript:void(0)">No notifications</a></li>`;
+        notifContainer.innerHTML = `
+          <li>
+            <a class="dropdown-item text-center text-muted py-3" href="javascript:void(0)">
+              <i class="fas fa-bell-slash fa-2x mb-2"></i>
+              <div>No notifications</div>
+            </a>
+          </li>
+        `;
       }
+      
       document.getElementById('viewAllNotifications').href = `/${role}/notifications`;
     })
     .catch(console.error);
 
-  // Messages
+  // Load messages
   fetch('/messages/count')
     .then(res => res.json())
     .then(data => {
-      document.getElementById('messageBadge').textContent = data.count || 0;
+      const badge = document.getElementById('messageBadge');
+      badge.textContent = data.count || 0;
+      
+      if (data.count > 0) {
+        badge.classList.add('pulse');
+      }
+      
       const msgContainer = document.getElementById('messages');
       msgContainer.innerHTML = '';
-      if (data.messages && data.messages.length) {
+      
+      if (data.messages?.length) {
         data.messages.forEach(m => {
           const item = document.createElement('li');
-          item.innerHTML = `<a class="dropdown-item" href="${m.link}">${m.message}</a>`;
+          item.innerHTML = `
+            <a class="dropdown-item d-flex align-items-center" href="${m.link}">
+              <i class="fas fa-envelope me-2 text-info"></i>
+              <div>
+                <div class="fw-semibold">${m.sender || 'System'}</div>
+                <small class="text-muted">${m.message}</small>
+              </div>
+            </a>
+          `;
           msgContainer.appendChild(item);
         });
       } else {
-        msgContainer.innerHTML = `<li><a class="dropdown-item text-center text-muted" href="javascript:void(0)">No messages</a></li>`;
+        msgContainer.innerHTML = `
+          <li>
+            <a class="dropdown-item text-center text-muted py-3" href="javascript:void(0)">
+              <i class="fas fa-envelope-open fa-2x mb-2"></i>
+              <div>No messages</div>
+            </a>
+          </li>
+        `;
       }
     })
     .catch(console.error);
