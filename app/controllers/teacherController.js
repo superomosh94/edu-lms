@@ -1,5 +1,5 @@
 // ==================================
-// Teacher Controller (Final Version)
+// Teacher Controller (Fixed Version - No points column)
 // ==================================
 
 const pool = require('../controllers/config/db');
@@ -104,16 +104,22 @@ async function createCourse(req, res) {
 }
 
 // ------------------------------
-// Assignments
+// Assignments (FIXED - No points column)
 // ------------------------------
 async function showAssignmentsPage(req, res) {
   try {
     const teacherId = req.session.userId;
 
+    // Get teacher's courses
     const [courses] = await pool.query('SELECT id, title FROM courses WHERE teacher_id = ?', [teacherId]);
+    
+    // Get assignments with submission counts and grading status
+    // Using correct column names from your database schema
     const [assignments] = await pool.query(
-      `SELECT a.id, a.title, a.due_date, c.title AS course_name,
-              (SELECT COUNT(*) FROM submissions s WHERE s.assignment_id = a.id) AS submissions_count
+      `SELECT a.id, a.title, a.description, a.due_date, a.created_at,
+              c.title AS course_name, c.id AS course_id,
+              (SELECT COUNT(*) FROM submissions s WHERE s.assignment_id = a.id) AS submissions_count,
+              (SELECT COUNT(*) FROM submissions s WHERE s.assignment_id = a.id AND s.grade IS NULL) AS ungraded_count
        FROM assignments a
        JOIN courses c ON a.course_id = c.id
        WHERE a.teacher_id = ?
@@ -121,13 +127,46 @@ async function showAssignmentsPage(req, res) {
       [teacherId]
     );
 
+    // Calculate stats for the teacher dashboard
+    const stats = {
+      total: assignments.length,
+      ungraded: assignments.reduce((count, assignment) => {
+        return count + (assignment.ungraded_count > 0 ? 1 : 0);
+      }, 0),
+      dueThisWeek: assignments.filter(assignment => {
+        if (!assignment.due_date) return false;
+        const dueDate = new Date(assignment.due_date);
+        const now = new Date();
+        const oneWeekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+        return dueDate <= oneWeekFromNow && dueDate >= now;
+      }).length,
+      averageSubmissions: assignments.length > 0 ? 
+        Math.round(assignments.reduce((sum, assignment) => {
+          // Use a default student count since we don't have course_enrollments
+          const totalStudents = 25; // Default class size
+          const submissions = assignment.submissions_count || 0;
+          return sum + (submissions / totalStudents) * 100;
+        }, 0) / assignments.length) : 0
+    };
+
+    // Add default values for template compatibility
+    assignments.forEach(assignment => {
+      assignment.total_students = 25; // Default class size
+      assignment.points = 100; // Default points since column doesn't exist
+    });
+
     res.render('teacher/assignments', {
       title: 'Assignments',
       activePage: 'assignments',
       menu: getMenu(),
-      user: { name: req.session.userName },
+      user: { 
+        name: req.session.userName,
+        id: teacherId,
+        role: 'teacher'
+      },
       courses,
-      assignments
+      assignments,
+      stats
     });
   } catch (error) {
     console.error('Assignments error:', error);
@@ -157,7 +196,7 @@ async function showCreateAssignmentPage(req, res) {
 }
 
 // ------------------------------
-// Create Assignment POST
+// Create Assignment POST (FIXED - No points parameter)
 // ------------------------------
 async function createAssignment(req, res) {
   try {
@@ -165,7 +204,8 @@ async function createAssignment(req, res) {
     const teacherId = req.session.userId;
 
     await pool.query(
-      `INSERT INTO assignments (course_id, teacher_id, title, description, due_date, created_at) VALUES (?, ?, ?, ?, ?, NOW())`,
+      `INSERT INTO assignments (course_id, teacher_id, title, description, due_date, created_at) 
+       VALUES (?, ?, ?, ?, ?, NOW())`,
       [course_id, teacherId, title, description, due_date]
     );
 
@@ -173,6 +213,145 @@ async function createAssignment(req, res) {
   } catch (error) {
     console.error('Create assignment error:', error);
     res.status(500).render('error', { title: 'Error', message: 'Unable to create assignment.' });
+  }
+}
+
+// ------------------------------
+// Edit Assignment Page
+// ------------------------------
+async function showEditAssignmentPage(req, res) {
+  try {
+    const assignmentId = req.params.id;
+    const teacherId = req.session.userId;
+    
+    const [courses] = await pool.query('SELECT id, title FROM courses WHERE teacher_id = ?', [teacherId]);
+    const [assignments] = await pool.query(
+      `SELECT a.*, c.title AS course_name 
+       FROM assignments a 
+       JOIN courses c ON a.course_id = c.id 
+       WHERE a.id = ? AND a.teacher_id = ?`,
+      [assignmentId, teacherId]
+    );
+
+    if (assignments.length === 0) {
+      return res.status(404).render('error', { title: 'Not Found', message: 'Assignment not found.' });
+    }
+
+    res.render('teacher/edit-assignment', {
+      title: 'Edit Assignment',
+      activePage: 'assignments',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      courses,
+      assignment: assignments[0]
+    });
+  } catch (error) {
+    console.error('Edit Assignment Page error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to load edit assignment page.' });
+  }
+}
+
+// ------------------------------
+// Update Assignment (FIXED - No points parameter)
+// ------------------------------
+async function updateAssignment(req, res) {
+  try {
+    const assignmentId = req.params.id;
+    const { course_id, title, description, due_date } = req.body;
+    const teacherId = req.session.userId;
+
+    // Verify the assignment belongs to the teacher
+    const [assignments] = await pool.query(
+      'SELECT id FROM assignments WHERE id = ? AND teacher_id = ?',
+      [assignmentId, teacherId]
+    );
+
+    if (assignments.length === 0) {
+      return res.status(403).render('error', { title: 'Access Denied', message: 'Cannot update this assignment.' });
+    }
+
+    await pool.query(
+      `UPDATE assignments 
+       SET course_id = ?, title = ?, description = ?, due_date = ?, updated_at = NOW()
+       WHERE id = ?`,
+      [course_id, title, description, due_date, assignmentId]
+    );
+
+    res.redirect('/teacher/assignments');
+  } catch (error) {
+    console.error('Update assignment error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to update assignment.' });
+  }
+}
+
+// ------------------------------
+// Delete Assignment
+// ------------------------------
+async function deleteAssignment(req, res) {
+  try {
+    const assignmentId = req.params.id;
+    const teacherId = req.session.userId;
+
+    // Verify the assignment belongs to the teacher
+    const [assignments] = await pool.query(
+      'SELECT id FROM assignments WHERE id = ? AND teacher_id = ?',
+      [assignmentId, teacherId]
+    );
+
+    if (assignments.length === 0) {
+      return res.status(403).render('error', { title: 'Access Denied', message: 'Cannot delete this assignment.' });
+    }
+
+    await pool.query('DELETE FROM assignments WHERE id = ?', [assignmentId]);
+
+    res.redirect('/teacher/assignments');
+  } catch (error) {
+    console.error('Delete assignment error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to delete assignment.' });
+  }
+}
+
+// ------------------------------
+// View Assignment (for teacher)
+// ------------------------------
+async function viewAssignment(req, res) {
+  try {
+    const assignmentId = req.params.id;
+    const teacherId = req.session.userId;
+
+    const [assignments] = await pool.query(
+      `SELECT a.*, c.title AS course_name 
+       FROM assignments a 
+       JOIN courses c ON a.course_id = c.id 
+       WHERE a.id = ? AND a.teacher_id = ?`,
+      [assignmentId, teacherId]
+    );
+
+    if (assignments.length === 0) {
+      return res.status(404).render('error', { title: 'Not Found', message: 'Assignment not found.' });
+    }
+
+    // Get submissions for this assignment
+    const [submissions] = await pool.query(
+      `SELECT s.*, u.name AS student_name 
+       FROM submissions s 
+       JOIN users u ON s.student_id = u.id 
+       WHERE s.assignment_id = ? 
+       ORDER BY s.submitted_at DESC`,
+      [assignmentId]
+    );
+
+    res.render('teacher/view-assignment', {
+      title: assignments[0].title,
+      activePage: 'assignments',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      assignment: assignments[0],
+      submissions
+    });
+  } catch (error) {
+    console.error('View assignment error:', error);
+    res.status(500).render('error', { title: 'Error', message: 'Unable to load assignment.' });
   }
 }
 
@@ -341,16 +520,10 @@ async function showReportsPage(req, res) {
     const [courses] = await pool.query(`SELECT id, title FROM courses WHERE teacher_id = ?`, [teacherId]);
 
     let reportsQuery = `
-      SELECT r.id, r.title, r.description, r.created_at, c.title AS course_title
+      SELECT r.id, r.title, r.description, r.created_at
       FROM reports r
-      JOIN courses c ON r.course_id = c.id
-      WHERE c.teacher_id = ?`;
+      WHERE r.teacher_id = ?`;
     const queryParams = [teacherId];
-
-    if (selectedCourse) {
-      reportsQuery += ` AND r.course_id = ?`;
-      queryParams.push(selectedCourse);
-    }
 
     reportsQuery += ` ORDER BY r.created_at DESC`;
 
@@ -412,6 +585,10 @@ module.exports = {
   showAssignmentsPage,
   showCreateAssignmentPage,
   createAssignment,
+  showEditAssignmentPage,
+  updateAssignment,
+  deleteAssignment,
+  viewAssignment,
   showSubmissionsPage,
   getSubmission,
   gradeSubmission,
