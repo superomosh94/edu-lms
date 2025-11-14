@@ -1,232 +1,282 @@
-<%- include('../partials/header', { title: 'System Overview | Admin Panel' }) %>
-<%- include('../partials/navigation') %>
-<%- include('../partials/adminSidebar') %>
+<% const title = 'System Overview' %>
 
-<style>
-    body.system-settings-page {
-        background-color: #f5f7fb;
-        font-family: 'Inter', Arial, sans-serif;
-        margin: 0;
-        color: #1e293b;
-    }
-
-    .system-settings-main {
-        padding: 40px;
-        flex-grow: 1;
-        min-height: 100vh;
-        margin-left: 250px; /* Adjust based on sidebar width */
-    }
-
-    .system-settings-header {
-        text-align: center;
-        margin-bottom: 40px;
-    }
-
-    .system-settings-header h1 {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin: 0;
-    }
-
-    /* Stats grid */
-    .stats-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 25px;
-    }
-
-    .stats-card {
-        background: #ffffff;
-        border-radius: 10px;
-        padding: 25px 20px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
-        border: 1px solid #e2e8f0;
-        text-align: center;
-        transition: transform 0.2s ease, box-shadow 0.3s ease;
-    }
-
-    .stats-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
-    }
-
-    .stats-card h2 {
-        font-size: 1rem;
-        color: #475569;
-        font-weight: 600;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .stats-card h2 i {
-        color: #3b82f6;
-        font-size: 1.1rem;
-    }
-
-    .stats-card p {
-        font-size: 2rem;
-        font-weight: 700;
-        color: #2563eb;
-        margin: 0;
-    }
-
-    /* Settings section */
-    .settings-section {
-        background: #ffffff;
-        padding: 30px;
-        margin-top: 50px;
-        border-radius: 10px;
-        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
-        border: 1px solid #e2e8f0;
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .settings-section h3 {
-        color: #0f172a;
-        font-size: 1.3rem;
-        font-weight: 700;
-        margin-bottom: 20px;
-    }
-
-    .settings-section form label {
-        display: block;
-        font-weight: 600;
-        color: #1e293b;
-        margin-bottom: 6px;
-    }
-
-    .settings-section form input,
-    .settings-section form select {
-        width: 100%;
-        padding: 10px 12px;
-        margin-bottom: 20px;
-        border: 1px solid #cbd5e1;
-        border-radius: 6px;
-        font-size: 1rem;
-        color: #334155;
-        background-color: #f8fafc;
-        transition: border-color 0.2s ease;
-    }
-
-    .settings-section form input:focus,
-    .settings-section form select:focus {
-        border-color: #3b82f6;
-        outline: none;
-    }
-
-    .settings-section form button {
-        display: inline-block;
-        background-color: #2563eb;
-        color: white;
-        padding: 12px 20px;
-        border: none;
-        border-radius: 6px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    .settings-section form button:hover {
-        background-color: #1d4ed8;
-    }
-    /* footer */
-    .footer {
-        text-align: center;
-        padding: 15px 0;
-        background: #1e293b;
-        color: #f1f5f9;
-        position: fixed;
-        bottom: 0;
-        width: calc(100% - 250px); /* Adjust based on sidebar width */
-        margin-left: 250px; /* Adjust based on sidebar width */
-    }
-
-    @media (max-width: 768px) {
-        .system-settings-main {
-            padding: 20px;
-        }
-
-        .stats-grid {
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        }
-
-        .stats-card p {
-            font-size: 1.6rem;
-        }
-    }
-</style>
-
-<div class="system-settings-main system-settings-page">
-
-    <div class="system-settings-header">
-        <h1>System Overview</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="fas fa-server text-primary me-2"></i>System Overview
+    </h1>
+    <div class="btn-group">
+        <button class="btn btn-outline-primary" onclick="window.location.reload()">
+            <i class="fas fa-sync-alt me-2"></i>Refresh
+        </button>
+        <button class="btn btn-outline-success">
+            <i class="fas fa-download me-2"></i>Export Report
+        </button>
     </div>
-
-    <div class="stats-grid">
-        <div class="stats-card">
-            <h2><i class="fas fa-users"></i> Total Users</h2>
-            <p><%= stats.totalUsers %></p>
-        </div>
-        <div class="stats-card">
-            <h2><i class="fas fa-user-shield"></i> Admins</h2>
-            <p><%= stats.admins %></p>
-        </div>
-        <div class="stats-card">
-            <h2><i class="fas fa-chalkboard-teacher"></i> Teachers</h2>
-            <p><%= stats.teachers %></p>
-        </div>
-        <div class="stats-card">
-            <h2><i class="fas fa-user-graduate"></i> Students</h2>
-            <p><%= stats.students %></p>
-        </div>
-        <div class="stats-card">
-            <h2><i class="fas fa-signal"></i> Active Users</h2>
-            <p><%= stats.activeUsers %></p>
-        </div>
-        <div class="stats-card">
-            <h2><i class="fas fa-user-slash"></i> Inactive Users</h2>
-            <p><%= stats.inactiveUsers %></p>
-        </div>
-        <div class="stats-card">
-            <h2><i class="fas fa-book"></i> Total Courses</h2>
-            <p><%= stats.totalCourses %></p>
-        </div>
-        <div class="stats-card">
-            <h2><i class="fas fa-wallet"></i> Total Payments</h2>
-            <p><%= stats.totalPayments %></p>
-        </div>
-        <div class="stats-card">
-            <h2><i class="fas fa-dollar-sign"></i> Total Revenue</h2>
-            <p>$<%= stats.totalRevenue %></p>
-        </div>
-    </div>
-
-    <div class="settings-section" id="general-settings">
-        <h3>General Settings</h3>
-        <form action="/admin/settings/general" method="POST" enctype="multipart/form-data">
-            <label for="site-name">Site Name</label>
-            <input type="text" id="site-name" name="siteName" value="<%= settings.siteName %>" required>
-
-            <label for="site-logo">Site Logo</label>
-            <input type="file" id="site-logo" name="siteLogo">
-
-            <label for="default-language">Default Language</label>
-            <select id="default-language" name="defaultLanguage">
-                <option value="en" <%= settings.defaultLanguage === 'en' ? 'selected' : '' %>>English</option>
-                <option value="es" <%= settings.defaultLanguage === 'es' ? 'selected' : '' %>>Spanish</option>
-            </select>
-
-            <button type="submit">Save Changes</button>
-        </form>
-    </div>
-
 </div>
 
-<%- include('../partials/footer') %>
+<div class="row">
+    <!-- System Health -->
+    <div class="col-lg-4 mb-4">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-heartbeat me-2"></i>System Health
+                </h5>
+            </div>
+            <div class="card-body text-center">
+                <div class="system-status mb-3">
+                    <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                    <h4 class="text-success">All Systems Operational</h4>
+                </div>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="border-end">
+                            <div class="h5 text-primary">99.9%</div>
+                            <small class="text-muted">Uptime</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div>
+                            <div class="h5 text-success">0</div>
+                            <small class="text-muted">Issues</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resource Usage -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-pie me-2 text-primary"></i>Resource Usage
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <div class="mb-3">
+                            <div class="resource-circle mx-auto mb-2">
+                                <div class="circle-progress" data-value="25"></div>
+                                <span class="circle-text">25%</span>
+                            </div>
+                            <h6>CPU</h6>
+                            <small class="text-muted">2.5 GHz / 4 cores</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="mb-3">
+                            <div class="resource-circle mx-auto mb-2">
+                                <div class="circle-progress" data-value="65"></div>
+                                <span class="circle-text">65%</span>
+                            </div>
+                            <h6>Memory</h6>
+                            <small class="text-muted">6.5 GB / 10 GB</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="mb-3">
+                            <div class="resource-circle mx-auto mb-2">
+                                <div class="circle-progress" data-value="45"></div>
+                                <span class="circle-text">45%</span>
+                            </div>
+                            <h6>Disk</h6>
+                            <small class="text-muted">45 GB / 100 GB</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="mb-3">
+                            <div class="resource-circle mx-auto mb-2">
+                                <div class="circle-progress" data-value="80"></div>
+                                <span class="circle-text">80%</span>
+                            </div>
+                            <h6>Network</h6>
+                            <small class="text-muted">80 Mbps / 100 Mbps</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Database Status -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-database me-2 text-success"></i>Database Status
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="database-info">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>Type:</strong> MySQL 8.0
+                        </div>
+                        <div class="col-6">
+                            <strong>Version:</strong> 8.0.28
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>Connections:</strong> 12/100
+                        </div>
+                        <div class="col-6">
+                            <strong>Uptime:</strong> 15 days
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>Size:</strong> 245 MB
+                        </div>
+                        <div class="col-6">
+                            <strong>Tables:</strong> 28
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4 mb-3">Table Sizes</h6>
+                <div class="table-size">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Users Table</span>
+                        <span class="text-primary">45.2 MB</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Courses Table</span>
+                        <span class="text-success">89.7 MB</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Payments Table</span>
+                        <span class="text-warning">12.3 MB</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Audit Logs</span>
+                        <span class="text-info">97.8 MB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Info -->
+    <div class="col-lg-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-info-circle me-2 text-info"></i>Application Information
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="app-info">
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>App Version:</strong> 2.1.0
+                        </div>
+                        <div class="col-6">
+                            <strong>Node.js:</strong> 18.0.0
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>Express:</strong> 4.18.0
+                        </div>
+                        <div class="col-6">
+                            <strong>Environment:</strong> Production
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-6">
+                            <strong>Start Time:</strong> 
+                            <span id="startTime">15 days ago</span>
+                        </div>
+                        <div class="col-6">
+                            <strong>Requests:</strong> 12,458
+                        </div>
+                    </div>
+                </div>
+                
+                <h6 class="mt-4 mb-3">Dependencies</h6>
+                <div class="dependencies">
+                    <span class="badge bg-primary me-1 mb-1">Express 4.18.0</span>
+                    <span class="badge bg-success me-1 mb-1">MySQL2 3.0.0</span>
+                    <span class="badge bg-info me-1 mb-1">EJS 3.1.8</span>
+                    <span class="badge bg-warning me-1 mb-1">BCrypt 5.0.0</span>
+                    <span class="badge bg-danger me-1 mb-1">Passport 0.6.0</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="fas fa-shield-alt me-2 text-warning"></i>Security Status
+        </h5>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-3 text-center">
+                <i class="fas fa-lock fa-2x text-success mb-2"></i>
+                <h6>SSL/TLS</h6>
+                <span class="badge bg-success">Enabled</span>
+            </div>
+            <div class="col-md-3 text-center">
+                <i class="fas fa-fire fa-2x text-success mb-2"></i>
+                <h6>Firewall</h6>
+                <span class="badge bg-success">Active</span>
+            </div>
+            <div class="col-md-3 text-center">
+                <i class="fas fa-bug fa-2x text-warning mb-2"></i>
+                <h6>Vulnerabilities</h6>
+                <span class="badge bg-warning">2 Minor</span>
+            </div>
+            <div class="col-md-3 text-center">
+                <i class="fas fa-clock fa-2x text-info mb-2"></i>
+                <h6>Last Scan</h6>
+                <span class="badge bg-info">2 hours ago</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.resource-circle {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circle-progress {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(#007bff var(--progress), #f8f9fa 0deg);
+}
+
+.circle-text {
+    position: relative;
+    font-weight: bold;
+    font-size: 14px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const circles = document.querySelectorAll('.circle-progress');
+    circles.forEach(circle => {
+        const value = circle.getAttribute('data-value');
+        circle.style.setProperty('--progress', `${value * 3.6}deg`);
+    });
+});
+</script>

@@ -1,165 +1,319 @@
-<!DOCTYPE html>
-<html lang="en">
-    <%- include('../partials/header', { title: "Reports", headerTitle: "Reports", adminName: "Admin" }) %>
-<head>
-  <meta charset="UTF-8">
-  <title>System Stats</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0">
+            <i class="fas fa-chart-bar text-primary me-2"></i>System Statistics
+        </h1>
+        <div class="btn-group">
+            <button class="btn btn-outline-primary" onclick="window.location.reload()">
+                <i class="fas fa-sync-alt me-2"></i>Refresh
+            </button>
+            <button class="btn btn-outline-success">
+                <i class="fas fa-download me-2"></i>Export
+            </button>
+        </div>
+    </div>
 
-  <style>
-    :root {
-      --primary: #1a73e8;
-      --text-dark: #1e293b;
-      --text-light: #f8fafc;
-      --background: #f4f6f8;
-      --white: #ffffff;
+    <div class="row">
+        <!-- User Statistics -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-users me-2 text-primary"></i>User Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h4 text-primary fw-bold"><%= typeof totalUsers !== 'undefined' ? totalUsers : (typeof stats !== 'undefined' ? stats.users.total : 0) %></div>
+                                <small class="text-muted">Total Users</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h4 text-success fw-bold"><%= typeof stats !== 'undefined' ? stats.users.byStatus.active : 0 %></div>
+                                <small class="text-muted">Active</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div>
+                                <div class="h4 text-warning fw-bold"><%= typeof stats !== 'undefined' ? stats.users.byStatus.inactive : 0 %></div>
+                                <small class="text-muted">Inactive</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="fw-bold text-muted">Users by Role</h6>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Admins:</span>
+                                <strong class="text-primary"><%= typeof stats !== 'undefined' ? stats.users.byRole.admin : 0 %></strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Teachers:</span>
+                                <strong class="text-success"><%= typeof stats !== 'undefined' ? stats.users.byRole.teacher : 0 %></strong>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="text-muted">Students:</span>
+                                <strong class="text-info"><%= typeof stats !== 'undefined' ? stats.users.byRole.student : 0 %></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course Statistics -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-book me-2 text-success"></i>Course Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h4 text-success fw-bold"><%= typeof totalCourses !== 'undefined' ? totalCourses : (typeof stats !== 'undefined' ? stats.courses.total : 0) %></div>
+                                <small class="text-muted">Total Courses</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border-end">
+                                <div class="h4 text-primary fw-bold"><%= typeof stats !== 'undefined' && typeof stats.courses.active !== 'undefined' ? stats.courses.active : 0 %></div>
+                                <small class="text-muted">Active</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div>
+                                <div class="h4 text-warning fw-bold"><%= typeof stats !== 'undefined' && typeof stats.courses.pending !== 'undefined' ? stats.courses.pending : 0 %></div>
+                                <small class="text-muted">Pending</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="fw-bold text-muted">Course Status Distribution</h6>
+                    <div class="progress mb-2" style="height: 20px;">
+                        <div class="progress-bar bg-success" style="width: 60%">Active (60%)</div>
+                        <div class="progress-bar bg-warning" style="width: 25%">Pending (25%)</div>
+                        <div class="progress-bar bg-danger" style="width: 10%">Rejected (10%)</div>
+                        <div class="progress-bar bg-secondary" style="width: 5%">Draft (5%)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Revenue Statistics -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-dollar-sign me-2 text-warning"></i>Revenue Statistics
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6">
+                            <div class="border-end">
+                                <div class="h3 text-warning fw-bold">$<%= typeof stats !== 'undefined' ? stats.payments.totalRevenue : 0 %></div>
+                                <small class="text-muted">Total Revenue</small>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div>
+                                <div class="h3 text-success fw-bold"><%= typeof stats !== 'undefined' ? stats.payments.total : 0 %></div>
+                                <small class="text-muted">Total Payments</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    
+                    <h6 class="fw-bold text-muted">Monthly Revenue Trend</h6>
+                    <div class="text-center py-3 bg-light rounded">
+                        <i class="fas fa-chart-line fa-2x text-muted mb-2"></i>
+                        <p class="text-muted mb-0">Revenue chart would be displayed here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Performance -->
+        <div class="col-lg-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-0">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-tachometer-alt me-2 text-info"></i>System Performance
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="performance-stats">
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">CPU Usage</span>
+                                <span class="text-success fw-bold">25%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-success" style="width: 25%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Memory Usage</span>
+                                <span class="text-warning fw-bold">65%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-warning" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Disk Usage</span>
+                                <span class="text-info fw-bold">45%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-info" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted">Database Connections</span>
+                                <span class="text-primary fw-bold">12/50</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" style="width: 24%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-0">
+            <h5 class="card-title mb-0">
+                <i class="fas fa-history me-2 text-secondary"></i>Recent Activity
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="list-group list-group-flush">
+                <div class="list-group-item d-flex justify-content-between align-items-center border-0">
+                    <div>
+                        <i class="fas fa-user-plus text-success me-2"></i>
+                        <span>New user registration: John Doe</span>
+                    </div>
+                    <small class="text-muted">2 hours ago</small>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center border-0">
+                    <div>
+                        <i class="fas fa-book text-primary me-2"></i>
+                        <span>New course created: "Advanced JavaScript"</span>
+                    </div>
+                    <small class="text-muted">5 hours ago</small>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center border-0">
+                    <div>
+                        <i class="fas fa-dollar-sign text-warning me-2"></i>
+                        <span>Payment received: $49.99</span>
+                    </div>
+                    <small class="text-muted">1 day ago</small>
+                </div>
+                <div class="list-group-item d-flex justify-content-between align-items-center border-0">
+                    <div>
+                        <i class="fas fa-cog text-info me-2"></i>
+                        <span>System settings updated</span>
+                    </div>
+                    <small class="text-muted">2 days ago</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+    
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
     }
-
-    body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: var(--background);
-      color: var(--text-dark);
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
+    
+    .progress {
+        border-radius: 10px;
+        overflow: hidden;
     }
-
-    h1 {
-      color: var(--primary);
-      font-size: 28px;
-      margin-bottom: 30px;
-      text-align: center;
+    
+    .progress-bar {
+        border-radius: 10px;
     }
-
-    table {
-      width: 90%;
-      max-width: 800px;
-      border-collapse: collapse;
-      background: var(--white);
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      margin-bottom: 25px;
+    
+    .list-group-item {
+        transition: background-color 0.2s ease;
     }
-
-    th, td {
-      padding: 15px;
-      text-align: left;
-      font-size: 15px;
-      border-bottom: 1px solid #e2e8f0;
+    
+    .list-group-item:hover {
+        background-color: #f8f9fa;
     }
+</style>
 
-    th {
-      background: var(--primary);
-      color: var(--text-light);
-      font-weight: 600;
-    }
-
-    tr:nth-child(even) td {
-      background: #f9fafb;
-    }
-
-    tr:hover td {
-      background: #f1f5f9;
-    }
-
-    .back-link {
-      text-decoration: none;
-      background: var(--primary);
-      color: var(--white);
-      padding: 10px 20px;
-      border-radius: 6px;
-      font-weight: 500;
-      transition: background 0.3s ease;
-    }
-
-    .back-link:hover {
-      background: #155ab6;
-    }
-
-    /* Responsive design */
-    @media (max-width: 768px) {
-      body {
-        padding: 20px;
-      }
-
-      table {
-        width: 100%;
-        font-size: 14px;
-      }
-
-      th, td {
-        padding: 12px;
-      }
-
-      h1 {
-        font-size: 22px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      table, thead, tbody, th, td, tr {
-        display: block;
-        width: 100%;
-      }
-
-      th {
-        display: none;
-      }
-
-      td {
-        display: flex;
-        justify-content: space-between;
-        padding: 12px 15px;
-        border-bottom: 1px solid #ddd;
-      }
-
-      td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        color: var(--primary);
-      }
-
-      tr {
-        background: var(--white);
-        margin-bottom: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-      }
-    }
-  </style>
-</head>
-<body>
-      <%- include('../partials/adminSidebar') %>
-  <h1>System Statistics</h1>
-
-  <table>
-    <thead>
-      <tr>
-        <th>Metric</th>
-        <th>Count</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td data-label="Metric">Total Users</td>
-        <td data-label="Count"><%= totalUsers || 0 %></td>
-      </tr>
-      <tr>
-        <td data-label="Metric">Total Courses</td>
-        <td data-label="Count"><%= totalCourses || 0 %></td>
-      </tr>
-    </tbody>
-  </table>
-
-  <a href="/dashboard" class="back-link">&larr; Back to Dashboard</a>
-</body>
-</html>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add smooth animations to cards
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+        });
+        
+        // Animate cards in sequence
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+        
+        // Add click effect to refresh button
+        const refreshBtn = document.querySelector('.btn-outline-primary');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Refreshing...';
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-sync-alt me-2"></i>Refresh';
+                }, 2000);
+            });
+        }
+        
+        // Add export functionality
+        const exportBtn = document.querySelector('.btn-outline-success');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-download me-2"></i>Exporting...';
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fas fa-download me-2"></i>Export';
+                    // Simulate download
+                    alert('Statistics exported successfully!');
+                }, 1500);
+            });
+        }
+    });
+</script>

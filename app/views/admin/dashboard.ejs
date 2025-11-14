@@ -1,0 +1,171 @@
+<% const title = 'Dashboard' %>
+<%- include('../layouts/admin-layout', { title, activePage: 'dashboard' }) %>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Admin Dashboard</h1>
+    <div class="btn-group">
+        <button class="btn btn-outline-secondary" onclick="window.location.reload()">
+            <i class="fas fa-sync-alt me-2"></i>Refresh
+        </button>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                            Total Users
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <%= stats.users.total %>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                            Total Courses
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <%= stats.courses.total %>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-book fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                            Total Revenue
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            $<%= stats.payments.totalRevenue %>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                            Total Payments
+                        </div>
+                        <div class="h5 mb-0 font-weight-bold text-gray-800">
+                            <%= stats.payments.total %>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-credit-card fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Statistics -->
+<div class="row">
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">User Statistics</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="small font-weight-bold">By Role:</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-1">
+                                <i class="fas fa-user-shield text-primary me-2"></i>
+                                Admins: <strong><%= stats.users.byRole.admin %></strong>
+                            </li>
+                            <li class="mb-1">
+                                <i class="fas fa-chalkboard-teacher text-success me-2"></i>
+                                Teachers: <strong><%= stats.users.byRole.teacher %></strong>
+                            </li>
+                            <li class="mb-1">
+                                <i class="fas fa-user-graduate text-info me-2"></i>
+                                Students: <strong><%= stats.users.byRole.student %></strong>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="small font-weight-bold">By Status:</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-1">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                Active: <strong><%= stats.users.byStatus.active %></strong>
+                            </li>
+                            <li class="mb-1">
+                                <i class="fas fa-times-circle text-danger me-2"></i>
+                                Inactive: <strong><%= stats.users.byStatus.inactive %></strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-sm-6">
+                        <a href="/admin/users/add" class="btn btn-outline-primary w-100">
+                            <i class="fas fa-user-plus me-2"></i>Add User
+                        </a>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="/admin/courses/add" class="btn btn-outline-success w-100">
+                            <i class="fas fa-book-medical me-2"></i>Add Course
+                        </a>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="/admin/announcements/add" class="btn btn-outline-info w-100">
+                            <i class="fas fa-bullhorn me-2"></i>Add Announcement
+                        </a>
+                    </div>
+                    <div class="col-sm-6">
+                        <a href="/admin/system" class="btn btn-outline-warning w-100">
+                            <i class="fas fa-server me-2"></i>System Overview
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

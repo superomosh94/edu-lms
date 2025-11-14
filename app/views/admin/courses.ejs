@@ -1,147 +1,90 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Courses</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background: #f9f9f9;
-        }
+<% const title = 'Courses' %>
 
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
-        }
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">
+        <i class="fas fa-book text-primary me-2"></i>Course Management
+    </h1>
+    <a href="/admin/courses/add" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Add Course
+    </a>
+</div>
 
-        a.add-btn {
-            text-decoration: none;
-            background: #28a745;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            display: inline-block;
-            margin-bottom: 15px;
-            font-weight: bold;
-            transition: background 0.3s ease;
-        }
-
-        a.add-btn:hover {
-            background: #218838;
-        }
-
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            background: white;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-
-        th {
-            background: #f4f4f4;
-            color: #333;
-            font-weight: bold;
-        }
-
-        tr:hover {
-            background: #f1f1f1;
-        }
-
-        .action-btn {
-            background: #dc3545;
-            color: white;
-            padding: 6px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s ease;
-        }
-
-        .action-btn:hover {
-            background: #c82333;
-        }
-
-        form {
-            display: inline;
-        }
-
-        @media (max-width: 768px) {
-            table, thead, tbody, th, td, tr {
-                display: block;
-            }
-            th {
-                display: none;
-            }
-            td {
-                position: relative;
-                padding-left: 50%;
-                border: none;
-                border-bottom: 1px solid #ddd;
-            }
-            td:before {
-                position: absolute;
-                left: 15px;
-                width: 45%;
-                padding-right: 10px;
-                white-space: nowrap;
-                font-weight: bold;
-            }
-            td:nth-of-type(1):before { content: "ID"; }
-            td:nth-of-type(2):before { content: "Title"; }
-            td:nth-of-type(3):before { content: "Description"; }
-            td:nth-of-type(4):before { content: "Status"; }
-            td:nth-of-type(5):before { content: "Teacher"; }
-            td:nth-of-type(6):before { content: "Actions"; }
-        }
-    </style>
-</head>
-<body>
-    <h1>Courses</h1>
-
-    <a href="/courses/create" class="add-btn"><i class="fas fa-plus"></i> Add New Course</a>
-
-    <table>
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Description</th>
-                <th>Status</th>
-                <th>Teacher</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <% if (courses && courses.length) { %>
-                <% courses.forEach(course => { %>
-                    <tr>
-                        <td><%= course.id %></td>
-                        <td><a href="/courses/view/<%= course.id %>"><%= course.title %></a></td>
-                        <td><%= course.description.substring(0, 50) %>...</td>
-                        <td><%= course.status %></td>
-                        <td><%= course.teacher %></td>
-                        <td>
-                            <a href="/courses/<%= course.id %>/edit" class="add-btn" style="background:#007bff;"><i class="fas fa-edit"></i> Edit</a>
-                            <% if (user && user.role === 'admin') { %>
-                                <form method="POST" action="/courses/<%= course.id %>/delete" onsubmit="return confirm('Are you sure you want to delete this course?');">
-                                    <button type="submit" class="action-btn"><i class="fas fa-trash"></i> Delete</button>
-                                </form>
-                            <% } %>
-                        </td>
-                    </tr>
-                <% }); %>
-            <% } else { %>
-                <tr><td colspan="6" style="text-align:center; padding:20px;">No courses available</td></tr>
-            <% } %>
-        </tbody>
-    </table>
-</body>
-</html>
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">All Courses</h5>
+    </div>
+    <div class="card-body">
+        <% if (courses && courses.length > 0) { %>
+            <div class="table-responsive">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Instructor</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% courses.forEach(course => { %>
+                        <tr>
+                            <td><%= course.id %></td>
+                            <td><strong><%= course.title %></strong></td>
+                            <td><%= course.description.length > 50 ? course.description.substring(0, 50) + '...' : course.description %></td>
+                            <td><%= course.teacher %></td>
+                            <td>
+                                <span class="badge 
+                                    <%= course.status === 'active' ? 'bg-success' : 
+                                        course.status === 'pending' ? 'bg-warning' : 
+                                        course.status === 'rejected' ? 'bg-danger' : 'bg-secondary' %>">
+                                    <%= course.status %>
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="/admin/courses/<%= course.id %>/edit" class="btn btn-outline-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="/admin/courses/moderate/<%= course.id %>" method="POST" class="d-inline">
+                                        <input type="hidden" name="status" value="active">
+                                        <button type="submit" class="btn btn-outline-success" 
+                                                title="Approve Course" 
+                                                onclick="return confirm('Approve this course?')">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                    </form>
+                                    <form action="/admin/courses/moderate/<%= course.id %>" method="POST" class="d-inline">
+                                        <input type="hidden" name="status" value="rejected">
+                                        <button type="submit" class="btn btn-outline-danger" 
+                                                title="Reject Course"
+                                                onclick="return confirm('Reject this course?')">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </form>
+                                    <form action="/admin/courses/delete/<%= course.id %>" method="POST" class="d-inline">
+                                        <button type="submit" class="btn btn-outline-danger" 
+                                                onclick="return confirm('Are you sure you want to delete this course?')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+        <% } else { %>
+            <div class="text-center py-4">
+                <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                <h5>No courses found</h5>
+                <p class="text-muted">Get started by creating your first course.</p>
+                <a href="/admin/courses/add" class="btn btn-primary">
+                    <i class="fas fa-plus me-2"></i>Create Course
+                </a>
+            </div>
+        <% } %>
+    </div>
+</div>

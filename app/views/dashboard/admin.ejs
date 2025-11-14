@@ -1,741 +1,333 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - EDU LMS</title>
-    <link rel="icon" href="/public/images/favicon/favicon.ico" type="image/x-icon">
-    
-    <!-- Include head content partial -->
-    <%- include('../partials/head-content', {
-        title: 'Admin Dashboard',
-        description: 'EDU-LMS Admin Dashboard - Manage users, courses, and system settings',
-        stylesheets: ['/css/admin.css']
-    }) %>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - EDU LMS</title>
+  
+  <%- include('../partials/header') %>
 
-    <style>
-        :root {
-            --primary: #1f8593;
-            --secondary: #4a69bd;
-            --success: #27ae60;
-            --info: #16a085;
-            --warning: #f39c12;
-            --danger: #c0392b;
-            --light-bg: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #2c3e50;
-            --shadow: rgba(0, 0, 0, 0.1);
-        }
-
-        body {
-            background: var(--light-bg);
-            font-family: 'Segoe UI', sans-serif;
-            color: var(--text-color);
-            margin: 0;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            background: linear-gradient(180deg, var(--primary), var(--secondary));
-            color: white;
-            min-height: 100vh;
-            width: 250px;
-            padding: 20px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            transition: transform 0.3s ease-in-out;
-            z-index: 1000;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 10px;
-            border-radius: 6px;
-            transition: background 0.2s ease;
-        }
-
-        .sidebar a:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* Hamburger menu */
-        .hamburger {
-            display: none;
-            font-size: 1.5rem;
-            color: white;
-            cursor: pointer;
-            padding: 10px;
-            background: var(--secondary);
-            border-radius: 8px;
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 1100;
-        }
-
-        /* Main content */
-        main {
-            margin-left: 260px;
-            padding: 20px;
-        }
-
-        /* Cards */
-        .admin-stats .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 12px var(--shadow);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .admin-stats .card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 8px 20px var(--shadow);
-        }
-
-        .card-header {
-            background: linear-gradient(90deg, var(--secondary), var(--primary));
-            color: white;
-            border-radius: 8px 8px 0 0;
-            font-weight: 600;
-            padding: 10px;
-        }
-
-        /* Buttons */
-        .btn-outline-primary {
-            border-color: var(--secondary);
-            color: var(--secondary);
-        }
-
-        .btn-outline-primary:hover {
-            background: var(--secondary);
-            color: white;
-        }
-
-        .btn-primary {
-            background: var(--secondary);
-            border-color: var(--secondary);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        /* Stats Cards */
-        .stat-card {
-            padding: 20px;
-            height: 100%;
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .stat-icon-primary { background: rgba(31, 58, 147, 0.1); color: var(--primary); }
-        .stat-icon-success { background: rgba(39, 174, 96, 0.1); color: var(--success); }
-        .stat-icon-info { background: rgba(22, 160, 133, 0.1); color: var(--info); }
-        .stat-icon-warning { background: rgba(243, 156, 18, 0.1); color: var(--warning); }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin: 8px 0 4px;
-        }
-
-        .stat-label {
-            color: #6b7280;
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            text-decoration: none;
-            color: var(--text-color);
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        .action-btn:hover {
-            border-color: var(--primary);
-            transform: translateY(-4px);
-            box-shadow: 0 6px 15px rgba(31, 58, 147, 0.15);
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        .action-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .action-text {
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-align: center;
-        }
-
-        /* Tables */
-        .user-management table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .user-management th {
-            background: #f8fafc;
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            color: #374151;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .user-management td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #f3f4f6;
-        }
-
-        .user-management tr:hover {
-            background-color: rgba(41, 128, 185, 0.1);
-        }
-
-        /* Badges */
-        .badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-admin { background: #fee2e2; color: #dc2626; }
-        .badge-teacher { background: #fef3c7; color: #d97706; }
-        .badge-student { background: #dbeafe; color: #2563eb; }
-        .badge-active { background: #d1fae5; color: #065f46; }
-        .badge-inactive { background: #f3f4f6; color: #6b7280; }
-
-        /* Alerts */
-        .alert-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            padding: 16px;
-            margin-bottom: 8px;
-            background: white;
-            border-radius: 8px;
-            border-left: 4px solid;
-            box-shadow: 0 1px 3px var(--shadow);
-        }
-
-        .alert-critical { border-left-color: var(--danger); }
-        .alert-warning { border-left-color: var(--warning); }
-        .alert-info { border-left-color: var(--info); }
-
-        .alert-content {
-            flex: 1;
-        }
-
-        .alert-title {
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: #1f2937;
-        }
-
-        .alert-message {
-            color: #6b7280;
-            font-size: 0.9rem;
-        }
-
-        .alert-badge {
-            margin-left: 12px;
-            flex-shrink: 0;
-        }
-
-        /* Page header */
-        .page-header {
-            background: white;
-            border-bottom: 1px solid #e5e7eb;
-            padding: 24px 0;
-            margin-bottom: 0;
-        }
-
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 0;
-        }
-
-        .page-subtitle {
-            color: #6b7280;
-            margin: 4px 0 0;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 1200px) {
-            .quick-actions {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            }
-        }
-
-        @media (max-width: 992px) {
-            .quick-actions {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hamburger {
-                display: block;
-            }
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            main {
-                margin-left: 0;
-                padding: 15px;
-            }
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-            .page-title {
-                font-size: 1.5rem;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .stat-value {
-                font-size: 1.5rem;
-            }
-            .action-btn {
-                padding: 15px;
-            }
-            .action-icon {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+  <style>
+  </style>
 </head>
 <body class="<%= typeof darkMode !== 'undefined' && darkMode ? 'dark-mode' : '' %>">
 
-    <!-- Navigation -->
-    <%- include('../partials/navigation') %>
+  <%- include('../partials/navigation') %>
 
-    <!-- Hamburger Menu Button -->
-    <div class="hamburger" onclick="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-    </div>
+  <div class="container-fluid py-4">
+    <div class="row">
+      <div class="col-md-3 col-lg-2 sidebar">
+        <%- include('../partials/adminSidebar') %>
+      </div>
 
-    <div class="container-fluid py-4">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-auto p-0">
-                <div class="sidebar" id="sidebar">
-                    <div class="sidebar-content">
-                        <%- include('../partials/adminSidebar') %>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Main Content -->
-            <main class="col px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Admin Dashboard</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <button class="btn btn-sm btn-outline-primary me-2" onclick="exportDashboard()">
-                            <i class="fas fa-download me-1"></i>Export Report
-                        </button>
-                        <button class="btn btn-sm btn-primary" onclick="refreshDashboard()">
-                            <i class="fas fa-sync-alt me-1"></i>Refresh
-                        </button>
-                    </div>
-                </div>
-
-                <div class="alert alert-success">
-                    <h4>Welcome back, Administrator!</h4>
-                    <p>You have <strong><%= data.stats?.pendingApprovals || 0 %> pending approvals</strong> that require attention.</p>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="row admin-stats " style="display: flex;">
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card shadow h-100 py-2">
-                            <div class="stat-card">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <div class="stat-label">Total Users</div>
-                                        <div class="stat-value"><%= data.stats.totalUsers || 0 %></div>
-                                        <div class="text-success" style="font-size: 0.85rem;">
-                                            <i class="fas fa-arrow-up me-1"></i>12% from last month
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="stat-icon stat-icon-primary">
-                                            <i class="fas fa-users"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card shadow h-100 py-2">
-                            <div class="stat-card">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <div class="stat-label">Active Courses</div>
-                                        <div class="stat-value"><%= data.stats.courses || 0 %></div>
-                                        <div class="text-success" style="font-size: 0.85rem;">
-                                            <i class="fas fa-arrow-up me-1"></i>8% from last month
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="stat-icon stat-icon-success">
-                                            <i class="fas fa-book"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card shadow h-100 py-2">
-                            <div class="stat-card">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <div class="stat-label">Pending Approvals</div>
-                                        <div class="stat-value"><%= data.stats.pendingApprovals || 0 %></div>
-                                        <div class="text-danger" style="font-size: 0.85rem;">
-                                            <i class="fas fa-clock me-1"></i>Requires attention
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="stat-icon stat-icon-info">
-                                            <i class="fas fa-clock"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6 mb-4">
-                        <div class="card shadow h-100 py-2">
-                            <div class="stat-card">
-                                <div class="row align-items-center">
-                                    <div class="col">
-                                        <div class="stat-label">System Health</div>
-                                        <div class="stat-value text-success">98%</div>
-                                        <div class="text-success" style="font-size: 0.85rem;">
-                                            <i class="fas fa-check me-1"></i>All systems operational
-                                        </div>
-                                    </div>
-                                    <div class="col-auto">
-                                        <div class="stat-icon stat-icon-warning">
-                                            <i class="fas fa-heart"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions -->
-                <div class="row mb-4">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <span>Quick Actions</span>
-                                <small class="text-light">Frequently used admin tasks</small>
-                            </div>
-                            <div class="card-body">
-                                <div class="quick-actions">
-                                    <a href="/admin/users/create" class="action-btn">
-                                        <div class="action-icon text-primary">
-                                            <i class="fas fa-user-plus"></i>
-                                        </div>
-                                        <div class="action-text">Add User</div>
-                                    </a>
-                                    <a href="/courses/create" class="action-btn">
-                                        <div class="action-icon text-success">
-                                            <i class="fas fa-plus-circle"></i>
-                                        </div>
-                                        <div class="action-text">Create Course</div>
-                                    </a>
-                                    <a href="/admin/reports" class="action-btn">
-                                        <div class="action-icon text-info">
-                                            <i class="fas fa-chart-bar"></i>
-                                        </div>
-                                        <div class="action-text">View Reports</div>
-                                    </a>
-                                    <a href="/admin/system" class="action-btn">
-                                        <div class="action-icon text-warning">
-                                            <i class="fas fa-cogs"></i>
-                                        </div>
-                                        <div class="action-text">System Settings</div>
-                                    </a>
-                                    <a href="/admin/announcements" class="action-btn">
-                                        <div class="action-icon" style="color: #8e44ad;">
-                                            <i class="fas fa-bullhorn"></i>
-                                        </div>
-                                        <div class="action-text">Announcements</div>
-                                    </a>
-                                    <a href="/admin/audit-logs" class="action-btn">
-                                        <div class="action-icon" style="color: #7f8c8d;">
-                                            <i class="fas fa-history"></i>
-                                        </div>
-                                        <div class="action-text">Audit Logs</div>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Activity & Alerts -->
-                <div class="row">
-                    <!-- Recent Users -->
-                    <div class="col-lg-6 mb-4">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <span>Recent Users</span>
-                                <a href="/admin/users" class="btn btn-sm btn-outline-primary">View All</a>
-                            </div>
-                            <div class="card-body user-management">
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th>Name</th>
-                                                <th>Role</th>
-                                                <th>Status</th>
-                                                <th>Joined</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <% if (data.recentUsers && data.recentUsers.length > 0) { %>
-                                                <% data.recentUsers.forEach(user => { %>
-                                                    <tr>
-                                                        <td>
-                                                            <div class="d-flex align-items-center">
-                                                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
-                                                                    <%= user.name.charAt(0).toUpperCase() %>
-                                                                </div>
-                                                                <div>
-                                                                    <div class="fw-semibold"><%= user.name %></div>
-                                                                    <small class="text-muted"><%= user.email %></small>
-                                                                </div>
-                                                            </div>
-                                                        </td>
-                                                        <td>
-                                                            <span class="badge badge-<%= user.role %>">
-                                                                <%= user.role %>
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <span class="badge badge-<%= user.status === 'active' ? 'active' : 'inactive' %>">
-                                                                <%= user.status %>
-                                                            </span>
-                                                        </td>
-                                                        <td>
-                                                            <small class="text-muted">
-                                                                <%= new Date(user.createdAt).toLocaleDateString() %>
-                                                            </small>
-                                                        </td>
-                                                    </tr>
-                                                <% }) %>
-                                            <% } else { %>
-                                                <tr>
-                                                    <td colspan="4" class="text-center py-4">
-                                                        <div class="text-muted">
-                                                            <i class="fas fa-users fa-2x mb-2"></i>
-                                                            <div>No recent users</div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            <% } %>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- System Alerts -->
-                    <div class="col-lg-6 mb-4">
-                        <div class="card">
-                            <div class="card-header d-flex justify-content-between align-items-center">
-                                <span>System Alerts</span>
-                                <span class="badge bg-danger rounded-pill"><%= (data.alerts && data.alerts.length) || 0 %></span>
-                            </div>
-                            <div class="card-body">
-                                <% if (data.alerts && data.alerts.length > 0) { %>
-                                    <div class="alert-list">
-                                        <% data.alerts.forEach(alert => { %>
-                                            <div class="alert-item alert-<%= alert.type || 'info' %>">
-                                                <div class="alert-content">
-                                                    <div class="alert-title"><%= alert.title %></div>
-                                                    <div class="alert-message"><%= alert.message %></div>
-                                                    <small class="text-muted">
-                                                        <%= new Date(alert.timestamp).toLocaleString() %>
-                                                    </small>
-                                                </div>
-                                                <div class="alert-badge">
-                                                    <span class="badge bg-<%= alert.priority === 'high' ? 'danger' : alert.priority === 'medium' ? 'warning' : 'info' %>">
-                                                        <%= alert.priority %>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        <% }) %>
-                                    </div>
-                                <% } else { %>
-                                    <div class="text-center py-4">
-                                        <div class="text-muted">
-                                            <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
-                                            <div>No active alerts</div>
-                                            <small>All systems are running smoothly</small>
-                                        </div>
-                                    </div>
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Additional Stats Section -->
-                <div class="row">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-                                Platform Overview
-                            </div>
-                            <div class="card-body">
-                                <div class="row text-center">
-                                    <div class="col-md-3 col-6 mb-3">
-                                        <div class="h4 text-primary mb-1"><%= data.stats.assignments || 0 %></div>
-                                        <div class="text-muted">Assignments</div>
-                                    </div>
-                                    <div class="col-md-3 col-6 mb-3">
-                                        <div class="h4 text-success mb-1"><%= data.stats.submissions || 0 %></div>
-                                        <div class="text-muted">Submissions</div>
-                                    </div>
-                                    <div class="col-md-3 col-6 mb-3">
-                                        <div class="h4 text-info mb-1"><%= data.stats.teachers || 0 %></div>
-                                        <div class="text-muted">Teachers</div>
-                                    </div>
-                                    <div class="col-md-3 col-6 mb-3">
-                                        <div class="h4 text-warning mb-1"><%= data.stats.students || 0 %></div>
-                                        <div class="text-muted">Students</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
+      <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+        <div class="d-flex justify-content-between flex-wrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+          <h1 class="h2">Admin Dashboard</h1>
+          <div class="btn-toolbar mb-2 mb-md-0">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle me-2">
+              <i class="fas fa-download me-1"></i>Export
+            </button>
+            <button class="btn btn-sm btn-primary" onclick="refreshDashboard()">
+              <i class="fas fa-sync-alt me-1"></i>Refresh
+            </button>
+          </div>
         </div>
+
+        <!-- Stats Cards -->
+        <div class="row admin-stats">
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value"><%= data.stats.totalUsers || 0 %></div>
+                    <div class="text-success" style="font-size: 0.75rem;">
+                      <i class="fas fa-arrow-up me-1"></i>12% from last month
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-users stat-icon text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <div class="stat-label">Active Courses</div>
+                    <div class="stat-value"><%= data.stats.courses || 0 %></div>
+                    <div class="text-success" style="font-size: 0.75rem;">
+                      <i class="fas fa-arrow-up me-1"></i>8% from last month
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-book stat-icon text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <div class="stat-label">Pending Approvals</div>
+                    <div class="stat-value"><%= data.stats.pendingApprovals || 0 %></div>
+                    <div class="text-danger" style="font-size: 0.75rem;">
+                      <i class="fas fa-clock me-1"></i>Requires attention
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-clock stat-icon text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <div class="stat-label">System Health</div>
+                    <div class="stat-value text-success">98%</div>
+                    <div class="text-success" style="font-size: 0.75rem;">
+                      <i class="fas fa-check me-1"></i>All systems operational
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <i class="fas fa-heart stat-icon text-gray-300"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card shadow">
+              <div class="card-header py-3">
+                Quick Actions
+              </div>
+              <div class="card-body text-center quick-actions">
+                <a href="/admin/users/add" class="btn btn-primary">
+                  <i class="fas fa-user-plus"></i> Add User
+                </a>
+                <a href="/admin/courses/add" class="btn btn-success">
+                  <i class="fas fa-plus-circle"></i> Create Course
+                </a>
+                <a href="/admin/reports" class="btn btn-info">
+                  <i class="fas fa-chart-bar"></i> Reports
+                </a>
+                <a href="/admin/settings" class="btn btn-warning">
+                  <i class="fas fa-cogs"></i> Settings
+                </a>
+                <a href="/admin/announcements/add" class="btn btn-danger">
+                  <i class="fas fa-bullhorn"></i> Announcements
+                </a>
+                <a href="/admin/audit-logs" class="btn" style="background: #8b5cf6; color: white;">
+                  <i class="fas fa-history"></i> Audit Logs
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Users & System Alerts -->
+        <div class="row">
+          <!-- Recent Users -->
+          <div class="col-md-6">
+            <div class="card shadow mb-4">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span>Recent Users</span>
+                <a href="/admin/users" class="btn btn-sm btn-outline-primary">View All</a>
+              </div>
+              <div class="card-body user-management">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <% if (data.recentUsers && data.recentUsers.length > 0) { %>
+                        <% data.recentUsers.forEach(user => { %>
+                          <tr>
+                            <td>
+                              <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2" style="width: 32px; height: 32px;">
+                                  <%= user.name.charAt(0).toUpperCase() %>
+                                </div>
+                                <div>
+                                  <div class="fw-semibold"><%= user.name %></div>
+                                  <small class="text-muted"><%= user.email %></small>
+                                </div>
+                              </div>
+                            </td>
+                            <td>
+                              <span class="badge bg-<%= user.role === 'admin' ? 'danger' : user.role === 'teacher' ? 'warning' : 'info' %>">
+                                <%= user.role %>
+                              </span>
+                            </td>
+                            <td>
+                              <span class="badge bg-<%= user.status === 'active' ? 'success' : 'secondary' %>">
+                                <%= user.status %>
+                              </span>
+                            </td>
+                            <td>
+                              <small class="text-muted">
+                                <%= new Date(user.createdAt).toLocaleDateString() %>
+                              </small>
+                            </td>
+                          </tr>
+                        <% }) %>
+                      <% } else { %>
+                        <tr>
+                          <td colspan="4" class="text-center py-4">
+                            <div class="text-muted">
+                              <i class="fas fa-users fa-2x mb-2"></i>
+                              <div>No recent users</div>
+                            </div>
+                          </td>
+                        </tr>
+                      <% } %>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- System Alerts -->
+          <div class="col-md-6">
+            <div class="card shadow mb-4">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <span>System Alerts</span>
+                <span class="badge bg-danger"><%= (data.alerts && data.alerts.length) || 0 %></span>
+              </div>
+              <div class="card-body">
+                <% if (data.alerts && data.alerts.length > 0) { %>
+                  <div class="list-group list-group-flush">
+                    <% data.alerts.forEach(alert => { %>
+                      <div class="list-group-item list-group-item-<%= alert.type || 'info' %> d-flex justify-content-between">
+                        <div>
+                          <strong><%= alert.title %></strong><br>
+                          <small class="text-muted"><%= alert.message %></small><br>
+                          <small class="text-muted">
+                            <%= new Date(alert.timestamp).toLocaleString() %>
+                          </small>
+                        </div>
+                        <span class="badge bg-<%= alert.priority === 'high' ? 'danger' : alert.priority === 'medium' ? 'warning' : 'info' %> rounded-pill">
+                          <%= alert.priority %>
+                        </span>
+                      </div>
+                    <% }) %>
+                  </div>
+                <% } else { %>
+                  <div class="text-center py-4">
+                    <div class="text-muted">
+                      <i class="fas fa-check-circle fa-2x mb-2 text-success"></i>
+                      <div>No system alerts</div>
+                      <small>All systems are running smoothly</small>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Stats Section -->
+        <div class="row">
+          <div class="col-12">
+            <div class="card shadow">
+              <div class="card-header">
+                Platform Overview
+              </div>
+              <div class="card-body">
+                <div class="row text-center">
+                  <div class="col-md-3 col-6 mb-3">
+                    <div class="h4 text-primary mb-1"><%= data.stats.assignments || 0 %></div>
+                    <div class="text-muted">Assignments</div>
+                  </div>
+                  <div class="col-md-3 col-6 mb-3">
+                    <div class="h4 text-success mb-1"><%= data.stats.submissions || 0 %></div>
+                    <div class="text-muted">Submissions</div>
+                  </div>
+                  <div class="col-md-3 col-6 mb-3">
+                    <div class="h4 text-info mb-1"><%= data.stats.teachers || 0 %></div>
+                    <div class="text-muted">Teachers</div>
+                  </div>
+                  <div class="col-md-3 col-6 mb-3">
+                    <div class="h4 text-warning mb-1"><%= data.stats.students || 0 %></div>
+                    <div class="text-muted">Students</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
+  </div>
 
-    <!-- Include footer scripts -->
-    <%- include('../partials/footer-scripts') %>
+  <!-- Footer partial -->
+  <%- include('../partials/footer') %>
 
-    <script>
-        // Mobile sidebar toggle
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-        }
+  <!-- Footer scripts partial -->
+  <%- include('../partials/footer-scripts') %>
 
-        // Refresh dashboard data
-        function refreshDashboard() {
-            const refreshBtn = event.target.closest('button');
-            const originalHtml = refreshBtn.innerHTML;
-            
-            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Refreshing...';
-            refreshBtn.disabled = true;
+  <script>
+    // Refresh dashboard data
+    function refreshDashboard() {
+      const refreshBtn = event.target.closest('button');
+      const originalHtml = refreshBtn.innerHTML;
+      
+      refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Refreshing...';
+      refreshBtn.disabled = true;
 
-            // Simulate API call
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
-        }
+      // Simulate API call
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
 
-        // Auto-refresh every 5 minutes
-        setInterval(() => {
-            console.log('Auto-refreshing dashboard data...');
-            // In a real app, you would fetch new data via AJAX
-        }, 300000);
+    // Initialize dashboard
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add loading states to cards that might fetch data
+      const statsCards = document.querySelectorAll('.admin-stats .card');
+      statsCards.forEach(card => {
+        card.classList.add('loading');
+        setTimeout(() => card.classList.remove('loading'), 1000);
+      });
 
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            // Add loading states to cards that might fetch data
-            const statsCards = document.querySelectorAll('.admin-stats .card');
-            statsCards.forEach(card => {
-                card.classList.add('loading');
-                setTimeout(() => card.classList.remove('loading'), 1000);
-            });
+      // Initialize tooltips
+      const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      tooltips.forEach(tooltip => {
+        new bootstrap.Tooltip(tooltip);
+      });
+    });
 
-            // Handle window resize for responsive sidebar
-            window.addEventListener('resize', function() {
-                const sidebar = document.getElementById('sidebar');
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('open');
-                }
-            });
-
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function(e) {
-                const sidebar = document.getElementById('sidebar');
-                const hamburger = document.querySelector('.hamburger');
-                
-                if (window.innerWidth <= 768 && 
-                    sidebar.classList.contains('open') &&
-                    !sidebar.contains(e.target) &&
-                    !hamburger.contains(e.target)) {
-                    sidebar.classList.remove('open');
-                }
-            });
-
-            // Initialize tooltips
-            const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-            tooltips.forEach(tooltip => {
-                new bootstrap.Tooltip(tooltip);
-            });
-        });
-
-        // Export dashboard data
-        function exportDashboard() {
-            // Implementation for exporting dashboard data
-            console.log('Exporting dashboard data...');
-            // You would typically make an API call here to generate and download a report
-        }
-    </script>
+    // Export dashboard data
+    function exportDashboard() {
+      // Implementation for exporting dashboard data
+      console.log('Exporting dashboard data...');
+      // You would typically make an API call here to generate and download a report
+    }
+  </script>
 </body>
 </html>

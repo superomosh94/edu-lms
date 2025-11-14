@@ -6,9 +6,11 @@
     <div class="navbar-header-container">
       <!-- Brand -->
       <a class="navbar-brand d-flex align-items-center fw-bold" href="/dashboard">
-        <i class="fas fa-graduation-cap me-2 text-gold"></i>
-        EDU LMS
-        <small class="text-light ms-2 fw-normal d-none d-sm-inline">Learn. Grow. Achieve.</small>
+        <div class="brand-glow">
+          <i class="fas fa-graduation-cap me-2 text-gold"></i>
+        </div>
+        <span class="brand-text">EDU LMS</span>
+        <small class="text-light ms-2 fw-normal d-none d-sm-inline tagline">Learn. Grow. Achieve.</small>
       </a>
 
       <!-- Mobile Toggle -->
@@ -24,29 +26,34 @@
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link px-3<%= activePage === 'dashboard' ? ' active' : '' %>" href="/dashboard">
-            <i class="fas fa-tachometer-alt me-1"></i>My Learning Space
+            <i class="fas fa-tachometer-alt me-1"></i>
+            <span class="nav-text">My Learning Space</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link px-3<%= activePage === 'courses' ? ' active' : '' %>" href="/courses">
-            <i class="fas fa-book me-1"></i>My Courses
+            <i class="fas fa-book me-1"></i>
+            <span class="nav-text">My Courses</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link px-3<%= activePage === 'assignments' ? ' active' : '' %>" href="/assignments">
-            <i class="fas fa-tasks me-1"></i>Assignments
+            <i class="fas fa-tasks me-1"></i>
+            <span class="nav-text">Assignments</span>
           </a>
         </li>
         <li class="nav-item">
           <a class="nav-link px-3<%= activePage === 'grades' ? ' active' : '' %>" href="/grades">
-            <i class="fas fa-chart-bar me-1"></i>Performance
+            <i class="fas fa-chart-bar me-1"></i>
+            <span class="nav-text">Performance</span>
           </a>
         </li>
 
         <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle px-3<%= activePage === 'management' ? ' active' : '' %>" href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
-            <i class="fas fa-cogs me-1"></i>Management
+            <i class="fas fa-cogs me-1"></i>
+            <span class="nav-text">Management</span>
           </a>
           <ul class="dropdown-menu shadow-sm">
             <% if (user.role === 'admin') { %>
@@ -63,9 +70,11 @@
 
       <!-- Search -->
       <form class="d-flex align-items-center search-container">
-        <div class="input-group">
-          <input class="form-control form-control-sm rounded-start" type="search" placeholder="Search courses, assignments..." aria-label="Search">
-          <button class="btn btn-outline-light btn-sm rounded-end" type="submit"><i class="fas fa-search"></i></button>
+        <div class="input-group search-glow">
+          <input class="form-control form-control-sm rounded-start" type="search" placeholder="Discover new knowledge..." aria-label="Search">
+          <button class="btn btn-outline-light btn-sm rounded-end search-btn" type="submit">
+            <i class="fas fa-search"></i>
+          </button>
         </div>
       </form>
 
@@ -83,12 +92,12 @@
 
         <!-- Notifications -->
         <li class="nav-item dropdown notification-container">
-          <a class="nav-link position-relative" href="javascript:void(0)" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+          <a class="nav-link position-relative notification-pulse" href="javascript:void(0)" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
             <i class="fas fa-bell fa-lg"></i>
             <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
           </a>
           <ul id="notificationList" class="dropdown-menu dropdown-menu-end shadow notification-dropdown">
-            <li><h6 class="dropdown-header">Notifications</h6></li>
+            <li><h6 class="dropdown-header">Your Updates</h6></li>
             <ul id="notifications" class="notification-content list-unstyled mb-0"></ul>
             <li><a class="dropdown-item text-center view-all-link" id="viewAllNotifications" href="javascript:void(0)">View all notifications</a></li>
           </ul>
@@ -96,12 +105,12 @@
 
         <!-- Messages -->
         <li class="nav-item dropdown message-container">
-          <a class="nav-link position-relative" href="javascript:void(0)" id="messageDropdown" role="button" data-bs-toggle="dropdown">
+          <a class="nav-link position-relative message-pulse" href="javascript:void(0)" id="messageDropdown" role="button" data-bs-toggle="dropdown">
             <i class="fas fa-envelope fa-lg"></i>
             <span id="messageBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">0</span>
           </a>
           <ul id="messageList" class="dropdown-menu dropdown-menu-end shadow message-dropdown">
-            <li><h6 class="dropdown-header">Messages</h6></li>
+            <li><h6 class="dropdown-header">Your Messages</h6></li>
             <ul id="messages" class="message-content list-unstyled mb-0"></ul>
             <li><a class="dropdown-item text-center view-all-link" href="/messages">View all messages</a></li>
           </ul>
@@ -114,7 +123,7 @@
               <i class="fas fa-user-circle fa-lg"></i>
             </div>
             <span class="user-name d-none d-md-inline">
-              <% if (user) { %>Welcome, <%= user.name %>!<% } else { %>Guest<% } %>
+              <% if (user) { %>Welcome back, <%= user.name %>!<% } else { %>Guest<% } %>
             </span>
           </a>
           <ul class="dropdown-menu dropdown-menu-end shadow profile-dropdown">
@@ -162,6 +171,7 @@
   transition: all 0.4s ease; 
   padding: 0.5rem 0;
   border-bottom: 3px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 4px 20px rgba(31, 58, 147, 0.3);
 }
 
 /* Header Container - Brand + Toggle */
@@ -176,10 +186,43 @@
   font-size: 1.5rem;
   transition: transform 0.3s ease;
   margin-right: auto;
+  position: relative;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
 }
 
 .navbar-brand:hover {
   transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.brand-glow {
+  display: inline-block;
+  animation: gentlePulse 4s infinite;
+}
+
+@keyframes gentlePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.brand-text {
+  font-weight: 700;
+  background: linear-gradient(45deg, #ffffff, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.tagline {
+  font-style: italic;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.navbar-brand:hover .tagline {
+  opacity: 1;
 }
 
 .text-gold {
@@ -206,6 +249,25 @@
   flex: 0 1 auto;
   min-width: 250px;
   max-width: 400px;
+}
+
+.search-glow {
+  position: relative;
+}
+
+.search-glow:focus-within {
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease;
+}
+
+.search-btn {
+  transition: all 0.3s ease;
+}
+
+.search-btn:hover {
+  background: rgba(255, 215, 0, 0.2);
+  transform: scale(1.05);
 }
 
 /* Right Menu Container */
@@ -258,6 +320,7 @@
 .navbar .nav-link:hover { 
   color: #ffd700; 
   background: rgba(255, 215, 0, 0.1); 
+  transform: translateY(-2px);
 }
 
 .navbar .nav-link.active { 
@@ -265,6 +328,7 @@
   color: #ffd700; 
   font-weight: 600;
   border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
 }
 
 .navbar .nav-link.active::before {
@@ -308,6 +372,30 @@
   transform: translate(-60%, -40%);
 }
 
+/* Notification and Message Pulse Effects */
+.notification-pulse, .message-pulse {
+  position: relative;
+}
+
+.notification-pulse.pulse-active::after, 
+.message-pulse.pulse-active::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 215, 0, 0.7);
+  animation: notificationPulse 2s infinite;
+}
+
+@keyframes notificationPulse {
+  0% { transform: scale(0.8); opacity: 1; }
+  70% { transform: scale(1.5); opacity: 0; }
+  100% { transform: scale(0.8); opacity: 0; }
+}
+
 /* User Profile Positioning */
 .user-profile-link {
   background: rgba(255, 255, 255, 0.1);
@@ -318,6 +406,8 @@
 
 .user-profile-link:hover {
   background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Search Bar Styling */
@@ -329,6 +419,13 @@
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   color: white;
+  transition: all 0.3s ease;
+}
+
+.search-container .form-control:focus {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
 }
 
 .search-container .form-control::placeholder {
@@ -338,6 +435,7 @@
 .search-container .btn {
   border-color: rgba(255, 255, 255, 0.2);
   color: white;
+  transition: all 0.3s ease;
 }
 
 .search-container .btn:hover {
@@ -490,7 +588,7 @@ input:checked + .slider:before {
     font-size: 1.25rem;
   }
   
-  .nav-link span:not(.badge) {
+  .nav-text {
     display: none;
   }
   
@@ -556,6 +654,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.add('dark-mode');
   }
 
+  // Add pulse effects for notifications and messages
+  const notificationLink = document.getElementById('notificationDropdown');
+  const messageLink = document.getElementById('messageDropdown');
+  
   // Notification and Message Fetching
   const role = "<%= user ? user.role : 'guest' %>";
   const paths = {
@@ -574,6 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (data.count > 0) {
         badge.classList.add('pulse');
+        notificationLink.classList.add('pulse-active');
       }
       
       const notifContainer = document.getElementById('notifications');
@@ -617,6 +720,7 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (data.count > 0) {
         badge.classList.add('pulse');
+        messageLink.classList.add('pulse-active');
       }
       
       const msgContainer = document.getElementById('messages');
@@ -648,5 +752,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     })
     .catch(console.error);
+    
+  // Add subtle hover effects to all interactive elements
+  const interactiveElements = document.querySelectorAll('.nav-link, .dropdown-item, .btn');
+  interactiveElements.forEach(el => {
+    el.addEventListener('mouseenter', function() {
+      this.style.transition = 'all 0.3s ease';
+    });
+  });
 });
 </script>

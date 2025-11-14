@@ -1,0 +1,74 @@
+<% 
+// Safely handle pagination data
+const paginationData = typeof pagination !== 'undefined' ? pagination : null;
+const currentPage = paginationData ? paginationData.currentPage : 1;
+const totalPages = paginationData ? paginationData.totalPages : 1;
+const totalRecords = paginationData ? paginationData.totalRecords : 0;
+%>
+
+<% if (paginationData && totalPages > 1) { %>
+<div class="pagination-container">
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mb-2">
+            <!-- Previous Page -->
+            <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            </li>
+            
+            <!-- Page Numbers -->
+            <% 
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+            
+            // Show first page and ellipsis if needed
+            if (startPage > 1) { %>
+                <li class="page-item <%= 1 === currentPage ? 'active' : '' %>">
+                    <a class="page-link" href="?page=1">1</a>
+                </li>
+                <% if (startPage > 2) { %>
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                <% } 
+            }
+            
+            // Show page numbers
+            for (let i = startPage; i <= endPage; i++) { %>
+                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                </li>
+            <% }
+            
+            // Show last page and ellipsis if needed
+            if (endPage < totalPages) { 
+                if (endPage < totalPages - 1) { %>
+                    <li class="page-item disabled">
+                        <span class="page-link">...</span>
+                    </li>
+                <% } %>
+                <li class="page-item <%= totalPages === currentPage ? 'active' : '' %>">
+                    <a class="page-link" href="?page=<%= totalPages %>"><%= totalPages %></a>
+                </li>
+            <% } %>
+            
+            <!-- Next Page -->
+            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    
+    <div class="text-center">
+        <small class="text-muted">
+            Page <%= currentPage %> of <%= totalPages %> 
+            <% if (totalRecords > 0) { %>
+                • <%= totalRecords %> total records
+            <% } %>
+        </small>
+    </div>
+</div>
+<% } %>
