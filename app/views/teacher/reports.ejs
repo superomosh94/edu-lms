@@ -1,284 +1,847 @@
-﻿<%- include('../partials/header', { title: 'Reports' }) %>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Teacher Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
 
-<%- include('../partials/sidebar', { activePage: 'reports' }) %>
-<div class="main-container">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <main class="content">
-    <header class="page-header">
-      <h1>Reports</h1>
-      <button id="newReportBtn" class="btn-primary">
-        <i class="fas fa-plus"></i> New Report
-      </button>
-    </header>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f1f5f9;
+            color: #334155;
+            line-height: 1.6;
+        }
 
-    <section class="filters">
-      <form method="GET" action="/teacher/reports" class="filter-form">
-        <label for="course">Filter by Course:</label>
-        <select name="course" id="course" onchange="this.form.submit()">
-          <option value="">All Courses</option>
-          <% if (courses && courses.length > 0) { %>
-            <% courses.forEach(c => { %>
-              <option value="<%= c.id %>" <%= selectedCourse == c.id ? 'selected' : '' %>><%= c.title %></option>
-            <% }) %>
-          <% } %>
-        </select>
-      </form>
-    </section>
+        .reports-page {
+            min-height: 100vh;
+            display: flex;
+        }
 
-    <section class="reports-list">
-      <% if (reports && reports.length > 0) { %>
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Title</th>
-              <th>Course</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% reports.forEach((r, index) => { %>
-              <tr>
-                <td><%= index + 1 %></td>
-                <td><%= r.title %></td>
-                <td><%= r.course_title || 'N/A' %></td>
-                <td><%= new Date(r.created_at).toLocaleDateString() %></td>
-                <td>
-                  <a href="/teacher/reports/<%= r.id %>" class="btn-view"><i class="fas fa-eye"></i></a>
-                  <a href="/teacher/reports/delete/<%= r.id %>" class="btn-delete" onclick="return confirm('Delete this report?')"><i class="fas fa-trash-alt"></i></a>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      <% } else { %>
-        <div class="empty-state">
-          <i class="fas fa-file-alt"></i>
-          <p>No reports found.</p>
+        /* Sidebar Styles */
+        .sidebar {
+            background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--dark) 100%);
+            width: 280px;
+            min-height: 100vh;
+            padding: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+            background: #f8f9fa;
+        }
+
+        .container-fluid {
+            padding: 2rem;
+        }
+
+        /* Header */
+        .page-header h1 {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .page-header p {
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Report Cards */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .report-card-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+        }
+
+        .report-card-body {
+            padding: 1.5rem;
+        }
+
+        .report-card-footer {
+            padding: 1rem 1.5rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        /* Stats Overview */
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-primary { color: var(--primary); }
+        .stat-success { color: var(--success); }
+        .stat-warning { color: var(--warning); }
+        .stat-danger { color: var(--danger); }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        /* Charts Container */
+        .charts-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .chart-placeholder {
+            background: #f8fafc;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: #f1f5f9;
+            color: var(--dark);
+            border: 1px solid #e2e8f0;
+        }
+
+        .action-btn.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-icon {
+            opacity: 0.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Report Actions */
+        .report-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .report-actions .btn {
+            flex: 1;
+        }
+
+        /* Progress Bars */
+        .progress-container {
+            margin: 1rem 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 1.5rem;
+            }
+
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-overview {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                justify-content: center;
+            }
+
+            .report-actions {
+                flex-direction: column;
+            }
+
+            .charts-container {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 101;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        @media (max-width: 992px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="reports-page">
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobileMenuButton">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <%- include('../partials/sidebar', { menu: menu, activePage: 'reports' }) %>
         </div>
-      <% } %>
-    </section>
-  </main>
-</div>
 
-<!-- New Report Modal -->
-<div id="reportModal" class="modal hidden">
-  <div class="modal-content">
-    <h2>Create Report</h2>
-    <form method="POST" action="/teacher/reports/create">
-      <div class="form-group">
-        <label for="title">Report Title</label>
-        <input type="text" name="title" id="title" required>
-      </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <%- include('../partials/header') %>
 
-      <div class="form-group">
-        <label for="course_id">Select Course</label>
-        <select name="course_id" id="course_id" required>
-          <% if (courses && courses.length > 0) { %>
-            <% courses.forEach(c => { %>
-              <option value="<%= c.id %>"><%= c.title %></option>
-            <% }) %>
-          <% } else { %>
-            <option value="">No courses available</option>
-          <% } %>
-        </select>
-      </div>
+            <div class="container-fluid py-4">
+                <!-- Flash Messages -->
+                <%- include('../partials/flash-messages') %>
 
-      <div class="form-group">
-        <label for="content">Report Details</label>
-        <textarea name="content" id="content" rows="6" required></textarea>
-      </div>
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4 page-header">
+                    <div>
+                        <h1 class="h2 mb-1"><%= title %></h1>
+                        <p class="text-muted mb-0">Analytics and insights for your courses and student performance.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary" id="exportAllReports">
+                            <i class="fas fa-download me-2"></i>Export All
+                        </button>
+                        <button class="btn btn-primary" id="generateReport" data-bs-toggle="modal" data-bs-target="#generateReportModal">
+                            <i class="fas fa-plus me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </div>
 
-      <div class="form-actions">
-        <button type="submit" class="btn-primary">Submit</button>
-        <button type="button" id="closeModal" class="btn-secondary">Cancel</button>
-      </div>
-    </form>
-  </div>
-</div>
+                <!-- Stats Overview -->
+                <div class="stats-overview">
+                    <div class="stat-item">
+                        <div class="stat-number stat-primary"><%= courses ? courses.length : 0 %></div>
+                        <div class="stat-label">Total Courses</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number stat-success"><%= typeof averageGrade !== 'undefined' ? averageGrade : 'N/A' %></div>
+                        <div class="stat-label">Average Grade</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number stat-warning"><%= assignmentStats ? assignmentStats.total : 0 %></div>
+                        <div class="stat-label">Total Assignments</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number stat-danger"><%= submissionStats ? submissionStats.ungraded : 0 %></div>
+                        <div class="stat-label">Ungraded Submissions</div>
+                    </div>
+                </div>
 
-<script>
-  const modal = document.getElementById('reportModal');
-  const newBtn = document.getElementById('newReportBtn');
-  const closeBtn = document.getElementById('closeModal');
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <form method="GET" action="/teacher/reports" id="reportFilterForm">
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Course</label>
+                                <select class="form-select" name="course" id="courseFilter">
+                                    <option value="">All Courses</option>
+                                    <% if (courses && courses.length > 0) { %>
+                                        <% courses.forEach(function(course) { %>
+                                            <option value="<%= course.id %>" <%= selectedCourse == course.id ? 'selected' : '' %>><%= course.title %></option>
+                                        <% }); %>
+                                    <% } %>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Report Type</label>
+                                <select class="form-select" name="type" id="reportType">
+                                    <option value="performance">Performance</option>
+                                    <option value="grades">Grades</option>
+                                    <option value="submissions">Submissions</option>
+                                    <option value="comprehensive">Comprehensive</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Time Period</label>
+                                <select class="form-select" name="period" id="timePeriod">
+                                    <option value="7days">Last 7 Days</option>
+                                    <option value="30days" selected>Last 30 Days</option>
+                                    <option value="90days">Last 90 Days</option>
+                                    <option value="semester">This Semester</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-filter me-2"></i>Apply Filters
+                                </button>
+                                <a href="/teacher/reports" class="btn btn-outline-secondary ms-2">
+                                    <i class="fas fa-times me-2"></i>Clear Filters
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
 
-  newBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-  closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
-</script>
+                <!-- Grade Distribution Section -->
+                <% if (gradeDistribution) { %>
+                <div class="charts-container">
+                    <h5 class="mb-3">Grade Distribution</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="chart-placeholder">
+                                <div class="text-center">
+                                    <i class="fas fa-chart-pie fa-3x mb-3"></i>
+                                    <p>Grade Distribution Chart</p>
+                                    <div class="mt-3">
+                                        <% if (gradeDistribution.percentages) { %>
+                                            <div class="d-flex justify-content-around text-center">
+                                                <div>
+                                                    <div class="fw-bold text-success"><%= gradeDistribution.percentages.A %>%</div>
+                                                    <small>A (90-100%)</small>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-primary"><%= gradeDistribution.percentages.B %>%</div>
+                                                    <small>B (80-89%)</small>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-warning"><%= gradeDistribution.percentages.C %>%</div>
+                                                    <small>C (70-79%)</small>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-danger"><%= gradeDistribution.percentages.D %>%</div>
+                                                    <small>D (60-69%)</small>
+                                                </div>
+                                                <div>
+                                                    <div class="fw-bold text-dark"><%= gradeDistribution.percentages.F %>%</div>
+                                                    <small>F (<60%)</small>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="chart-placeholder">
+                                <div class="text-center">
+                                    <i class="fas fa-chart-bar fa-3x mb-3"></i>
+                                    <p>Grade Statistics</p>
+                                    <div class="mt-3">
+                                        <% if (minMaxGrades) { %>
+                                            <div class="row text-center">
+                                                <div class="col-6">
+                                                    <div class="fw-bold text-success"><%= minMaxGrades.highest %></div>
+                                                    <small>Highest Grade</small>
+                                                </div>
+                                                <div class="col-6">
+                                                    <div class="fw-bold text-danger"><%= minMaxGrades.lowest %></div>
+                                                    <small>Lowest Grade</small>
+                                                </div>
+                                            </div>
+                                            <div class="row text-center mt-3">
+                                                <div class="col-12">
+                                                    <div class="fw-bold text-primary"><%= typeof averageGrade !== 'undefined' ? averageGrade : 'N/A' %></div>
+                                                    <small>Average Grade</small>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h6>Grade Distribution by Letter</h6>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>A (90-100%)</span>
+                                    <span><%= gradeDistribution.A || 0 %> students</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" style="width: <%= gradeDistribution.percentages ? gradeDistribution.percentages.A : 0 %>%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>B (80-89%)</span>
+                                    <span><%= gradeDistribution.B || 0 %> students</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-primary" style="width: <%= gradeDistribution.percentages ? gradeDistribution.percentages.B : 0 %>%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>C (70-79%)</span>
+                                    <span><%= gradeDistribution.C || 0 %> students</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-warning" style="width: <%= gradeDistribution.percentages ? gradeDistribution.percentages.C : 0 %>%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>D (60-69%)</span>
+                                    <span><%= gradeDistribution.D || 0 %> students</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-danger" style="width: <%= gradeDistribution.percentages ? gradeDistribution.percentages.D : 0 %>%"></div>
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-label">
+                                    <span>F (<60%)</span>
+                                    <span><%= gradeDistribution.F || 0 %> students</span>
+                                </div>
+                                <div class="progress">
+                                    <div class="progress-bar bg-dark" style="width: <%= gradeDistribution.percentages ? gradeDistribution.percentages.F : 0 %>%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Submission Status</h6>
+                            <% if (submissionStats) { %>
+                                <div class="alert alert-success">
+                                    <i class="fas fa-check-circle me-2"></i>
+                                    <strong><%= submissionStats.graded || 0 %> submissions</strong> graded
+                                </div>
+                                <div class="alert alert-warning">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    <strong><%= submissionStats.ungraded || 0 %> submissions</strong> need grading
+                                </div>
+                                <div class="alert alert-info">
+                                    <i class="fas fa-clock me-2"></i>
+                                    <strong><%= submissionStats.total || 0 %> total</strong> submissions
+                                </div>
+                                <div class="alert alert-primary">
+                                    <i class="fas fa-percentage me-2"></i>
+                                    <strong><%= submissionStats.graded && submissionStats.total ? Math.round((submissionStats.graded / submissionStats.total) * 100) : 0 %>%</strong> grading completion rate
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <% } %>
 
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f9fafb;
-    color: #1e293b;
-  }
+                <!-- Generated Reports Section -->
+                <div class="charts-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="mb-0">Generated Reports</h5>
+                        <form method="GET" action="/teacher/reports" class="d-inline">
+                            <button type="submit" class="btn btn-outline-primary btn-sm" id="refreshReports">
+                                <i class="fas fa-sync-alt me-1"></i>Refresh
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <% if (!reports || reports.length === 0) { %>
+                        <div class="empty-state text-center py-4">
+                            <i class="fas fa-file-alt fa-2x text-muted mb-2"></i>
+                            <h5 class="text-muted">No reports generated yet</h5>
+                            <p class="text-muted">Generate your first report to see it here.</p>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#generateReportModal">
+                                <i class="fas fa-plus me-2"></i>Generate Report
+                            </button>
+                        </div>
+                    <% } else { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Report Name</th>
+                                        <th>Description</th>
+                                        <th>Generated</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% reports.forEach(function(report) { %>
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <i class="fas fa-file-pdf text-danger me-2"></i>
+                                                    <div class="fw-semibold"><%= report.title %></div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <small class="text-muted"><%= report.description %></small>
+                                            </td>
+                                            <td><%= new Date(report.created_at).toLocaleDateString() %></td>
+                                            <td>
+                                                <span class="badge bg-success">Complete</span>
+                                            </td>
+                                            <td>
+                                                <div class="btn-group btn-group-sm">
+                                                    <a href="/teacher/reports/<%= report.id %>/view" class="btn btn-outline-primary">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <a href="/teacher/reports/<%= report.id %>/download" class="btn btn-outline-secondary">
+                                                        <i class="fas fa-download"></i>
+                                                    </a>
+                                                    <form method="POST" action="/teacher/reports/<%= report.id %>/delete" class="d-inline">
+                                                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this report?')">
+                                                            <i class="fas fa-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </main>
+    </div>
 
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 16px 0;
-    border-bottom: 1px solid #e2e8f0;
-  }
+    <!-- Generate Report Modal -->
+    <div class="modal fade" id="generateReportModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Generate New Report</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="/teacher/reports/generate" id="generateReportForm">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Report Title</label>
+                            <input type="text" class="form-control" name="title" required placeholder="Enter report title">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea class="form-control" name="description" rows="3" placeholder="Enter report description"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Report Type</label>
+                            <select class="form-select" name="type" required>
+                                <option value="performance">Performance Report</option>
+                                <option value="grades">Grade Distribution</option>
+                                <option value="submissions">Submission Analysis</option>
+                                <option value="comprehensive">Comprehensive Report</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Course</label>
+                            <select class="form-select" name="course_id">
+                                <option value="">All Courses</option>
+                                <% if (courses && courses.length > 0) { %>
+                                    <% courses.forEach(function(course) { %>
+                                        <option value="<%= course.id %>"><%= course.title %></option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Format</label>
+                            <select class="form-select" name="format">
+                                <option value="pdf">PDF</option>
+                                <option value="excel">Excel</option>
+                                <option value="csv">CSV</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="submitGenerateReport">
+                            <i class="fas fa-plus me-2"></i>Generate Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-  .page-header h1 {
-    font-size: 1.6rem;
-    font-weight: bold;
-  }
+    <%- include('../partials/footer-scripts') %>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileMenuButton && sidebar) {
+                mobileMenuButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
 
-  .btn-primary {
-    background: #2563eb;
-    color: white;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.95rem;
-  }
+            // Course filter change handler
+            const courseFilter = document.getElementById('courseFilter');
+            if (courseFilter) {
+                courseFilter.addEventListener('change', function() {
+                    document.getElementById('reportFilterForm').submit();
+                });
+            }
 
-  .btn-secondary {
-    background: #e2e8f0;
-    color: #1e293b;
-    border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
-    cursor: pointer;
-  }
+            // Report type filter change handler
+            const reportTypeFilter = document.getElementById('reportType');
+            if (reportTypeFilter) {
+                reportTypeFilter.addEventListener('change', function() {
+                    document.getElementById('reportFilterForm').submit();
+                });
+            }
 
-  .filters {
-    padding: 16px 0;
-    border-bottom: 1px solid #e2e8f0;
-  }
+            // Generate report form handler
+            const generateReportForm = document.getElementById('generateReportForm');
+            if (generateReportForm) {
+                generateReportForm.addEventListener('submit', function(e) {
+                    const submitBtn = document.getElementById('submitGenerateReport');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<span class="loading-spinner me-2"></span>Generating...';
+                    submitBtn.disabled = true;
+                    
+                    // Form will submit normally, this just shows loading state
+                });
+            }
 
-  .filter-form label {
-    font-weight: bold;
-    margin-right: 10px;
-  }
+            // Export all reports
+            const exportAllButton = document.getElementById('exportAllReports');
+            if (exportAllButton) {
+                exportAllButton.addEventListener('click', function() {
+                    alert('Export functionality would be implemented here');
+                });
+            }
 
-  .filter-form select {
-    padding: 6px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-  }
-
-  .reports-list {
-    padding: 20px 0;
-  }
-
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.05);
-  }
-
-  .data-table th,
-  .data-table td {
-    padding: 12px;
-    border-bottom: 1px solid #e2e8f0;
-    text-align: left;
-  }
-
-  .data-table th {
-    background: #f1f5f9;
-    font-weight: bold;
-  }
-
-  .btn-view, .btn-delete {
-    margin-right: 8px;
-    font-size: 1rem;
-  }
-
-  .btn-view {
-    color: #2563eb;
-  }
-
-  .btn-delete {
-    color: #dc2626;
-  }
-
-  .empty-state {
-    text-align: center;
-    color: #94a3b8;
-    padding: 40px 0;
-  }
-
-  .empty-state i {
-    font-size: 50px;
-    margin-bottom: 12px;
-  }
-
-  .modal {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: rgba(15, 23, 42, 0.8);
-    z-index: 1000;
-  }
-
-  .modal.hidden {
-    display: none;
-  }
-
-  .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.15);
-  }
-
-  .form-group {
-    margin-bottom: 16px;
-  }
-
-  .form-group label {
-    display: block;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 0.95rem;
-  }
-
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-  }
-  .main-container {
-    margin-left: 260px; /* Width of the sidebar */
-    display: flex;
-    min-height: 100vh;
-  }
-
-
-  @media (max-width: 768px) {
-    .modal-content {
-      width: 90%;
-    }
-
-    .page-header {
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .data-table th, .data-table td {
-      font-size: 14px;
-    }
-  }
-</style>
-
-<%- include('../partials/footer') %>
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+</body>
+</html>

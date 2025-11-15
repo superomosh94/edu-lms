@@ -1,181 +1,754 @@
-﻿<%- include('../partials/header', { title: 'Grades' }) %>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Teacher Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
 
-<%- include('../partials/sidebar', { activePage: 'grades' }) %>
-<div class="main-container" style="margin-left: 250px;">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <main class="content">
-    <header class="page-header">
-      <h1>Student Grades</h1>
-      <div class="user-info">
-        <i class="fas fa-user-tie"></i>
-        <span>Welcome, <%= user && user.name ? user.name : 'Teacher' %></span>
-      </div>
-    </header>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f1f5f9;
+            color: #334155;
+            line-height: 1.6;
+        }
 
-    <% if (grades && grades.length > 0) { %>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Student</th>
-              <th>Assignment</th>
-              <th>Marks</th>
-              <th>Grade</th>
-              <th>Remarks</th>
-              <th>Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% grades.forEach((g, index) => { %>
-              <tr>
-                <td><%= index + 1 %></td>
-                <td><%= g.student_name %></td>
-                <td><%= g.assignment_title %></td>
-                <td><%= g.marks || '—' %></td>
-                <td class="grade"><%= g.grade || '—' %></td>
-                <td><%= g.remarks || 'N/A' %></td>
-                <td><%= g.date_graded ? new Date(g.date_graded).toLocaleDateString() : '—' %></td>
-                <td class="actions">
-                  <a href="/teacher/grades/<%= g.id %>">View</a>
-                  <a href="/teacher/grades/edit/<%= g.id %>">Edit</a>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
-    <% } else { %>
-      <div class="no-data">
-        <i class="fas fa-exclamation-circle"></i>
-        <p>No grades available yet.</p>
-      </div>
-    <% } %>
-  </main>
-</div>
+        .grades-page {
+            min-height: 100vh;
+            display: flex;
+        }
 
-<%- include('../partials/footer') %>
+        /* Sidebar Styles */
+        .sidebar {
+            background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--dark) 100%);
+            width: 280px;
+            min-height: 100vh;
+            padding: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            z-index: 100;
+            overflow-y: auto;
+        }
 
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f9fafb;
-    color: #1e293b;
-    margin: 0;
-  }
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+            background: #f8f9fa;
+        }
 
-  .main-container {
-    display: flex;
-    min-height: 100vh;
-  }
+        .container-fluid {
+            padding: 2rem;
+        }
 
-  main.content {
-    flex: 1;
-    padding: 20px;
-  }
+        /* Header */
+        .page-header h1 {
+            font-weight: 700;
+            color: var(--dark);
+        }
 
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #e5e7eb;
-    padding-bottom: 10px;
-  }
+        .page-header p {
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
 
-  .page-header h1 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #1e3a8a;
-  }
+        /* Grades Table */
+        .grades-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
 
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 500;
-    font-size: 0.95rem;
-  }
+        .grades-table {
+            width: 100%;
+            margin-bottom: 0;
+        }
 
-  .user-info i {
-    color: #2563eb;
-  }
+        .grades-table th {
+            background: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 600;
+            padding: 1rem;
+            color: #475569;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-  .table-container {
-    overflow-x: auto;
-  }
+        .grades-table td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #e2e8f0;
+        }
 
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    overflow: hidden;
-  }
+        .student-row:hover {
+            background: #f8fafc;
+        }
 
-  .data-table th,
-  .data-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #e5e7eb;
-    text-align: left;
-  }
+        .grade-cell {
+            text-align: center;
+            font-weight: 600;
+        }
 
-  .data-table th {
-    background: #2563eb;
-    color: #fff;
-    font-size: 14px;
-    text-transform: uppercase;
-  }
+        .grade-a { color: #10b981; }
+        .grade-b { color: #3b82f6; }
+        .grade-c { color: #f59e0b; }
+        .grade-d { color: #ef4444; }
+        .grade-f { color: #dc2626; }
 
-  tr:hover {
-    background: #f1f5f9;
-  }
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
 
-  .grade {
-    font-weight: 600;
-    color: #1e3a8a;
-  }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
 
-  .actions a {
-    text-decoration: none;
-    color: #2563eb;
-    margin-right: 10px;
-    font-weight: 500;
-  }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
 
-  .actions a:hover {
-    text-decoration: underline;
-  }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
 
-  .no-data {
-    text-align: center;
-    padding: 2rem;
-    background: #fff;
-    border-radius: 6px;
-    color: #64748b;
-    font-size: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    margin-top: 20px;
-  }
+        .stat-card-primary .stat-number { color: var(--primary); }
+        .stat-card-success .stat-number { color: var(--success); }
+        .stat-card-warning .stat-number { color: var(--warning); }
+        .stat-card-danger .stat-number { color: var(--danger); }
 
-  .no-data i {
-    font-size: 40px;
-    margin-bottom: 10px;
-    color: #94a3b8;
-  }
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
 
-  @media (max-width: 768px) {
-    .page-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-    }
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
 
-    .data-table th, .data-table td {
-      font-size: 13px;
-      padding: 10px;
-    }
-  }
-</style>
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: #f1f5f9;
+            color: var(--dark);
+            border: 1px solid #e2e8f0;
+        }
+
+        .action-btn.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Filter Section */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-icon {
+            opacity: 0.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Grade Distribution */
+        .grade-distribution {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 2rem;
+        }
+
+        .distribution-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: #e2e8f0;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .distribution-fill {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        .distribution-a { background: #10b981; }
+        .distribution-b { background: #3b82f6; }
+        .distribution-c { background: #f59e0b; }
+        .distribution-d { background: #ef4444; }
+        .distribution-f { background: #dc2626; }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 1.5rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                justify-content: center;
+            }
+
+            .grades-table {
+                font-size: 0.875rem;
+            }
+
+            .grades-table th,
+            .grades-table td {
+                padding: 0.75rem 0.5rem;
+            }
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 101;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        @media (max-width: 992px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="grades-page">
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobileMenuButton">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <%- include('../partials/sidebar', { menu: menu, activePage: 'grades' }) %>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <%- include('../partials/header') %>
+
+            <div class="container-fluid py-4">
+                <!-- Flash Messages -->
+                <%- include('../partials/flash-messages') %>
+
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4 page-header">
+                    <div>
+                        <h1 class="h2 mb-1"><%= title %></h1>
+                        <p class="text-muted mb-0">Manage and track student grades across all courses.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-outline-primary" id="exportGrades">
+                            <i class="fas fa-download me-2"></i>Export Grades
+                        </button>
+                        <a href="/teacher/submissions" class="btn btn-primary">
+                            <i class="fas fa-edit me-2"></i>Grade Submissions
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Action Buttons -->
+                <div class="action-buttons">
+                    <a href="/teacher/submissions" class="action-btn primary">
+                        <i class="fas fa-edit"></i>
+                        Grade Submissions
+                    </a>
+                    <a href="/teacher/assignments" class="action-btn secondary">
+                        <i class="fas fa-tasks"></i>
+                        View Assignments
+                    </a>
+                    <a href="/teacher/reports" class="action-btn success">
+                        <i class="fas fa-chart-line"></i>
+                        View Reports
+                    </a>
+                    <a href="/teacher/courses" class="action-btn warning">
+                        <i class="fas fa-book"></i>
+                        Manage Courses
+                    </a>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-number">
+                            <%= grades ? grades.filter(function(g) { return g.grade !== null; }).length : 0 %>
+                        </div>
+                        <div class="stat-label">Graded Submissions</div>
+                    </div>
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-number">
+                            <%= averageGrade %>
+                        </div>
+                        <div class="stat-label">Average Grade</div>
+                    </div>
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-number">
+                            <%= grades ? grades.filter(function(g) { return g.grade === null; }).length : 0 %>
+                        </div>
+                        <div class="stat-label">Pending Grading</div>
+                    </div>
+                    <div class="stat-card stat-card-danger">
+                        <div class="stat-number">
+                            <%= grades ? new Set(grades.map(function(g) { return g.student_name; })).size : 0 %>
+                        </div>
+                        <div class="stat-label">Unique Students</div>
+                    </div>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <div class="row g-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Course</label>
+                            <select class="form-select" id="courseFilter">
+                                <option value="">All Courses</option>
+                                <% if (grades) { 
+                                    const uniqueCourses = [...new Set(grades.map(g => g.course_name))];
+                                    uniqueCourses.forEach(course => { %>
+                                        <option value="<%= course %>"><%= course %></option>
+                                <% }); } %>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Assignment</label>
+                            <select class="form-select" id="assignmentFilter">
+                                <option value="">All Assignments</option>
+                                <% if (grades) { 
+                                    const uniqueAssignments = [...new Set(grades.map(g => g.assignment_title))];
+                                    uniqueAssignments.forEach(assignment => { %>
+                                        <option value="<%= assignment %>"><%= assignment %></option>
+                                <% }); } %>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Grade Range</label>
+                            <select class="form-select" id="gradeFilter">
+                                <option value="">All Grades</option>
+                                <option value="90-100">A (90-100)</option>
+                                <option value="80-89">B (80-89)</option>
+                                <option value="70-79">C (70-79)</option>
+                                <option value="60-69">D (60-69)</option>
+                                <option value="0-59">F (0-59)</option>
+                                <option value="ungraded">Ungraded</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Search</label>
+                            <input type="text" class="form-control" placeholder="Search students..." id="searchInput">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grade Distribution -->
+                <div class="grade-distribution">
+                    <h5 class="mb-3">Grade Distribution</h5>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="distribution-visual">
+                                <% if (grades && grades.length > 0) { %>
+                                <div class="d-flex justify-content-between mb-1">
+                                    <small>A (90-100)</small>
+                                    <small><%= gradeDistribution.percentages.A %>%</small>
+                                </div>
+                                <div class="distribution-bar">
+                                    <div class="distribution-fill distribution-a" style="width: <%= gradeDistribution.percentages.A %>%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-1">
+                                    <small>B (80-89)</small>
+                                    <small><%= gradeDistribution.percentages.B %>%</small>
+                                </div>
+                                <div class="distribution-bar">
+                                    <div class="distribution-fill distribution-b" style="width: <%= gradeDistribution.percentages.B %>%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-1">
+                                    <small>C (70-79)</small>
+                                    <small><%= gradeDistribution.percentages.C %>%</small>
+                                </div>
+                                <div class="distribution-bar">
+                                    <div class="distribution-fill distribution-c" style="width: <%= gradeDistribution.percentages.C %>%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-1">
+                                    <small>D (60-69)</small>
+                                    <small><%= gradeDistribution.percentages.D %>%</small>
+                                </div>
+                                <div class="distribution-bar">
+                                    <div class="distribution-fill distribution-d" style="width: <%= gradeDistribution.percentages.D %>%"></div>
+                                </div>
+                                
+                                <div class="d-flex justify-content-between mb-1">
+                                    <small>F (0-59)</small>
+                                    <small><%= gradeDistribution.percentages.F %>%</small>
+                                </div>
+                                <div class="distribution-bar">
+                                    <div class="distribution-fill distribution-f" style="width: <%= gradeDistribution.percentages.F %>%"></div>
+                                </div>
+                                <% } else { %>
+                                    <div class="text-center text-muted py-3">
+                                        No graded submissions available for distribution analysis.
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="text-center">
+                                <div class="h1 text-primary mb-1"><%= averageGrade %></div>
+                                <div class="text-muted">Class Average</div>
+                                <div class="mt-3">
+                                    <div class="d-flex justify-content-between">
+                                        <small>Highest: <%= minMaxGrades.highest !== 'N/A' ? minMaxGrades.highest + '%' : minMaxGrades.highest %></small>
+                                        <small>Lowest: <%= minMaxGrades.lowest !== 'N/A' ? minMaxGrades.lowest + '%' : minMaxGrades.lowest %></small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Grades Table -->
+                <div class="grades-table-container">
+                    <div class="table-responsive">
+                        <table class="table grades-table">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Course</th>
+                                    <th>Assignment</th>
+                                    <th class="text-center">Grade</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Submitted</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if (!grades || grades.length === 0) { %>
+                                    <tr>
+                                        <td colspan="7" class="text-center py-4">
+                                            <div class="text-muted">
+                                                <i class="fas fa-clipboard-list fa-2x mb-2"></i>
+                                                <p>No grades available yet.</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% } else { %>
+                                    <% grades.forEach(function(grade) { 
+                                        var gradeValue = grade.grade;
+                                        var gradeClass = '';
+                                        if (gradeValue >= 90) gradeClass = 'grade-a';
+                                        else if (gradeValue >= 80) gradeClass = 'grade-b';
+                                        else if (gradeValue >= 70) gradeClass = 'grade-c';
+                                        else if (gradeValue >= 60) gradeClass = 'grade-d';
+                                        else if (gradeValue !== null) gradeClass = 'grade-f';
+                                    %>
+                                        <tr class="student-row">
+                                            <td>
+                                                <div class="d-flex align-items-center">
+                                                    <div class="avatar-sm bg-light rounded-circle d-flex align-items-center justify-content-center me-2">
+                                                        <i class="fas fa-user text-muted"></i>
+                                                    </div>
+                                                    <div>
+                                                        <div class="fw-semibold"><%= grade.student_name %></div>
+                                                        <small class="text-muted">ID: <%= grade.student_id || 'N/A' %></small>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td><%= grade.course_name %></td>
+                                            <td><%= grade.assignment_title %></td>
+                                            <td class="grade-cell <%= gradeClass %>">
+                                                <%= gradeValue !== null ? gradeValue + '%' : 'Not Graded' %>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge <%= gradeValue !== null ? 'bg-success' : 'bg-warning' %>">
+                                                    <%= gradeValue !== null ? 'Graded' : 'Pending' %>
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <%= new Date(grade.created_at).toLocaleDateString() %>
+                                            </td>
+                                            <td class="text-center">
+                                                <div class="btn-group">
+                                                    <a href="/teacher/submissions/<%= grade.id %>" class="btn btn-outline-primary btn-sm">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <% if (gradeValue === null) { %>
+                                                    <a href="/teacher/submissions/<%= grade.id %>/grade" class="btn btn-outline-success btn-sm">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <% } %>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <%- include('../partials/footer-scripts') %>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileMenuButton && sidebar) {
+                mobileMenuButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
+
+            // Export grades functionality
+            const exportButton = document.getElementById('exportGrades');
+            if (exportButton) {
+                exportButton.addEventListener('click', function() {
+                    // Implement export functionality
+                    alert('Exporting grades data...');
+                    // This would typically generate a CSV or PDF file
+                });
+            }
+
+            // Filter functionality
+            const filters = ['courseFilter', 'assignmentFilter', 'gradeFilter', 'searchInput'];
+            filters.forEach(filterId => {
+                const filter = document.getElementById(filterId);
+                if (filter) {
+                    filter.addEventListener('change', function() {
+                        applyFilters();
+                    });
+                    if (filterId === 'searchInput') {
+                        filter.addEventListener('input', function() {
+                            applyFilters();
+                        });
+                    }
+                }
+            });
+
+            function applyFilters() {
+                const courseFilter = document.getElementById('courseFilter').value.toLowerCase();
+                const assignmentFilter = document.getElementById('assignmentFilter').value.toLowerCase();
+                const gradeFilter = document.getElementById('gradeFilter').value;
+                const searchInput = document.getElementById('searchInput').value.toLowerCase();
+
+                const rows = document.querySelectorAll('.student-row');
+                
+                rows.forEach(row => {
+                    const studentName = row.querySelector('.fw-semibold').textContent.toLowerCase();
+                    const courseName = row.cells[1].textContent.toLowerCase();
+                    const assignmentName = row.cells[2].textContent.toLowerCase();
+                    const gradeCell = row.cells[3];
+                    const gradeText = gradeCell.textContent.trim();
+                    
+                    let showRow = true;
+
+                    // Course filter
+                    if (courseFilter && !courseName.includes(courseFilter)) {
+                        showRow = false;
+                    }
+
+                    // Assignment filter
+                    if (assignmentFilter && !assignmentName.includes(assignmentFilter)) {
+                        showRow = false;
+                    }
+
+                    // Search filter
+                    if (searchInput && !studentName.includes(searchInput)) {
+                        showRow = false;
+                    }
+
+                    // Grade filter
+                    if (gradeFilter) {
+                        if (gradeFilter === 'ungraded') {
+                            if (gradeText !== 'Not Graded') showRow = false;
+                        } else {
+                            const [min, max] = gradeFilter.split('-').map(Number);
+                            const gradeValue = gradeText === 'Not Graded' ? null : parseInt(gradeText);
+                            
+                            if (gradeValue === null || gradeValue < min || gradeValue > max) {
+                                showRow = false;
+                            }
+                        }
+                    }
+
+                    row.style.display = showRow ? '' : 'none';
+                });
+            }
+
+            // Initialize tooltips
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+</body>
+</html>

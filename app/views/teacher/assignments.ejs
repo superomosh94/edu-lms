@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Assignment Management</title>
+    <title><%= title %> - Teacher Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -50,37 +50,6 @@
             position: fixed;
             z-index: 100;
             overflow-y: auto;
-        }
-
-        .sidebar-content {
-            padding: 2rem 1.5rem;
-        }
-
-        .sidebar .nav-link {
-            color: #cbd5e1;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-            border: none;
-            font-weight: 500;
-        }
-
-        .sidebar .nav-link:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-
-        .sidebar .nav-link.active {
-            color: #ffffff;
-            background: var(--primary);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .sidebar .nav-link i {
-            width: 20px;
-            text-align: center;
         }
 
         /* Main Content */
@@ -503,100 +472,23 @@
         </button>
 
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-content pt-3">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="text-white mb-0">Teacher Portal</h4>
-                </div>
-                
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/teacher">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/teacher/courses">
-                            <i class="fas fa-book me-2"></i>My Courses
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/teacher/assignments">
-                            <i class="fas fa-tasks me-2"></i>Assignments
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/teacher/submissions">
-                            <i class="fas fa-file-alt me-2"></i>Submissions
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/teacher/grades">
-                            <i class="fas fa-clipboard me-2"></i>Gradebook
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/teacher/announcements">
-                            <i class="fas fa-bullhorn me-2"></i>Announcements
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/teacher/reports">
-                            <i class="fas fa-chart-line me-2"></i>Reports
-                        </a>
-                    </li>
-                </ul>
-
-                <!-- Quick Actions -->
-                <div class="filters mt-4">
-                    <h6 class="text-white mb-3">Quick Actions</h6>
-                    <div class="d-grid gap-2">
-                        <a href="/teacher/assignments/create" class="btn filter-btn">
-                            <i class="fas fa-plus me-2"></i>New Assignment
-                        </a>
-                        <a href="/teacher/submissions?filter=ungraded" class="btn filter-btn">
-                            <i class="fas fa-edit me-2"></i>Grade Submissions
-                        </a>
-                        <a href="/teacher/assignments?filter=upcoming" class="btn filter-btn">
-                            <i class="fas fa-clock me-2"></i>Upcoming Deadlines
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Course Filter -->
-                <div class="courses mt-4">
-                    <h6 class="text-white mb-3">My Courses</h6>
-                    <div class="course-filters">
-                        <div class="form-check mb-2">
-                            <input class="form-check-input course-checkbox" type="checkbox" id="course-all" checked>
-                            <label class="form-check-label text-white" for="course-all">
-                                <i class="fas fa-th-large me-2"></i>All Courses
-                            </label>
-                        </div>
-                        <% if (courses && courses.length > 0) { %>
-                            <% courses.forEach(course => { %>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input course-checkbox" type="checkbox" id="course-<%= course.id %>" checked>
-                                    <label class="form-check-label text-white" for="course-<%= course.id %>">
-                                        <i class="fas fa-bookmark me-2"></i><%= course.title %>
-                                    </label>
-                                </div>
-                            <% }) %>
-                        <% } else { %>
-                            <p class="text-white-50 small">No courses available</p>
-                        <% } %>
-                    </div>
-                </div>
-            </div>
-        </aside>
+        <div class="sidebar">
+            <%- include('../partials/sidebar', { menu: menu, activePage: 'assignments' }) %>
+        </div>
 
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Header -->
+            <%- include('../partials/header') %>
+
             <div class="container-fluid py-4">
+                <!-- Flash Messages -->
+                <%- include('../partials/flash-messages') %>
+
                 <!-- Header -->
                 <div class="d-flex justify-content-between align-items-center mb-4 page-header">
                     <div>
-                        <h1 class="h2 mb-1">Assignment Management</h1>
+                        <h1 class="h2 mb-1"><%= title %></h1>
                         <p class="text-muted mb-0">Create, manage, and track assignments across all your courses.</p>
                     </div>
                     <div class="d-flex gap-2">
@@ -688,24 +580,21 @@
                     </div>
                 <% } else { %>
                     <div class="row g-4 assignments-list" id="assignmentsContainer">
-                        <% assignments.forEach(assignment => { 
-                            // Safely determine assignment status
-                            const isOverdue = assignment.due_date && new Date(assignment.due_date) < new Date() && assignment.submissions_count < (assignment.total_students || 1);
-                            const assignmentStatus = isOverdue ? 'overdue' : 'published';
-                            const statusText = assignmentStatus.charAt(0).toUpperCase() + assignmentStatus.slice(1);
+                        <% assignments.forEach(function(assignment) { 
+                            var isOverdue = assignment.due_date && new Date(assignment.due_date) < new Date() && assignment.submissions_count < (assignment.total_students || 1);
+                            var assignmentStatus = isOverdue ? 'overdue' : 'published';
+                            var statusText = assignmentStatus.charAt(0).toUpperCase() + assignmentStatus.slice(1);
                             
-                            // Safely get assignment properties
-                            const assignmentTitle = assignment.title || 'Untitled Assignment';
-                            const assignmentDescription = assignment.description || 'No description provided';
-                            const dueDate = assignment.due_date ? new Date(assignment.due_date).toLocaleDateString() : 'No due date';
-                            const courseId = assignment.course_id || 'all';
-                            const courseName = assignment.course_name || 'General';
+                            var assignmentTitle = assignment.title || 'Untitled Assignment';
+                            var assignmentDescription = assignment.description || 'No description provided';
+                            var dueDate = assignment.due_date ? new Date(assignment.due_date).toLocaleDateString() : 'No due date';
+                            var courseId = assignment.course_id || 'all';
+                            var courseName = assignment.course_name || 'General';
                             
-                            // Calculate submission stats
-                            const totalStudents = assignment.total_students || 1;
-                            const submissions = assignment.submissions_count || 0;
-                            const submissionRate = totalStudents > 0 ? Math.round((submissions / totalStudents) * 100) : 0;
-                            const graded = (assignment.submissions_count || 0) - (assignment.ungraded_count || 0);
+                            var totalStudents = assignment.total_students || 1;
+                            var submissions = assignment.submissions_count || 0;
+                            var submissionRate = totalStudents > 0 ? Math.round((submissions / totalStudents) * 100) : 0;
+                            var graded = (assignment.submissions_count || 0) - (assignment.ungraded_count || 0);
                         %>
                             <div class="col-xl-4 col-lg-6 assignment-item" 
                                  data-status="<%= assignmentStatus %>" 
@@ -766,12 +655,6 @@
                                                     <% } %>
                                                 </small>
                                             </div>
-                                            <% if (assignment.points) { %>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="fas fa-star text-success me-2"></i>
-                                                    <small class="text-muted"><%= assignment.points %> points</small>
-                                                </div>
-                                            <% } %>
                                         </div>
 
                                         <!-- Submission Stats -->
@@ -807,68 +690,73 @@
                                     </div>
                                 </div>
                             </div>
-                        <% }) %>
+                        <% }); %>
                     </div>
                 <% } %>
             </div>
         </main>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <%- include('../partials/footer-scripts') %>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Mobile menu toggle
             const mobileMenuButton = document.getElementById('mobileMenuButton');
             const sidebar = document.querySelector('.sidebar');
             
-            mobileMenuButton.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
+            if (mobileMenuButton && sidebar) {
+                mobileMenuButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
 
             // Bulk actions functionality
             const selectAll = document.getElementById('selectAll');
             const bulkAction = document.getElementById('bulkAction');
             const applyBulkAction = document.getElementById('applyBulkAction');
             
-            selectAll.addEventListener('change', function() {
-                const checkboxes = document.querySelectorAll('.assignment-select');
-                checkboxes.forEach(checkbox => {
-                    checkbox.checked = selectAll.checked;
+            if (selectAll && bulkAction && applyBulkAction) {
+                selectAll.addEventListener('change', function() {
+                    const checkboxes = document.querySelectorAll('.assignment-select');
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = selectAll.checked;
+                    });
                 });
-            });
 
-            applyBulkAction.addEventListener('click', function() {
-                const selectedAction = bulkAction.value;
-                const selectedAssignments = document.querySelectorAll('.assignment-select:checked');
-                
-                if (selectedAssignments.length === 0) {
-                    alert('Please select at least one assignment.');
-                    return;
-                }
-
-                if (selectedAction === 'delete') {
-                    if (!confirm(`Are you sure you want to delete ${selectedAssignments.length} assignment(s)? This will also delete all submissions.`)) {
+                applyBulkAction.addEventListener('click', function() {
+                    const selectedAction = bulkAction.value;
+                    const selectedAssignments = document.querySelectorAll('.assignment-select:checked');
+                    
+                    if (selectedAssignments.length === 0) {
+                        alert('Please select at least one assignment.');
                         return;
                     }
-                }
 
-                // Implement bulk action logic here
-                console.log(`Applying ${selectedAction} to ${selectedAssignments.length} assignments`);
-                
-                // Reset selection
-                selectAll.checked = false;
-                selectedAssignments.forEach(checkbox => {
-                    checkbox.checked = false;
+                    if (selectedAction === 'delete') {
+                        if (!confirm(`Are you sure you want to delete ${selectedAssignments.length} assignment(s)? This will also delete all submissions.`)) {
+                            return;
+                        }
+                    }
+
+                    console.log(`Applying ${selectedAction} to ${selectedAssignments.length} assignments`);
+                    
+                    selectAll.checked = false;
+                    selectedAssignments.forEach(checkbox => {
+                        checkbox.checked = false;
+                    });
                 });
-            });
+            }
 
             // Course filter functionality
             const courseCheckboxes = document.querySelectorAll('.course-checkbox');
-            courseCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    filterAssignments();
+            if (courseCheckboxes.length > 0) {
+                courseCheckboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', function() {
+                        filterAssignments();
+                    });
                 });
-            });
+            }
 
             function filterAssignments() {
                 const selectedCourses = Array.from(courseCheckboxes)

@@ -459,12 +459,65 @@ async function showGradesPage(req, res) {
       [teacherId]
     );
 
+    // Calculate average grade on server side
+    function calculateAverageGrade(grades) {
+      if (!grades || grades.length === 0) return 'N/A';
+      const graded = grades.filter(g => g.grade !== null);
+      if (graded.length === 0) return 'N/A';
+      const total = graded.reduce((sum, g) => sum + parseInt(g.grade), 0);
+      return Math.round(total / graded.length) + '%';
+    }
+
+    // Calculate grade distribution
+    function calculateGradeDistribution(grades) {
+      const gradedSubmissions = grades.filter(g => g.grade !== null);
+      const totalGraded = gradedSubmissions.length;
+      
+      if (totalGraded === 0) {
+        return {
+          A: 0, B: 0, C: 0, D: 0, F: 0,
+          percentages: { A: 0, B: 0, C: 0, D: 0, F: 0 }
+        };
+      }
+
+      const gradeRanges = {
+        A: gradedSubmissions.filter(g => g.grade >= 90).length,
+        B: gradedSubmissions.filter(g => g.grade >= 80 && g.grade < 90).length,
+        C: gradedSubmissions.filter(g => g.grade >= 70 && g.grade < 80).length,
+        D: gradedSubmissions.filter(g => g.grade >= 60 && g.grade < 70).length,
+        F: gradedSubmissions.filter(g => g.grade < 60).length
+      };
+
+      const percentages = {};
+      Object.keys(gradeRanges).forEach(grade => {
+        percentages[grade] = Math.round((gradeRanges[grade] / totalGraded) * 100);
+      });
+
+      return { ...gradeRanges, percentages };
+    }
+
+    // Calculate highest and lowest grades
+    function calculateMinMaxGrades(grades) {
+      const gradedGrades = grades.filter(g => g.grade !== null).map(g => g.grade);
+      return {
+        highest: gradedGrades.length > 0 ? Math.max(...gradedGrades) : 'N/A',
+        lowest: gradedGrades.length > 0 ? Math.min(...gradedGrades) : 'N/A'
+      };
+    }
+
+    const averageGrade = calculateAverageGrade(grades);
+    const gradeDistribution = calculateGradeDistribution(grades);
+    const minMaxGrades = calculateMinMaxGrades(grades);
+
     res.render('teacher/grades', {
       title: 'Gradebook',
       activePage: 'grades',
       menu: getMenu(),
       user: { name: req.session.userName },
-      grades
+      grades,
+      averageGrade,
+      gradeDistribution,
+      minMaxGrades
     });
   } catch (error) {
     console.error('Grades error:', error);
@@ -529,6 +582,84 @@ async function showReportsPage(req, res) {
 
     const [reports] = await pool.query(reportsQuery, queryParams);
 
+    // Get additional stats for the reports page
+    const [courseCount] = await pool.query('SELECT COUNT(*) AS count FROM courses WHERE teacher_id = ?', [teacherId]);
+    const [assignmentCount] = await pool.query('SELECT COUNT(*) AS count FROM assignments WHERE teacher_id = ?', [teacherId]);
+    const [ungradedCount] = await pool.query(
+      `SELECT COUNT(*) AS count FROM submissions s 
+       JOIN assignments a ON s.assignment_id = a.id 
+       WHERE a.teacher_id = ? AND s.grade IS NULL`,
+      [teacherId]
+    );
+
+    // Get grade statistics
+    const [gradeStats] = await pool.query(
+      `SELECT s.grade
+       FROM submissions s
+       JOIN assignments a ON s.assignment_id = a.id
+       WHERE a.teacher_id = ? AND s.grade IS NOT NULL`,
+      [teacherId]
+    );
+
+    // Calculate average grade
+    let averageGrade = 'N/A';
+    if (gradeStats.length > 0) {
+      const total = gradeStats.reduce((sum, stat) => sum + parseInt(stat.grade), 0);
+      averageGrade = Math.round(total / gradeStats.length) + '%';
+    }
+
+    // Calculate grade distribution
+    function calculateGradeDistribution(grades) {
+      const gradedSubmissions = grades.filter(g => g.grade !== null);
+      const totalGraded = gradedSubmissions.length;
+      
+      if (totalGraded === 0) {
+        return {
+          A: 0, B: 0, C: 0, D: 0, F: 0,
+          percentages: { A: 0, B: 0, C: 0, D: 0, F: 0 }
+        };
+      }
+
+      const gradeRanges = {
+        A: gradedSubmissions.filter(g => g.grade >= 90).length,
+        B: gradedSubmissions.filter(g => g.grade >= 80 && g.grade < 90).length,
+        C: gradedSubmissions.filter(g => g.grade >= 70 && g.grade < 80).length,
+        D: gradedSubmissions.filter(g => g.grade >= 60 && g.grade < 70).length,
+        F: gradedSubmissions.filter(g => g.grade < 60).length
+      };
+
+      const percentages = {};
+      Object.keys(gradeRanges).forEach(grade => {
+        percentages[grade] = Math.round((gradeRanges[grade] / totalGraded) * 100);
+      });
+
+      return { ...gradeRanges, percentages };
+    }
+
+    // Calculate highest and lowest grades
+    function calculateMinMaxGrades(grades) {
+      const gradedGrades = grades.filter(g => g.grade !== null).map(g => g.grade);
+      return {
+        highest: gradedGrades.length > 0 ? Math.max(...gradedGrades) + '%' : 'N/A',
+        lowest: gradedGrades.length > 0 ? Math.min(...gradedGrades) + '%' : 'N/A'
+      };
+    }
+
+    const gradeDistribution = calculateGradeDistribution(gradeStats);
+    const minMaxGrades = calculateMinMaxGrades(gradeStats);
+
+    // Get submission stats
+    const [submissionStats] = await pool.query(
+      `SELECT 
+        COUNT(*) as total,
+        SUM(CASE WHEN grade IS NULL THEN 1 ELSE 0 END) as ungraded,
+        SUM(CASE WHEN grade IS NOT NULL THEN 1 ELSE 0 END) as graded
+       FROM submissions s
+       JOIN assignments a ON s.assignment_id = a.id
+       WHERE a.teacher_id = ?`,
+      [teacherId]
+    );
+
     res.render('teacher/reports', {
       title: 'Reports',
       activePage: 'reports',
@@ -536,14 +667,20 @@ async function showReportsPage(req, res) {
       user: { name: req.session.userName },
       courses,
       reports,
-      selectedCourse
+      selectedCourse,
+      averageGrade,
+      gradeDistribution,
+      minMaxGrades,
+      assignmentStats: {
+        total: assignmentCount[0].count
+      },
+      submissionStats: submissionStats[0] || { total: 0, ungraded: 0, graded: 0 }
     });
   } catch (error) {
     console.error('Reports error:', error);
     res.status(500).render('error', { title: 'Error', message: 'Unable to load reports.' });
   }
 }
-
 // ------------------------------
 // Dashboard Helper
 // ------------------------------

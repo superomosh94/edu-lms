@@ -142,15 +142,15 @@
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                     <h1 class="h2">Teacher Dashboard</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
-                        <a href="/courses/create" class="btn btn-sm btn-primary">
+                        <a href="/teacher/courses/create" class="btn btn-sm btn-primary">
                             <i class="fas fa-plus me-1"></i>New Course
                         </a>
                     </div>
                 </div>
 
                 <div class="alert alert-info">
-                    <h4>Welcome, Professor <%= user?.firstName %>!</h4>
-                    <p>You have <strong><%= stats?.pendingGrading || 0 %> assignments</strong> waiting to be graded.</p>
+                    <h4>Welcome, <%= user?.name || 'Teacher' %>!</h4>
+                    <p>You have <strong><%= stats?.pendingGrading || 0 %> submissions</strong> waiting to be graded.</p>
                 </div>
 
                 <!-- Stats -->
@@ -161,7 +161,7 @@
                                 <div class="row no-gutters align-items-center">
                                     <div class="col">
                                         <div class="text-xs font-weight-bold text-primary mb-1">My Courses</div>
-                                        <div class="h5 mb-0 font-weight-bold"><%= stats?.myCourses || 0 %></div>
+                                        <div class="h5 mb-0 font-weight-bold"><%= stats?.courses || 0 %></div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-book fa-2x text-gray-300"></i>
@@ -176,11 +176,11 @@
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col">
-                                        <div class="text-xs font-weight-bold text-success mb-1">Total Students</div>
-                                        <div class="h5 mb-0 font-weight-bold"><%= stats?.totalStudents || 0 %></div>
+                                        <div class="text-xs font-weight-bold text-success mb-1">Total Assignments</div>
+                                        <div class="h5 mb-0 font-weight-bold"><%= stats?.assignments || 0 %></div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                                        <i class="fas fa-tasks fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -196,7 +196,7 @@
                                         <div class="h5 mb-0 font-weight-bold"><%= stats?.pendingGrading || 0 %></div>
                                     </div>
                                     <div class="col-auto">
-                                        <i class="fas fa-tasks fa-2x text-gray-300"></i>
+                                        <i class="fas fa-clipboard-check fa-2x text-gray-300"></i>
                                     </div>
                                 </div>
                             </div>
@@ -208,11 +208,133 @@
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col">
-                                        <div class="text-xs font-weight-bold text-warning mb-1">Upcoming Classes</div>
-                                        <div class="h5 mb-0 font-weight-bold"><%= stats?.upcomingClasses || 0 %></div>
+                                        <div class="text-xs font-weight-bold text-warning mb-1">Recent Assignments</div>
+                                        <div class="h5 mb-0 font-weight-bold"><%= assignments ? assignments.length : 0 %></div>
                                     </div>
                                     <div class="col-auto">
                                         <i class="fas fa-clock fa-2x text-gray-300"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Courses & Assignments -->
+                <div class="row mt-4">
+                    <!-- Recent Courses -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-book me-2"></i>My Courses
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <% if (courses && courses.length > 0) { %>
+                                    <div class="list-group list-group-flush">
+                                        <% courses.forEach(function(course) { %>
+                                            <a href="/teacher/courses/<%= course.id %>" class="list-group-item list-group-item-action">
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <h6 class="mb-1"><%= course.title %></h6>
+                                                    <small class="text-muted"><%= new Date(course.created_at).toLocaleDateString() %></small>
+                                                </div>
+                                                <p class="mb-1 text-muted"><%= course.description ? course.description.substring(0, 100) + '...' : 'No description' %></p>
+                                                <small class="text-muted">Status: <span class="badge bg-<%= course.status === 'active' ? 'success' : 'secondary' %>"><%= course.status %></span></small>
+                                            </a>
+                                        <% }); %>
+                                    </div>
+                                <% } else { %>
+                                    <div class="text-center py-4">
+                                        <i class="fas fa-book fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">No courses yet</p>
+                                        <a href="/teacher/courses/create" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus me-1"></i>Create Your First Course
+                                        </a>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Assignments -->
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-tasks me-2"></i>Recent Assignments
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <% if (assignments && assignments.length > 0) { %>
+                                    <div class="list-group list-group-flush">
+                                        <% assignments.forEach(function(assignment) { %>
+                                            <a href="/teacher/assignments/<%= assignment.id %>" class="list-group-item list-group-item-action">
+                                                <div class="d-flex w-100 justify-content-between">
+                                                    <h6 class="mb-1"><%= assignment.title %></h6>
+                                                    <% if (assignment.due_date) { %>
+                                                        <small class="text-<%= new Date(assignment.due_date) < new Date() ? 'danger' : 'muted' %>">
+                                                            Due: <%= new Date(assignment.due_date).toLocaleDateString() %>
+                                                        </small>
+                                                    <% } %>
+                                                </div>
+                                                <p class="mb-1 text-muted"><%= assignment.description ? assignment.description.substring(0, 100) + '...' : 'No description' %></p>
+                                                <small class="text-muted">Created: <%= new Date(assignment.created_at).toLocaleDateString() %></small>
+                                            </a>
+                                        <% }); %>
+                                    </div>
+                                <% } else { %>
+                                    <div class="text-center py-4">
+                                        <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                                        <p class="text-muted">No assignments yet</p>
+                                        <a href="/teacher/assignments/create" class="btn btn-primary btn-sm">
+                                            <i class="fas fa-plus me-1"></i>Create Your First Assignment
+                                        </a>
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <i class="fas fa-bolt me-2"></i>Quick Actions
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-3 col-6">
+                                        <a href="/teacher/courses" class="btn btn-outline-primary w-100 h-100 py-3">
+                                            <i class="fas fa-book fa-2x mb-2"></i>
+                                            <br>
+                                            Manage Courses
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <a href="/teacher/assignments" class="btn btn-outline-success w-100 h-100 py-3">
+                                            <i class="fas fa-tasks fa-2x mb-2"></i>
+                                            <br>
+                                            View Assignments
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <a href="/teacher/submissions" class="btn btn-outline-info w-100 h-100 py-3">
+                                            <i class="fas fa-file-alt fa-2x mb-2"></i>
+                                            <br>
+                                            Grade Submissions
+                                        </a>
+                                    </div>
+                                    <div class="col-md-3 col-6">
+                                        <a href="/teacher/grades" class="btn btn-outline-warning w-100 h-100 py-3">
+                                            <i class="fas fa-clipboard-list fa-2x mb-2"></i>
+                                            <br>
+                                            Gradebook
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -237,6 +359,11 @@
                 sidebar.classList.remove('open');
             }
         });
+
+        // Auto-refresh dashboard every 30 seconds
+        setInterval(() => {
+            window.location.reload();
+        }, 30000);
     </script>
 </body>
 </html>

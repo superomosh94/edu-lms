@@ -1,145 +1,602 @@
-﻿<%- include('../partials/header', { title: 'Submissions' }) %>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Teacher Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
 
-<%- include('../partials/sidebar', { activePage: 'submissions' }) %>
-<div class="main-container" style="margin-left: 260px; min-height: 100vh;">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <main class="content">
-    <header class="page-header">
-      <h1>Student Submissions</h1>
-      <div class="user-info">
-        <i class="fas fa-user-tie"></i>
-        <span>Welcome, <%= user && user.name ? user.name : 'Teacher' %></span>
-      </div>
-    </header>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f1f5f9;
+            color: #334155;
+            line-height: 1.6;
+        }
 
-    <% if (submissions && submissions.length > 0) { %>
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Student</th>
-            <th>Assignment</th>
-            <th>File</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% submissions.forEach((submission, index) => { %>
-            <tr>
-              <td><%= index + 1 %></td>
-              <td><%= submission.student_name %></td>
-              <td><%= submission.assignment_title %></td>
-              <td>
-                <% if (submission.file_path) { %>
-                  <a href="<%= submission.file_path %>" target="_blank">View File</a>
+        .submissions-page {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--dark) 100%);
+            width: 280px;
+            min-height: 100vh;
+            padding: 0;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            position: fixed;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 0;
+            background: #f8f9fa;
+        }
+
+        .container-fluid {
+            padding: 2rem;
+        }
+
+        /* Header */
+        .page-header h1 {
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .page-header p {
+            color: var(--secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Submission Cards */
+        .submission-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .submission-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+        }
+
+        .submission-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .submission-body {
+            padding: 1.25rem;
+        }
+
+        .submission-footer {
+            padding: 1rem 1.25rem;
+            background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grade-form {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .grade-input {
+            max-width: 100px;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .badge-graded { 
+            background: #d1fae5; 
+            color: #065f46; 
+        }
+        .badge-pending { 
+            background: #fef3c7; 
+            color: #d97706; 
+        }
+        .badge-late { 
+            background: #fee2e2; 
+            color: #dc2626; 
+        }
+
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: white;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+
+        .empty-icon {
+            opacity: 0.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .empty-state h3 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state p {
+            color: var(--secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: #f1f5f9;
+            color: var(--dark);
+            border: 1px solid #e2e8f0;
+        }
+
+        .action-btn.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .action-btn.warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--hover-shadow);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container-fluid {
+                padding: 1.5rem;
+            }
+
+            .submission-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .submission-footer {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .grade-form {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+
+            .grade-input {
+                max-width: 100%;
+                width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                justify-content: center;
+            }
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 101;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--card-shadow);
+        }
+
+        @media (max-width: 992px) {
+            .mobile-menu-btn {
+                display: flex;
+            }
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary);
+            border-color: var(--primary);
+            font-weight: 500;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="submissions-page">
+        <!-- Mobile Menu Button -->
+        <button class="mobile-menu-btn" id="mobileMenuButton">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <%- include('../partials/sidebar', { menu: menu, activePage: 'submissions' }) %>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <%- include('../partials/header') %>
+
+            <div class="container-fluid py-4">
+                <!-- Flash Messages -->
+                <%- include('../partials/flash-messages') %>
+
+                <!-- Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4 page-header">
+                    <div>
+                        <h1 class="h2 mb-1"><%= title %></h1>
+                        <p class="text-muted mb-0">Review and grade student submissions.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="/teacher/assignments" class="btn btn-outline-primary">
+                            <i class="fas fa-tasks me-2"></i>View Assignments
+                        </a>
+                        <a href="/teacher/grades" class="btn btn-primary">
+                            <i class="fas fa-clipboard-check me-2"></i>Gradebook
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Action Buttons -->
+                <div class="action-buttons">
+                    <a href="/teacher/assignments" class="action-btn primary">
+                        <i class="fas fa-tasks"></i>
+                        View Assignments
+                    </a>
+                    <a href="/teacher/grades" class="action-btn success">
+                        <i class="fas fa-clipboard-check"></i>
+                        Gradebook
+                    </a>
+                    <a href="/teacher/reports" class="action-btn secondary">
+                        <i class="fas fa-chart-line"></i>
+                        View Reports
+                    </a>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number"><%= submissions ? submissions.length : 0 %></div>
+                        <div class="stat-label">Total Submissions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">
+                            <%= submissions ? submissions.filter(s => !s.grade).length : 0 %>
+                        </div>
+                        <div class="stat-label">Pending Grading</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">
+                            <%= submissions ? submissions.filter(s => s.grade).length : 0 %>
+                        </div>
+                        <div class="stat-label">Graded</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">78%</div>
+                        <div class="stat-label">Completion Rate</div>
+                    </div>
+                </div>
+
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Assignment</label>
+                            <select class="form-select">
+                                <option value="">All Assignments</option>
+                                <option value="active">Active Assignments</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Filter by Status</label>
+                            <select class="form-select">
+                                <option value="">All Status</option>
+                                <option value="graded">Graded</option>
+                                <option value="pending">Pending</option>
+                                <option value="late">Late</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Search Students</label>
+                            <input type="text" class="form-control" placeholder="Enter student name...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submissions List -->
+                <% if (!submissions || submissions.length === 0) { %>
+                    <div class="empty-state text-center py-5">
+                        <div class="empty-icon mb-3">
+                            <i class="fas fa-file-alt fa-4x text-muted"></i>
+                        </div>
+                        <h3 class="text-muted mb-3">No Submissions Yet</h3>
+                        <p class="text-muted">Student submissions will appear here once they submit their assignments.</p>
+                    </div>
                 <% } else { %>
-                  N/A
+                    <% submissions.forEach(function(submission) { %>
+                        <div class="submission-card">
+                            <div class="submission-header">
+                                <div>
+                                    <h6 class="mb-1"><%= submission.student_name %></h6>
+                                    <div class="text-muted">
+                                        <small><%= submission.assignment_title %></small> • 
+                                        <small><%= submission.course_name %></small>
+                                    </div>
+                                </div>
+                                <div class="d-flex align-items-center gap-3">
+                                    <span class="status-badge <%= submission.grade ? 'badge-graded' : 'badge-pending' %>">
+                                        <%= submission.grade ? 'Graded' : 'Pending' %>
+                                    </span>
+                                    <small class="text-muted">
+                                        <%= new Date(submission.submitted_at).toLocaleDateString() %>
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="submission-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-8">
+                                        <p class="mb-2">
+                                            <strong>Submission Date:</strong> 
+                                            <%= new Date(submission.submitted_at).toLocaleString() %>
+                                        </p>
+                                        <% if (submission.grade) { %>
+                                            <p class="mb-0">
+                                                <strong>Grade:</strong> 
+                                                <span class="text-success fw-bold"><%= submission.grade %></span>
+                                            </p>
+                                        <% } else { %>
+                                            <p class="mb-0 text-warning">
+                                                <strong>Status:</strong> Awaiting grading
+                                            </p>
+                                        <% } %>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <form action="/teacher/submissions/<%= submission.id %>/grade" method="POST" class="grade-form">
+                                            <div class="input-group">
+                                                <input type="number" class="form-control grade-input" 
+                                                       name="grade" placeholder="Grade" 
+                                                       value="<%= submission.grade || '' %>" min="0" max="100">
+                                                <span class="input-group-text">/ 100</span>
+                                            </div>
+                                            <div class="d-flex gap-2 mt-2">
+                                                <button type="submit" class="btn btn-primary btn-sm">
+                                                    <%= submission.grade ? 'Update' : 'Grade' %>
+                                                </button>
+                                                <a href="/teacher/submissions/<%= submission.id %>" class="btn btn-outline-secondary btn-sm">
+                                                    View Details
+                                                </a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="submission-footer">
+                                <small class="text-muted">
+                                    <i class="fas fa-clock me-1"></i>
+                                    Submitted <%= new Date(submission.submitted_at).toLocaleDateString() %>
+                                </small>
+                                <div class="d-flex gap-2">
+                                    <a href="/teacher/submissions/<%= submission.id %>" class="btn btn-outline-primary btn-sm">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                    <a href="/teacher/assignments/view/<%= submission.assignment_id %>" class="btn btn-outline-secondary btn-sm">
+                                        <i class="fas fa-tasks me-1"></i>Assignment
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
                 <% } %>
-              </td>
-              <td>
-                <%= submission.date_submitted
-                      ? new Date(submission.date_submitted).toLocaleDateString()
-                      : '—' %>
-              </td>
-              <td>
-                <span class="status <%= submission.status === 'Submitted' ? 'submitted' : 'pending' %>">
-                  <%= submission.status %>
-                </span>
-              </td>
-              <td class="actions">
-                <a href="/teacher/submissions/<%= submission.id %>">View</a>
-                <a href="/teacher/submissions/grade/<%= submission.id %>">Grade</a>
-              </td>
-            </tr>
-          <% }) %>
-        </tbody>
-      </table>
-    <% } else { %>
-      <div class="no-data">
-        <i class="fas fa-folder-open"></i>
-        <p>No submissions found.</p>
-      </div>
-    <% } %>
-  </main>
-</div>
+            </div>
+        </main>
+    </div>
 
-<%- include('../partials/footer') %>
+    <%- include('../partials/footer-scripts') %>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile menu toggle
+            const mobileMenuButton = document.getElementById('mobileMenuButton');
+            const sidebar = document.querySelector('.sidebar');
+            
+            if (mobileMenuButton && sidebar) {
+                mobileMenuButton.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                });
+            }
 
-<style>
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
+            // Grade form submission
+            const gradeForms = document.querySelectorAll('.grade-form');
+            gradeForms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const gradeInput = this.querySelector('input[name="grade"]');
+                    if (gradeInput && gradeInput.value) {
+                        const grade = parseInt(gradeInput.value);
+                        if (grade < 0 || grade > 100) {
+                            e.preventDefault();
+                            alert('Please enter a grade between 0 and 100.');
+                        }
+                    }
+                });
+            });
 
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    background: #fff;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-
-  .data-table th,
-  .data-table td {
-    padding: 12px 15px;
-    border-bottom: 1px solid #e5e7eb;
-    text-align: left;
-  }
-
-  .data-table th {
-    background: #2563eb;
-    color: white;
-    font-size: 14px;
-    text-transform: uppercase;
-  }
-
-  tr:hover {
-    background: #f1f5f9;
-  }
-
-  .status {
-    padding: 4px 10px;
-    border-radius: 4px;
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .status.submitted {
-    background: #dcfce7;
-    color: #15803d;
-  }
-
-  .status.pending {
-    background: #fee2e2;
-    color: #b91c1c;
-  }
-
-  .actions a {
-    text-decoration: none;
-    color: #2563eb;
-    margin-right: 10px;
-  }
-
-  .actions a:hover {
-    text-decoration: underline;
-  }
-
-  .no-data {
-    text-align: center;
-    padding: 40px;
-    background: #fff;
-    border-radius: 6px;
-    color: #64748b;
-    font-size: 15px;
-  }
-
-  .no-data i {
-    font-size: 40px;
-    margin-bottom: 10px;
-  }
-</style>
+            // Filter functionality
+            const filterSelects = document.querySelectorAll('.filter-section select');
+            filterSelects.forEach(select => {
+                select.addEventListener('change', function() {
+                    // Implement filter logic here
+                    console.log('Filter changed:', this.value);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

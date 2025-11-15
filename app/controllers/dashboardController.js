@@ -49,19 +49,38 @@ exports.getDashboard = async (req, res) => {
         pageTitle = 'Dashboard';
     }
 
-    res.render(view, {
-      title: pageTitle,
-      role: roleName,
-      user: {
-        id: userId,
-        name: userName,
+    // For teacher dashboard, pass assignments separately
+    if (roleName === 'Teacher') {
+      res.render(view, {
+        title: pageTitle,
         role: roleName,
-        avatar: userAvatar
-      },
-      activePage: 'dashboard',
-      data: dashboardData,
-      stats: dashboardData.stats || {}
-    });
+        user: {
+          id: userId,
+          name: userName,
+          role: roleName,
+          avatar: userAvatar
+        },
+        activePage: 'dashboard',
+        data: dashboardData,
+        stats: dashboardData.stats || {},
+        courses: dashboardData.subjects || [], // Map subjects to courses for the template
+        assignments: dashboardData.assignments || [] // Add this line - pass assignments to template
+      });
+    } else {
+      res.render(view, {
+        title: pageTitle,
+        role: roleName,
+        user: {
+          id: userId,
+          name: userName,
+          role: roleName,
+          avatar: userAvatar
+        },
+        activePage: 'dashboard',
+        data: dashboardData,
+        stats: dashboardData.stats || {}
+      });
+    }
   } catch (error) {
     console.error('Dashboard error:', error);
     res.status(500).render('error', {
@@ -103,7 +122,8 @@ exports.showTeacherDashboard = async (req, res) => {
       stats: data.stats || {},
       subjects: data.subjects || [],
       assignments: data.assignments || [],
-      pendingGrading: data.stats.pendingGrading || 0
+      pendingGrading: data.stats.pendingGrading || 0,
+      courses: data.subjects || [] // Add courses for template compatibility
     });
   } catch (error) {
     console.error('Teacher dashboard error:', error);
@@ -242,7 +262,7 @@ async function fetchTeacherDashboard(userId) {
   `, [userId]);
 
   const [assignments] = await pool.query(`
-    SELECT id, title, due_date
+    SELECT id, title, due_date, created_at, description
     FROM assignments
     WHERE teacher_id = ?
     ORDER BY due_date DESC

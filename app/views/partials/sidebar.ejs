@@ -2,10 +2,25 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
 <style>
+:root {
+  --gold-primary: #D4AF37;
+  --gold-secondary: #FFD700;
+  --gold-dark: #B8860B;
+  --gold-light: #FFF8DC;
+  --navy-dark: #252838;
+  --navy-medium: #1A1F3D;
+  --navy-light: #2A2F4D;
+  --emerald: #10B981;
+  --sapphire: #3B82F6;
+  --ruby: #EF4444;
+  --ivory: #FDF6E3;
+  --charcoal: #2D3748;
+}
+
 body {
   margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f4f6f9;
+  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  background: #f8f9fa;
 }
 
 .layout {
@@ -16,66 +31,91 @@ body {
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 240px;
-  background: #0d1117;
-  color: #fff;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 20px;
+  width: 280px;
+  background: linear-gradient(180deg, var(--navy-dark) 0%, var(--navy-medium) 100%);
+  color: var(--ivory);
+  border-right: 1px solid rgba(212, 175, 55, 0.2);
+  padding: 25px 20px;
   height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
   overflow-y: auto;
-  transition: transform 0.3s ease-in-out, background 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Hamburger */
 .hamburger {
   display: none;
-  font-size: 1.5rem;
-  color: white;
+  font-size: 1.4rem;
+  color: var(--navy-dark);
   cursor: pointer;
-  padding: 12px;
-  background: linear-gradient(45deg, #1f6feb, #10b981);
-  border-radius: 8px;
-  margin: 10px;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
+  border-radius: 12px;
+  margin: 15px;
   position: fixed;
-  top: 10px;
-  left: 10px;
+  top: 15px;
+  left: 15px;
   z-index: 1100;
-  transition: transform 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+  border: none;
 }
 .hamburger:hover {
   transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
 }
 
 /* Main content */
 .main-content {
-  margin-left: 250px;
-  padding: 20px;
+  margin-left: 280px;
+  padding: 25px;
   flex-grow: 1;
+  transition: margin-left 0.4s ease;
 }
 
 /* Brand */
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  font-size: 1.3rem;
-  color: white;
+  gap: 12px;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--navy-dark);
   text-decoration: none;
-  margin-bottom: 18px;
-  background: linear-gradient(45deg, #1f6feb, #10b981);
-  padding: 10px 14px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  transition: background 0.3s ease, transform 0.2s ease;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
+  padding: 16px 20px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.brand::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
+}
+.brand:hover::before {
+  left: 100%;
 }
 .brand:hover {
-  background: linear-gradient(45deg, #10b981, #1f6feb);
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.6);
+}
+
+.brand i {
+  font-size: 1.8rem;
+  color: var(--navy-dark);
 }
 
 /* Navigation */
@@ -90,41 +130,56 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: rgba(255, 255, 255, 0.85);
-  padding: 12px 16px;
-  border-radius: 6px;
+  color: rgba(253, 246, 227, 0.85);
+  padding: 14px 18px;
+  border-radius: 12px;
   margin-bottom: 8px;
   text-decoration: none;
   font-size: 0.95rem;
-  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  font-weight: 500;
+  transition: all 0.3s ease;
   position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
 }
 .nav-link:hover {
-  background: rgba(31, 111, 235, 0.2);
-  color: #fff;
-  transform: translateX(4px);
+  background: linear-gradient(135deg, rgba(228, 210, 150, 0.15) 0%, rgba(255, 215, 0, 0.1) 100%);
+  color: var(--gold-secondary);
+  transform: translateX(8px);
+  border-color: rgba(212, 175, 55, 0.3);
 }
 .nav-link.active {
-  background: linear-gradient(90deg, #1f6feb, #10b981);
-  color: #fff;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+  /*i want a bright color that is visible on the background*/
+  color: var(--navy-dark);
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(233, 226, 202, 0.4);
+  transform: translateX(8px);
+ 
 }
 
-/* Hover Glow Effect */
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 0;
-  background: rgba(31, 111, 235, 0.3);
-  border-radius: 6px;
-  transition: width 0.3s ease;
+.nav-link i {
+  font-size: 1.1rem;
+  width: 20px;
+  text-align: center;
+  transition: transform 0.3s ease;
 }
-.nav-link:hover::after {
-  width: 100%;
+
+.nav-link:hover i {
+  transform: scale(1.2);
+}
+
+.nav-link.active i {
+  color: var(--navy-dark);
+  transform: scale(1.1);
+}
+
+/* Divider */
+hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent);
+  margin: 20px 0;
 }
 
 /* User Info */
@@ -132,132 +187,203 @@ body {
   margin-top: auto;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background 0.3s ease;
+  gap: 15px;
+  padding: 20px 15px;
+  border-top: 1px solid rgba(212, 175, 55, 0.2);
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  background: rgba(10, 15, 45, 0.5);
 }
 .user-wrap:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
-}
-
-
-.nav-link.active {
-  background: linear-gradient(90deg, #1f6feb, #10b981);
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(31, 111, 235, 0.4);
-  border-left: 4px solid #10b981;
-  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
-
-.nav-link.active i {
-  color: #fff;
-}
-
-.nav-link.active span {
-  font-weight: bold;
+  background: rgba(212, 175, 55, 0.1);
+  transform: translateY(-2px);
 }
 
 .avatar {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background: #1f6feb;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
+  background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
+  color: var(--navy-dark);
+  font-weight: 700;
+  font-size: 1.1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.15);
+  border: 3px solid rgba(212, 175, 55, 0.3);
   flex-shrink: 0;
   text-decoration: none;
-  transition: transform 0.2s ease;
-  /* border-radius: 50%; */
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
 }
 .avatar:hover {
   transform: scale(1.1);
+  border-color: var(--gold-secondary);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
 }
 
 .online-dot {
   position: absolute;
-  right: 2px;
-  bottom: 2px;
-  width: 10px;
-  height: 10px;
-  background: #28a745;
-  border: 2px solid #0d1117;
+  right: 3px;
+  bottom: 3px;
+  width: 12px;
+  height: 12px;
+  background: var(--emerald);
+  border: 2px solid var(--navy-dark);
   border-radius: 50%;
+  box-shadow: 0 0 10px var(--emerald);
 }
 
 .user-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--gold-light);
   text-decoration: none;
   padding-bottom: 2px;
-  transition: color 0.2s ease;
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-secondary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .user-name:hover {
-  color: #1f6feb;
-  text-decoration: underline;
+  background: linear-gradient(135deg, var(--gold-secondary) 0%, var(--gold-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
 }
 
 .user-role {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.8rem;
+  color: rgba(212, 175, 55, 0.8);
   margin-top: -2px;
+  font-weight: 500;
+}
+
+/* Scrollbar Styling */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(212, 175, 55, 0.1);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, var(--gold-primary) 0%, var(--gold-dark) 100%);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, var(--gold-secondary) 0%, var(--gold-primary) 100%);
 }
 
 /* Responsive */
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 260px;
+  }
+  .main-content {
+    margin-left: 260px;
+  }
+}
+
 @media (max-width: 768px) {
   .hamburger {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .sidebar {
     transform: translateX(-100%);
+    width: 300px;
   }
   .sidebar.open {
     transform: translateX(0);
+    box-shadow: 8px 0 30px rgba(0, 0, 0, 0.4);
   }
   .main-content {
     margin-left: 0;
     width: 100%;
+    padding: 20px 15px;
   }
 }
+
+@media (max-width: 480px) {
+  .sidebar {
+    width: 280px;
+  }
+  .brand {
+    font-size: 1.3rem;
+    padding: 14px 16px;
+  }
+  .nav-link {
+    padding: 12px 16px;
+  }
+}
+
+/* Animation for sidebar items */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.nav li {
+  animation: slideIn 0.4s ease forwards;
+}
+
+.nav li:nth-child(1) { animation-delay: 0.1s; }
+.nav li:nth-child(2) { animation-delay: 0.2s; }
+.nav li:nth-child(3) { animation-delay: 0.3s; }
+.nav li:nth-child(4) { animation-delay: 0.4s; }
+.nav li:nth-child(5) { animation-delay: 0.5s; }
+.nav li:nth-child(6) { animation-delay: 0.6s; }
+.nav li:nth-child(7) { animation-delay: 0.7s; }
 </style>
 
 <!-- Hamburger -->
-<div class="hamburger" onclick="toggleSidebar()">
+<button class="hamburger" onclick="toggleSidebar()" aria-label="Toggle navigation">
   <i class="fas fa-bars"></i>
-</div>
+</button>
 
 <div class="layout">
   <div class="sidebar" id="sidebar">
     <a href="/" class="brand">
-      <i class="fas fa-graduation-cap"></i> EDU LMS
+      <i class="fas fa-graduation-cap"></i> 
+      <span>EDU LMS</span>
     </a>
+    
     <hr>
+    
     <ul class="nav">
       <% if (menuItems && menuItems.length) { %>
-        <% menuItems.forEach(item => { %>
+        <% menuItems.forEach((item, index) => { %>
           <li>
-            <a href="<%= item.url %>" class="nav-link <%= activePage === item.page ? 'active' : '' %>">
-              <i class="fas fa-<%= item.icon %>"></i> <span><%= item.label %></span>
+            <a href="<%= item.url %>" class="nav-link <%= activePage === item.page ? 'active' : '' %>" style="color: rgb(162, 255, 0);">
+              <i class="<%= item.icon.startsWith('fa-') ? item.icon : 'fas fa-' + item.icon %>"></i> 
+              <span><%= item.label %></span>
             </a>
           </li>
         <% }) %>
       <% } %>
     </ul>
+    
     <hr>
+    
     <div class="user-wrap">
-      <a href="/settings/profile" class="avatar" style=" border-radius: 50%;">
+      <a href="/settings/profile" class="avatar">
         <% if (user && user.name) {
             let parts = user.name.split(' ');
-            let initials = parts.map(p => p[0]).join('').toUpperCase();
+            let initials = parts.map(p => p[0]).join('').toUpperCase().substring(0, 2);
         %>
           <div class="avatar-initials"><%= initials %></div>
         <% } else { %>
@@ -265,7 +391,7 @@ body {
         <% } %>
         <span class="online-dot"></span>
       </a>
-      <div style="display:flex;flex-direction:column; padding-left: 8px;">
+      <div style="display:flex;flex-direction:column;">
         <a href="/settings/profile" class="user-name"><%= user?.name || 'User' %></a>
         <span class="user-role"><%= user?.roleName || user?.role || 'Member' %></span>
       </div>
@@ -275,6 +401,41 @@ body {
 
 <script>
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar = document.getElementById('sidebar');
+  sidebar.classList.toggle('open');
+  
+  // Update hamburger icon
+  const hamburger = document.querySelector('.hamburger i');
+  if (sidebar.classList.contains('open')) {
+    hamburger.className = 'fas fa-times';
+  } else {
+    hamburger.className = 'fas fa-bars';
+  }
 }
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', function(event) {
+  const sidebar = document.getElementById('sidebar');
+  const hamburger = document.querySelector('.hamburger');
+  
+  if (window.innerWidth <= 768 && 
+      sidebar.classList.contains('open') && 
+      !sidebar.contains(event.target) && 
+      !hamburger.contains(event.target)) {
+    toggleSidebar();
+  }
+});
+
+// Add smooth loading animation
+document.addEventListener('DOMContentLoaded', function() {
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.opacity = '0';
+  sidebar.style.transform = 'translateX(-20px)';
+  
+  setTimeout(() => {
+    sidebar.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+    sidebar.style.opacity = '1';
+    sidebar.style.transform = 'translateX(0)';
+  }, 100);
+});
 </script>
