@@ -1,24 +1,139 @@
-<%- include('partials/header') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help & Support - EDU LMS</title>
+    <%- include('./partials/header') %>
+    <style>
+        .help-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .help-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .faq-section {
+            margin-bottom: 3rem;
+        }
+        .faq-item {
+            background: white;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .faq-question {
+            padding: 1.5rem;
+            background: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+        .faq-answer {
+            padding: 1.5rem;
+            border-top: 1px solid #eee;
+            display: none;
+        }
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+        .contact-support {
+            background: #667eea;
+            color: white;
+            padding: 3rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .btn-support {
+            background: white;
+            color: #667eea;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/navigation') %>
+    
+    <div class="help-container">
+        <div class="help-header">
+            <h1>Help & Support</h1>
+            <p style="font-size: 1.25rem; color: #666;">Find answers to common questions</p>
+        </div>
 
-<div class="container" style="max-width: 860px; margin: 2rem auto; color:#f1f5f9;">
-  <h1>Help & Support</h1>
-  <p>If you need assistance, check the topics below or contact support.</p>
+        <div class="faq-section">
+            <h2 style="margin-bottom: 2rem;">Frequently Asked Questions</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    How do I enroll in a course?
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    To enroll in a course, go to the "Available Courses" section, browse the available courses, and click the "Enroll" button on any course you're interested in.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    How do I submit an assignment?
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    Navigate to the assignment in your course, click "Submit Assignment," fill out the required information, and click "Submit." Make sure to submit before the due date.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    Can I access courses on mobile?
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    Yes! Our platform is fully responsive and works on all devices including smartphones and tablets.
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    How are grades calculated?
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    Grades are calculated based on your performance in assignments, quizzes, and other course activities. Each course may have different grading criteria.
+                </div>
+            </div>
+        </div>
 
-  <section>
-    <h2>Frequently Asked Questions</h2>
-    <ul>
-      <li>How do I reset my password? Go to the login page and click "Forgot password".</li>
-      <li>How do I enroll in a course? Open a course and click "Enroll".</li>
-      <li>Who do I contact for billing? Email support@example.com.</li>
-    </ul>
-  </section>
+        <div class="contact-support">
+            <h2 style="margin-bottom: 1rem;">Still need help?</h2>
+            <p>Our support team is here to assist you with any questions or issues.</p>
+            <a href="/contact" class="btn-support">Contact Support</a>
+        </div>
+    </div>
 
-  <section>
-    <h2>Contact</h2>
-    <p>Email: support@example.com</p>
-  </section>
-</div>
+    <%- include('./partials/footer') %>
 
-<%- include('partials/footer') %>
-
-
+    <script>
+        // FAQ toggle functionality
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', function() {
+                const faqItem = this.parentElement;
+                faqItem.classList.toggle('active');
+                
+                const icon = this.querySelector('span');
+                icon.textContent = faqItem.classList.contains('active') ? '−' : '+';
+            });
+        });
+    </script>
+</body>
+</html>

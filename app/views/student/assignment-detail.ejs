@@ -1,122 +1,212 @@
-<%- include('../partials/header', { title: 'Assignment Detail | Student Panel' }) %>
-<%- include('../partials/navigation') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= assignment.title %> - EDU LMS</title>
+    <%- include('../partials/header') %>
+    <style>
+        :root {
+            --primary-blue: #2563EB;
+            --success-green: #10B981;
+            --warning-orange: #F59E0B;
+            --dark-gray: #1F2937;
+            --medium-gray: #6B7280;
+            --light-gray: #F8FAFC;
+            --white: #FFFFFF;
+        }
 
-<div class="student-page">
-  <aside class="sidebar">
+        .assignment-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .assignment-header {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .assignment-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 1rem;
+        }
+
+        .assignment-meta {
+            display: flex;
+            gap: 2rem;
+            color: var(--medium-gray);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .assignment-description {
+            color: var(--dark-gray);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .submission-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark-gray);
+        }
+
+        .submission-form {
+            space-y: 1.5rem;
+        }
+
+        .form-group {
+            space-y: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: var(--dark-gray);
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .submission-status {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-submitted {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .status-pending {
+            background: #FEF3C7;
+            color: #92400E;
+            border: 1px solid #FDE68A;
+        }
+    </style>
+</head>
+<body>
     <%- include('../partials/sidebar', { user: user, activePage: 'assignments' }) %>
-  </aside>
+    
+    <div class="main-content">
+        <div class="assignment-container">
+            <div class="assignment-header">
+                <h1 class="assignment-title"><%= assignment.title %></h1>
+                
+                <div class="assignment-meta">
+                    <span>📅 Due: <%= new Date(assignment.due_date).toLocaleDateString() %></span>
+                    <span>📚 Course: <%= assignment.course_name %></span>
+                    <span>💯 Points: <%= assignment.points || 100 %></span>
+                </div>
 
-  <main class="content">
-    <header class="page-header">
-      <h1>Assignment Detail</h1>
-    </header>
+                <div class="assignment-description">
+                    <%= assignment.description %>
+                </div>
 
-    <section class="page-content">
-      <% if (assignment) { %>
-        <h2><%= assignment.title %></h2>
-        <p><%= assignment.description %></p>
+                <% if (assignment.instructions) { %>
+                    <div style="background: var(--light-gray); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--primary-blue);">
+                        <strong>Instructions:</strong>
+                        <p style="margin-top: 0.5rem; margin-bottom: 0;"><%= assignment.instructions %></p>
+                    </div>
+                <% } %>
+            </div>
 
-        <ul>
-          <li>Due Date: <%= new Date(assignment.dueDate).toLocaleString() %></li>
-          <li>Status: <strong><%= submission ? "Submitted" : "Pending" %></strong></li>
-          <% if (submission) { %>
-            <li>Grade: <%= submission.grade !== null ? submission.grade : "Not graded yet" %></li>
-            <li>Submitted At: <%= new Date(submission.submittedAt).toLocaleString() %></li>
-          <% } %>
-        </ul>
-      <% } else { %>
-        <p>No assignment details found.</p>
-      <% } %>
-    </section>
-  </main>
-</div>
+            <div class="submission-section">
+                <h2 class="section-title">Submit Assignment</h2>
 
-<footer><%- include('../partials/footer') %></footer>
+                <% if (submission) { %>
+                    <div class="submission-status status-submitted">
+                        <strong>✅ Assignment Submitted</strong>
+                        <p style="margin: 0.5rem 0 0 0;">
+                            Submitted on: <%= new Date(submission.submitted_at).toLocaleDateString() %>
+                            <% if (submission.grade) { %>
+                                <br>Grade: <strong><%= submission.grade %>%</strong>
+                            <% } else { %>
+                                <br>Status: Awaiting grade
+                            <% } %>
+                        </p>
+                    </div>
+                    
+                    <% if (submission.content) { %>
+                        <div style="background: var(--light-gray); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                            <strong>Your Submission:</strong>
+                            <p style="margin-top: 0.5rem; margin-bottom: 0;"><%= submission.content %></p>
+                        </div>
+                    <% } %>
+                    
+                    <a href="/student/submissions/<%= submission.id %>" class="btn btn-primary">View Submission Details</a>
+                <% } else { %>
+                    <form action="/student/assignments/<%= assignment.id %>/submit" method="POST" class="submission-form">
+                        <div class="form-group">
+                            <label class="form-label">Your Work *</label>
+                            <textarea 
+                                name="content" 
+                                class="form-textarea" 
+                                placeholder="Enter your assignment submission here..."
+                                required
+                            ></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Additional Notes (Optional)</label>
+                            <textarea 
+                                name="notes" 
+                                class="form-textarea" 
+                                placeholder="Any additional comments for your teacher..."
+                                rows="3"
+                            ></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Submit Assignment</button>
+                    </form>
+                <% } %>
+            </div>
+        </div>
+    </div>
 
-<style>
-body.student-page {
-  display: flex;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
-
-.sidebar {
-  width: 240px;
-  background: #2c3e50;
-  color: white;
-  padding: 20px;
-  position: fixed;
-  height: 100%;
-  overflow-y: auto;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-}
-
-.content {
-  margin-left: 240px;
-  padding: 20px;
-  flex-grow: 1;
-}
-
-.page-header {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-}
-.page-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-}
-
-.page-content {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.page-content h2 {
-  margin-top: 0;
-}
-
-.page-content ul {
-  list-style: none;
-  padding: 0;
-}
-
-.page-content li {
-  margin-bottom: 8px;
-}
-
-footer {
-  margin-left: 120px;
-  padding: 15px 20px;
-  background: #fff;
-  border-top: 1px solid #e0e0e0;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-@media (max-width: 1024px) {
-  body.student-page {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    position: relative;
-    height: auto;
-  }
-  .content {
-    margin-left: 0;
-    padding: 15px;
-  }
-  footer {
-    margin-left: 0;
-  }
-}
-</style>
+    <%- include('../partials/footer') %>
+</body>
+</html>

@@ -66,6 +66,25 @@ exports.getDashboard = async (req, res) => {
         courses: dashboardData.subjects || [], // Map subjects to courses for the template
         assignments: dashboardData.assignments || [] // Add this line - pass assignments to template
       });
+    } else if (roleName === 'Student') {
+      // For student dashboard, pass all necessary data
+      res.render(view, {
+        title: pageTitle,
+        role: roleName,
+        user: {
+          id: userId,
+          name: userName,
+          role: roleName,
+          avatar: userAvatar
+        },
+        activePage: 'dashboard',
+        data: dashboardData,
+        stats: dashboardData.stats || {},
+        courses: dashboardData.courses || [],
+        overallStats: dashboardData.overallStats || {},
+        recentSubmissions: dashboardData.recentSubmissions || [],
+        grades: dashboardData.grades || []
+      });
     } else {
       res.render(view, {
         title: pageTitle,
@@ -138,10 +157,22 @@ exports.showTeacherDashboard = async (req, res) => {
 // Student dashboard page
 exports.showStudentDashboard = async (req, res) => {
   try {
-    const data = await fetchStudentDashboard(req.session.userId);
+    const userId = req.session.userId;
+    const data = await fetchStudentDashboard(userId);
+    
     res.render('dashboard/student', {
       title: 'Student Dashboard',
-      stats: data.stats
+      user: {
+        id: userId,
+        name: req.session.userName,
+        role: req.session.roleName
+      },
+      activePage: 'dashboard',
+      stats: data.stats || {},
+      courses: data.courses || [],
+      overallStats: data.overallStats || {},
+      recentSubmissions: data.recentSubmissions || [],
+      grades: data.grades || []
     });
   } catch (error) {
     console.error('Student dashboard error:', error);
@@ -281,29 +312,94 @@ async function fetchTeacherDashboard(userId) {
   };
 }
 
-// Student
+// Student - Fixed with correct schema
 async function fetchStudentDashboard(userId) {
+  // Basic stats
   const [[enrollmentCount]] = await pool.query(
     "SELECT COUNT(*) AS count FROM enrollments WHERE student_id = ?",
     [userId]
   );
+  
   const [[assignmentCount]] = await pool.query(`
     SELECT COUNT(*) AS count
     FROM assignments a
     JOIN enrollments e ON a.course_id = e.course_id
     WHERE e.student_id = ?
   `, [userId]);
+  
   const [[completedAssignments]] = await pool.query(
     "SELECT COUNT(*) AS count FROM submissions WHERE student_id = ? AND grade IS NOT NULL",
     [userId]
   );
+  
+  const [[pendingAssignments]] = await pool.query(`
+    SELECT COUNT(*) AS count
+    FROM assignments a
+    JOIN enrollments e ON a.course_id = e.course_id
+    WHERE e.student_id = ? 
+    AND a.id NOT IN (SELECT assignment_id FROM submissions WHERE student_id = ?)
+  `, [userId, userId]);
+
+  // Average grade
+  const [[avgGradeResult]] = await pool.query(`
+    SELECT AVG(grade) AS average_grade 
+    FROM submissions 
+    WHERE student_id = ? AND grade IS NOT NULL
+  `, [userId]);
+
+  // Get enrolled courses
+  const [courses] = await pool.query(`
+    SELECT c.id, c.title, c.description, e.enrolled_at
+    FROM enrollments e
+    JOIN courses c ON e.course_id = c.id
+    WHERE e.student_id = ?
+    ORDER BY e.enrolled_at DESC
+  `, [userId]);
+
+  // Get recent submissions - FIXED: removed s.content column
+  const [recentSubmissions] = await pool.query(`
+    SELECT s.id, s.assignment_id, a.title AS assignment_title, 
+           s.grade, s.submitted_at,
+           c.title AS course_name
+    FROM submissions s
+    JOIN assignments a ON s.assignment_id = a.id
+    JOIN courses c ON a.course_id = c.id
+    WHERE s.student_id = ?
+    ORDER BY s.submitted_at DESC
+    LIMIT 5
+  `, [userId]);
+
+  // Get grades for all submissions
+  const [grades] = await pool.query(`
+    SELECT s.grade, a.title AS assignment_title, c.title AS course_name
+    FROM submissions s
+    JOIN assignments a ON s.assignment_id = a.id
+    JOIN courses c ON a.course_id = c.id
+    WHERE s.student_id = ? AND s.grade IS NOT NULL
+    ORDER BY s.submitted_at DESC
+  `, [userId]);
+
+  // Calculate overall stats for the dashboard
+  const overallStats = {
+    totalCourses: enrollmentCount.count || 0,
+    totalAssignments: assignmentCount.count || 0,
+    completedAssignments: completedAssignments.count || 0,
+    pendingAssignments: pendingAssignments.count || 0,
+    pendingGrading: 0, // You can calculate this if you track ungraded submissions
+    averageGrade: avgGradeResult.average_grade ? Math.round(avgGradeResult.average_grade) : null
+  };
 
   return {
     stats: {
       enrollments: enrollmentCount.count || 0,
       assignments: assignmentCount.count || 0,
-      completed: completedAssignments.count || 0
-    }
+      completed: completedAssignments.count || 0,
+      pending: pendingAssignments.count || 0
+    },
+    courses: courses || [],
+    overallStats: overallStats,
+    recentSubmissions: recentSubmissions || [],
+    grades: grades || []
   };
 }
 

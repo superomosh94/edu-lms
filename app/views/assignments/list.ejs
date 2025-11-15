@@ -3,816 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assignments Dashboard</title>
+    <title>Assignments - EduPortal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #3b82f6;
-            --primary-dark: #1e40af;
-            --secondary: #64748b;
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --light: #f8fafc;
-            --dark: #0f172a;
-            --sidebar-bg: #1e293b;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f1f5f9;
-            color: #334155;
-            line-height: 1.6;
-        }
-
-        .assignments-page {
-            min-height: 100vh;
-            display: flex;
-        }
-
-        /* Sidebar Styles */
-        .sidebar {
-            background: linear-gradient(180deg, var(--sidebar-bg) 0%, var(--dark) 100%);
-            width: 280px;
-            min-height: 100vh;
-            padding: 0;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-            position: fixed;
-            z-index: 100;
-            overflow-y: auto;
-        }
-
-        .sidebar-content {
-            padding: 2rem 1.5rem;
-        }
-
-        .sidebar .nav-link {
-            color: #cbd5e1;
-            padding: 0.75rem 1rem;
-            border-radius: 8px;
-            margin-bottom: 0.5rem;
-            transition: all 0.3s ease;
-            border: none;
-            font-weight: 500;
-        }
-
-        .sidebar .nav-link:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateX(5px);
-        }
-
-        .sidebar .nav-link.active {
-            color: #ffffff;
-            background: var(--primary);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .sidebar .nav-link i {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Filter Section */
-        .filters, .courses {
-            margin-top: 2rem;
-        }
-
-        .filters h6, .courses h6 {
-            color: #e2e8f0;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .filter-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: #e2e8f0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
-            text-align: left;
-            transition: all 0.3s ease;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            width: 100%;
-        }
-
-        .filter-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-            transform: translateY(-2px);
-        }
-
-        .filter-btn.active {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .filter-btn-all.active { background: #6b7280; border-color: #6b7280; }
-        .filter-btn-pending.active { background: var(--warning); border-color: var(--warning); }
-        .filter-btn-submitted.active { background: var(--primary); border-color: var(--primary); }
-        .filter-btn-overdue.active { background: var(--danger); border-color: var(--danger); }
-
-        /* Course Checkboxes */
-        .course-filters .form-check-label {
-            font-size: 0.9rem;
-            cursor: pointer;
-            color: #e2e8f0;
-            font-weight: 500;
-        }
-
-        .course-filters .form-check-input {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .course-filters .form-check-input:checked {
-            background-color: var(--primary);
-            border-color: var(--primary);
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            padding: 0;
-            background: #f8f9fa;
-        }
-
-        .container-fluid {
-            padding: 2rem;
-        }
-
-        /* Header */
-        .page-header h1 {
-            font-weight: 700;
-            color: var(--dark);
-        }
-
-        .page-header p {
-            color: var(--secondary);
-            font-size: 1.1rem;
-        }
-
-        /* Stats Cards */
-        .stat-card {
-            border-radius: 12px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border: none;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--hover-shadow);
-        }
-
-        .stat-card .card-body {
-            padding: 1.5rem;
-        }
-
-        .stat-card h4 {
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-card small {
-            font-weight: 500;
-            opacity: 0.9;
-        }
-
-        .stat-card i {
-            opacity: 0.8;
-        }
-
-        /* Assignment Cards */
         .assignment-card {
+            border: none;
             border-radius: 12px;
             transition: all 0.3s ease;
-            border: none;
-            box-shadow: var(--card-shadow);
-            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             height: 100%;
         }
 
         .assignment-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--hover-shadow);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
         }
 
-        .assignment-card .card-header {
-            padding: 1.25rem 1.5rem 0;
-            background: transparent;
-            border: none;
-        }
-
-        .assignment-card .card-body {
-            padding: 1rem 1.5rem;
-        }
-
-        .assignment-card .card-footer {
-            padding: 1rem 1.5rem;
-            background: transparent;
-            border: none;
-        }
-
-        .assignment-card .card-title {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.75rem;
-        }
-
-        .assignment-card .card-text {
-            color: var(--secondary);
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        /* Status Badges */
         .status-badge {
             font-size: 0.75rem;
-            padding: 0.5rem 0.75rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 20px;
             font-weight: 600;
         }
 
-        .status-badge.pending { 
-            background: #fef3c7; 
-            color: #d97706; 
-        }
-        
-        .status-badge.submitted { 
-            background: #dbeafe; 
-            color: #1d4ed8; 
-        }
-        
-        .status-badge.overdue { 
-            background: #fee2e2; 
-            color: #dc2626; 
-        }
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-submitted { background: #d1fae5; color: #065f46; }
+        .status-overdue { background: #fee2e2; color: #dc2626; }
 
-        /* Assignment Meta Info */
-        .assignment-meta {
-            margin-top: 1.25rem;
-        }
-
-        .assignment-meta .d-flex {
-            margin-bottom: 0.5rem;
-        }
-
-        .assignment-meta i {
-            width: 16px;
-        }
-
-        /* Empty State */
-        .empty-state {
-            padding: 4rem 2rem;
-            text-align: center;
-        }
-
-        .empty-icon {
-            opacity: 0.5;
-            margin-bottom: 1.5rem;
-        }
-
-        .empty-state h3 {
-            color: var(--secondary);
-            margin-bottom: 1rem;
-        }
-
-        .empty-state p {
-            color: var(--secondary);
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
-        }
-
-        /* Dropdown Menu */
-        .dropdown-menu {
-            border-radius: 8px;
-            box-shadow: var(--card-shadow);
+        .stat-card {
+            border-radius: 12px;
             border: none;
-            padding: 0.5rem;
+            transition: transform 0.2s ease;
         }
 
-        .dropdown-item {
+        .stat-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .filter-btn {
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
             padding: 0.5rem 1rem;
-            border-radius: 6px;
-            font-weight: 500;
+            margin: 0.25rem;
+            transition: all 0.3s ease;
+            background: white;
         }
 
-        .dropdown-item:hover {
-            background-color: #f1f5f9;
+        .filter-btn.active, .filter-btn:hover {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            color: white;
         }
 
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .mobile-menu-btn {
-                display: block;
-            }
+        .empty-state {
+            padding: 3rem 1rem;
         }
 
+        /* Mobile optimizations */
         @media (max-width: 768px) {
             .container-fluid {
-                padding: 1.5rem;
+                padding: 1rem;
             }
             
             .stat-card .card-body {
-                padding: 1.25rem;
+                padding: 1rem;
             }
-        }
-
-        /* Animation for filtered items */
-        .assignment-item {
-            transition: all 0.3s ease;
-        }
-
-        .assignment-item.hidden {
-            opacity: 0;
-            transform: scale(0.8);
-            pointer-events: none;
-            height: 0;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Mobile Menu Button */
-        .mobile-menu-btn {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 101;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            width: 40px;
-            height: 40px;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--card-shadow);
-        }
-
-        @media (max-width: 992px) {
-            .mobile-menu-btn {
+            
+            .filter-section .card-body {
+                padding: 1rem;
+            }
+            
+            .btn-group-mobile {
                 display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
             }
-        }
-
-        /* Button Styles */
-        .btn-primary {
-            background: var(--primary);
-            border: none;
-            font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-outline-primary {
-            color: var(--primary);
-            border-color: var(--primary);
-            font-weight: 500;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-outline-primary:hover {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        /* Submission Form */
-        .submission-form {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--card-shadow);
-            margin-top: 1.5rem;
-        }
-
-        .submission-form textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        /* Grade Badge */
-        .grade-badge {
-            font-size: 0.85rem;
-            padding: 0.4rem 0.75rem;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-
-        .grade-badge.graded {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .grade-badge.ungraded {
-            background: #fef3c7;
-            color: #92400e;
+            
+            .btn-group-mobile .btn {
+                flex: 1;
+                min-width: 120px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="assignments-page">
-        <!-- Mobile Menu Button -->
-        <button class="mobile-menu-btn" id="mobileMenuButton">
-            <i class="fas fa-bars"></i>
-        </button>
+    <!-- Your existing top navigation bar will be here -->
+    <!-- This page assumes you already have navigation at the top -->
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-content pt-3">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="text-white mb-0">EduPortal</h4>
-                </div>
-                
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/dashboard">
-                            <i class="fas fa-tachometer-alt me-2"></i>Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/courses">
-                            <i class="fas fa-book me-2"></i>Courses
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="/assignments">
-                            <i class="fas fa-tasks me-2"></i>Assignments
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/grades">
-                            <i class="fas fa-chart-bar me-2"></i>Grades
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/calendar">
-                            <i class="fas fa-calendar me-2"></i>Calendar
-                        </a>
-                    </li>
-                    <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/assignments/create">
-                                <i class="fas fa-plus-circle me-2"></i>Create Assignment
-                            </a>
-                        </li>
-                    <% } %>
-                </ul>
-
-                <!-- Filters Section -->
-                <div class="filters mt-4">
-                    <h6 class="text-white mb-3">Filter by Status</h6>
-                    <div class="d-grid gap-2">
-                        <button class="btn filter-btn filter-btn-all active" data-status="all">
-                            <i class="fas fa-layer-group me-2"></i>All Assignments
-                        </button>
-                        <button class="btn filter-btn filter-btn-pending" data-status="pending">
-                            <i class="fas fa-clock me-2"></i>Pending
-                        </button>
-                        <button class="btn filter-btn filter-btn-submitted" data-status="submitted">
-                            <i class="fas fa-paper-plane me-2"></i>Submitted
-                        </button>
-                        <button class="btn filter-btn filter-btn-overdue" data-status="overdue">
-                            <i class="fas fa-exclamation-triangle me-2"></i>Overdue
-                        </button>
+    <div class="container-fluid py-3">
+        <!-- Page Header with Create Button -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h2 mb-1">Assignments</h1>
+                        <p class="text-muted mb-0">Manage and track your assignments</p>
                     </div>
+                    <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
+                        <a href="/assignments/create" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>New Assignment
+                        </a>
+                    <% } %>
                 </div>
+            </div>
+        </div>
 
-                <!-- Course Filter -->
-                <div class="courses mt-4">
-                    <h6 class="text-white mb-3">Filter by Course</h6>
-                    <div class="course-filters">
-                        <div class="form-check mb-2">
-                            <input class="form-check-input course-checkbox" type="checkbox" id="course-all" checked>
-                            <label class="form-check-label text-white" for="course-all">
-                                <i class="fas fa-th-large me-2"></i>All Courses
-                            </label>
+        <!-- Quick Stats -->
+        <div class="row mb-4">
+            <div class="col-md-3 col-6 mb-3">
+                <div class="card stat-card bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h4 class="mb-0"><%= assignments ? assignments.length : 0 %></h4>
+                                <small>Total</small>
+                            </div>
+                            <i class="fas fa-tasks fa-2x opacity-75"></i>
                         </div>
-                        <% if (courses && courses.length > 0) { %>
-                            <% courses.forEach(course => { %>
-                                <div class="form-check mb-2">
-                                    <input class="form-check-input course-checkbox" type="checkbox" id="course-<%= course.id %>" checked>
-                                    <label class="form-check-label text-white" for="course-<%= course.id %>">
-                                        <i class="fas fa-bookmark me-2"></i><%= course.title || 'Untitled Course' %>
-                                    </label>
-                                </div>
-                            <% }) %>
-                        <% } else { %>
-                            <p class="text-white-50 small">No courses available</p>
-                        <% } %>
                     </div>
                 </div>
             </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="container-fluid py-4">
-                <!-- Header -->
-                <div class="d-flex justify-content-between align-items-center mb-4 page-header">
-                    <div>
-                        <h1 class="h2 mb-1">Assignments</h1>
-                        <p class="text-muted mb-0">Track upcoming, submitted, and graded assignments in one place.</p>
-                    </div>
-                    <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
-                        <a href="/assignments/create" class="btn btn-primary btn-lg">
-                            <i class="fas fa-plus me-2"></i>Create Assignment
-                        </a>
-                    <% } %>
-                </div>
-
-                <!-- Stats Overview -->
-                <div class="row mb-4">
-                    <div class="col-xl-3 col-md-6 mb-3">
-                        <div class="card stat-card border-0 bg-primary text-white">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h4 class="mb-0"><%= assignments ? assignments.length : 0 %></h4>
-                                        <small>Total Assignments</small>
-                                    </div>
-                                    <i class="fas fa-tasks fa-2x opacity-50"></i>
-                                </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="card stat-card bg-warning text-dark">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h4 class="mb-0"><%= stats ? stats.pending : 0 %></h4>
+                                <small>Pending</small>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6 mb-3">
-                        <div class="card stat-card border-0 bg-warning text-dark">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h4 class="mb-0"><%= stats ? stats.pending : 0 %></h4>
-                                        <small>Pending</small>
-                                    </div>
-                                    <i class="fas fa-clock fa-2x opacity-50"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6 mb-3">
-                        <div class="card stat-card border-0 bg-info text-white">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h4 class="mb-0"><%= stats ? stats.submitted : 0 %></h4>
-                                        <small>Submitted</small>
-                                    </div>
-                                    <i class="fas fa-paper-plane fa-2x opacity-50"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3 col-md-6 mb-3">
-                        <div class="card stat-card border-0 bg-danger text-white">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h4 class="mb-0"><%= stats ? stats.overdue : 0 %></h4>
-                                        <small>Overdue</small>
-                                    </div>
-                                    <i class="fas fa-exclamation-triangle fa-2x opacity-50"></i>
-                                </div>
-                            </div>
+                            <i class="fas fa-clock fa-2x opacity-75"></i>
                         </div>
                     </div>
                 </div>
-
-                <!-- Assignments List -->
-                <% if (!assignments || assignments.length === 0) { %>
-                    <div class="empty-state text-center py-5">
-                        <div class="empty-icon mb-3">
-                            <i class="fas fa-tasks fa-4x text-muted"></i>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="card stat-card bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h4 class="mb-0"><%= stats ? stats.submitted : 0 %></h4>
+                                <small>Submitted</small>
+                            </div>
+                            <i class="fas fa-check fa-2x opacity-75"></i>
                         </div>
-                        <h3 class="text-muted mb-3">No Assignments Yet</h3>
-                        <p class="text-muted mb-4">When assignments are created, they will appear here.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-6 mb-3">
+                <div class="card stat-card bg-danger text-white">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-grow-1">
+                                <h4 class="mb-0"><%= stats ? stats.overdue : 0 %></h4>
+                                <small>Overdue</small>
+                            </div>
+                            <i class="fas fa-exclamation-triangle fa-2x opacity-75"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simple Filters -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card filter-section">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Filter Assignments</h5>
+                        
+                        <!-- Status Filter -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Status:</label>
+                            <div class="btn-group-mobile">
+                                <button class="btn filter-btn active" data-status="all">
+                                    All Assignments
+                                </button>
+                                <button class="btn filter-btn" data-status="pending">
+                                    Pending
+                                </button>
+                                <button class="btn filter-btn" data-status="submitted">
+                                    Submitted
+                                </button>
+                                <button class="btn filter-btn" data-status="overdue">
+                                    Overdue
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Course Filter -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Course:</label>
+                            <div class="d-flex flex-wrap align-items-center">
+                                <div class="form-check me-3 mb-2">
+                                    <input class="form-check-input" type="checkbox" id="course-all" checked>
+                                    <label class="form-check-label" for="course-all">
+                                        All Courses
+                                    </label>
+                                </div>
+                                <% if (courses && courses.length > 0) { %>
+                                    <% courses.forEach(course => { %>
+                                        <div class="form-check me-3 mb-2">
+                                            <input class="form-check-input course-checkbox" type="checkbox" id="course-<%= course.id %>" checked>
+                                            <label class="form-check-label" for="course-<%= course.id %>">
+                                                <%= course.title || 'Untitled Course' %>
+                                            </label>
+                                        </div>
+                                    <% }) %>
+                                <% } else { %>
+                                    <span class="text-muted">No courses available</span>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assignments List -->
+        <% if (!assignments || assignments.length === 0) { %>
+            <div class="empty-state">
+                <div class="card">
+                    <div class="card-body text-center py-5">
+                        <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+                        <h3 class="text-muted mb-3">No Assignments Found</h3>
+                        <p class="text-muted mb-4">There are no assignments to display at this time.</p>
                         <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
                             <a href="/assignments/create" class="btn btn-primary btn-lg">
                                 <i class="fas fa-plus me-2"></i>Create Your First Assignment
                             </a>
                         <% } else { %>
-                            <p class="text-muted">Check back later for new assignments.</p>
+                            <p class="text-muted">Check back later for new assignments from your teachers.</p>
                         <% } %>
                     </div>
-                <% } else { %>
-                    <div class="row g-4 assignments-list" id="assignmentsContainer">
-                        <% assignments.forEach(assignment => { 
-                            // Safely determine assignment status
-                            const isOverdue = assignment.due_date && new Date(assignment.due_date) < new Date() && !assignment.submitted;
-                            const assignmentStatus = isOverdue ? 'overdue' : (assignment.submitted ? 'submitted' : 'pending');
-                            const statusText = assignmentStatus.charAt(0).toUpperCase() + assignmentStatus.slice(1);
-                            
-                            // Safely get assignment properties
-                            const assignmentTitle = assignment.title || 'Untitled Assignment';
-                            const assignmentDescription = assignment.description || 'No description provided';
-                            const dueDate = assignment.due_date ? new Date(assignment.due_date).toLocaleDateString() : 'No due date';
-                            const courseId = assignment.courseId || assignment.course_id || 'all';
-                            const courseName = assignment.course_name || assignment.course_title || 'General';
-                        %>
-                            <div class="col-xl-4 col-lg-6 assignment-item" 
-                                 data-status="<%= assignmentStatus %>" 
-                                 data-course="<%= courseId %>">
-                                <div class="card assignment-card border-0 shadow-sm h-100">
-                                    <div class="card-header bg-transparent border-0 pb-0">
-                                        <div class="d-flex justify-content-between align-items-start">
-                                            <span class="badge status-badge <%= assignmentStatus %> mb-2">
-                                                <i class="fas <%= 
-                                                    assignmentStatus === 'submitted' ? 'fa-paper-plane' :
-                                                    assignmentStatus === 'overdue' ? 'fa-exclamation-triangle' : 'fa-clock'
-                                                %> me-1"></i>
-                                                <%= statusText %>
-                                            </span>
-                                            <div class="dropdown">
-                                                <button class="btn btn-sm btn-outline-secondary border-0" type="button" data-bs-toggle="dropdown">
-                                                    <i class="fas fa-ellipsis-v"></i>
-                                                </button>
-                                                <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="/assignments/view/<%= assignment.id %>"><i class="fas fa-eye me-2"></i>View</a></li>
-                                                    <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
-                                                        <li><a class="dropdown-item" href="/assignments/edit/<%= assignment.id %>"><i class="fas fa-edit me-2"></i>Edit</a></li>
-                                                        <li><hr class="dropdown-divider"></li>
-                                                        <li><a class="dropdown-item text-danger" href="/assignments/delete/<%= assignment.id %>" onclick="return confirm('Are you sure you want to delete this assignment?')"><i class="fas fa-trash me-2"></i>Delete</a></li>
-                                                    <% } %>
-                                                </ul>
-                                            </div>
-                                        </div>
+                </div>
+            </div>
+        <% } else { %>
+            <div class="row g-3" id="assignmentsContainer">
+                <% assignments.forEach(assignment => { 
+                    const isOverdue = assignment.due_date && new Date(assignment.due_date) < new Date() && !assignment.submitted;
+                    const assignmentStatus = isOverdue ? 'overdue' : (assignment.submitted ? 'submitted' : 'pending');
+                    const statusText = assignmentStatus.charAt(0).toUpperCase() + assignmentStatus.slice(1);
+                    
+                    const assignmentTitle = assignment.title || 'Untitled Assignment';
+                    const assignmentDescription = assignment.description || 'No description provided';
+                    const dueDate = assignment.due_date ? new Date(assignment.due_date).toLocaleDateString() : 'No due date';
+                    const courseId = assignment.courseId || assignment.course_id || 'all';
+                    const courseName = assignment.course_name || assignment.course_title || 'General';
+                %>
+                    <div class="col-xl-4 col-lg-6 col-12 assignment-item" 
+                         data-status="<%= assignmentStatus %>" 
+                         data-course="<%= courseId %>">
+                        <div class="card assignment-card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h5 class="card-title mb-0 flex-grow-1 me-2"><%= assignmentTitle %></h5>
+                                    <span class="badge status-<%= assignmentStatus %> status-badge">
+                                        <%= statusText %>
+                                    </span>
+                                </div>
+                                
+                                <p class="card-text text-muted small mb-3">
+                                    <%= assignmentDescription.substring(0, 100) + (assignmentDescription.length > 100 ? '...' : '') %>
+                                </p>
+                                
+                                <div class="assignment-meta small text-muted mb-3">
+                                    <div class="mb-1">
+                                        <i class="fas fa-book me-1"></i><%= courseName %>
                                     </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title mb-3"><%= assignmentTitle %></h5>
-                                        <p class="card-text text-muted mb-3">
-                                            <%= assignmentDescription.substring(0, 100) + (assignmentDescription.length > 100 ? '...' : '') %>
-                                        </p>
-                                        
-                                        <div class="assignment-meta">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <i class="fas fa-book text-primary me-2"></i>
-                                                <small class="text-muted"><%= courseName %></small>
-                                            </div>
-                                            <div class="d-flex align-items-center mb-2">
-                                                <i class="fas fa-calendar-alt text-warning me-2"></i>
-                                                <small class="text-muted">Due: <%= dueDate %></small>
-                                            </div>
-                                            <% if (assignment.points) { %>
-                                                <div class="d-flex align-items-center">
-                                                    <i class="fas fa-star text-success me-2"></i>
-                                                    <small class="text-muted"><%= assignment.points %> points</small>
-                                                </div>
-                                            <% } %>
-                                        </div>
+                                    <div class="mb-1">
+                                        <i class="fas fa-calendar me-1"></i>Due: <%= dueDate %>
                                     </div>
-                                    <div class="card-footer bg-transparent border-0 pt-0">
-                                        <div class="d-grid">
-                                            <a href="/assignments/view/<%= assignment.id %>" class="btn btn-outline-primary">
-                                                <i class="fas fa-eye me-2"></i>View Details
-                                            </a>
+                                    <% if (assignment.points) { %>
+                                        <div>
+                                            <i class="fas fa-star me-1"></i><%= assignment.points %> points
                                         </div>
-                                    </div>
+                                    <% } %>
+                                </div>
+                                
+                                <div class="d-flex gap-2">
+                                    <a href="/assignments/view/<%= assignment.id %>" class="btn btn-outline-primary btn-sm flex-grow-1">
+                                        <i class="fas fa-eye me-1"></i>View
+                                    </a>
+                                    <% if (user && (user.role === 'Teacher' || user.role === 'Admin')) { %>
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li><a class="dropdown-item" href="/assignments/edit/<%= assignment.id %>">
+                                                    <i class="fas fa-edit me-2"></i>Edit
+                                                </a></li>
+                                                <li><a class="dropdown-item text-danger" href="/assignments/delete/<%= assignment.id %>" onclick="return confirm('Are you sure you want to delete this assignment?')">
+                                                    <i class="fas fa-trash me-2"></i>Delete
+                                                </a></li>
+                                            </ul>
+                                        </div>
+                                    <% } %>
                                 </div>
                             </div>
-                        <% }) %>
+                        </div>
                     </div>
-                <% } %>
+                <% }) %>
             </div>
-        </main>
+        <% } %>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
-            const mobileMenuButton = document.getElementById('mobileMenuButton');
-            const sidebar = document.querySelector('.sidebar');
-            
-            mobileMenuButton.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
-
-            // Filter functionality
+            // Simple filter functionality
             const filterButtons = document.querySelectorAll('.filter-btn');
             const courseCheckboxes = document.querySelectorAll('.course-checkbox');
-            const assignmentsContainer = document.getElementById('assignmentsContainer');
+            const courseAllCheckbox = document.getElementById('course-all');
             
-            // Initialize filter state
             let currentStatus = 'all';
             let selectedCourses = new Set(['all']);
             
-            // Status filter buttons
+            // Status filter
             filterButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Update active button
                     filterButtons.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
-                    
-                    // Update current status
                     currentStatus = this.dataset.status;
                     filterAssignments();
                 });
             });
             
-            // Course checkboxes
+            // Course filter
+            courseAllCheckbox.addEventListener('change', function() {
+                courseCheckboxes.forEach(cb => cb.checked = this.checked);
+                selectedCourses = this.checked ? new Set(['all']) : new Set();
+                filterAssignments();
+            });
+            
             courseCheckboxes.forEach(checkbox => {
                 checkbox.addEventListener('change', function() {
-                    if (this.id === 'course-all') {
-                        // Toggle all courses
-                        if (this.checked) {
-                            courseCheckboxes.forEach(cb => cb.checked = true);
-                            selectedCourses = new Set(['all']);
-                        } else {
-                            courseCheckboxes.forEach(cb => cb.checked = false);
-                            selectedCourses.clear();
-                        }
+                    const courseId = this.id.replace('course-', '');
+                    
+                    if (this.checked) {
+                        selectedCourses.add(courseId);
                     } else {
-                        // Update individual course
-                        if (this.checked) {
-                            selectedCourses.add(this.id.replace('course-', ''));
-                            // If all individual courses are checked, check "all" too
-                            const individualChecked = Array.from(courseCheckboxes)
-                                .filter(cb => cb.id !== 'course-all')
-                                .every(cb => cb.checked);
-                            if (individualChecked) {
-                                document.getElementById('course-all').checked = true;
-                                selectedCourses.add('all');
-                            }
-                        } else {
-                            selectedCourses.delete(this.id.replace('course-', ''));
-                            document.getElementById('course-all').checked = false;
-                            selectedCourses.delete('all');
-                        }
+                        selectedCourses.delete(courseId);
                     }
+                    
+                    // Update "all" checkbox
+                    const allChecked = Array.from(courseCheckboxes).every(cb => cb.checked);
+                    courseAllCheckbox.checked = allChecked;
+                    if (allChecked) {
+                        selectedCourses.add('all');
+                    } else {
+                        selectedCourses.delete('all');
+                    }
+                    
                     filterAssignments();
                 });
             });
             
-            // Filter assignments function
             function filterAssignments() {
-                const assignmentItems = document.querySelectorAll('.assignment-item');
+                const items = document.querySelectorAll('.assignment-item');
                 let visibleCount = 0;
                 
-                assignmentItems.forEach(item => {
-                    const itemStatus = item.dataset.status;
-                    const itemCourse = item.dataset.course;
-                    
-                    const statusMatch = currentStatus === 'all' || itemStatus === currentStatus;
-                    const courseMatch = selectedCourses.has('all') || selectedCourses.has(itemCourse);
+                items.forEach(item => {
+                    const statusMatch = currentStatus === 'all' || item.dataset.status === currentStatus;
+                    const courseMatch = selectedCourses.has('all') || selectedCourses.has(item.dataset.course);
                     
                     if (statusMatch && courseMatch) {
-                        item.classList.remove('hidden');
+                        item.style.display = 'block';
                         visibleCount++;
-                        
-                        // Add animation delay for staggered appearance
-                        item.style.animationDelay = `${visibleCount * 0.05}s`;
                     } else {
-                        item.classList.add('hidden');
+                        item.style.display = 'none';
                     }
                 });
                 
-                // Show/hide empty state
+                // Show empty state if no items visible
                 const emptyState = document.querySelector('.empty-state');
-                if (emptyState) {
-                    emptyState.style.display = visibleCount === 0 ? 'block' : 'none';
+                const assignmentsContainer = document.getElementById('assignmentsContainer');
+                
+                if (visibleCount === 0 && assignmentsContainer) {
+                    if (!emptyState) {
+                        const emptyHtml = `
+                            <div class="empty-state">
+                                <div class="card">
+                                    <div class="card-body text-center py-5">
+                                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                        <h3 class="text-muted mb-3">No Matching Assignments</h3>
+                                        <p class="text-muted">Try adjusting your filters to see more results.</p>
+                                        <button class="btn btn-outline-primary" onclick="resetFilters()">
+                                            Reset Filters
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        assignmentsContainer.innerHTML = emptyHtml;
+                    }
                 }
             }
             
-            // Initialize filters
-            filterAssignments();
+            // Reset filters function
+            window.resetFilters = function() {
+                filterButtons.forEach(btn => {
+                    if (btn.dataset.status === 'all') {
+                        btn.classList.add('active');
+                        currentStatus = 'all';
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+                
+                courseAllCheckbox.checked = true;
+                courseCheckboxes.forEach(cb => cb.checked = true);
+                selectedCourses = new Set(['all']);
+                
+                filterAssignments();
+            };
         });
     </script>
 </body>

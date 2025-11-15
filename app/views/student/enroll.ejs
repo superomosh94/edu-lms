@@ -1,189 +1,152 @@
-<%- include('../partials/header', { title: 'Enroll in a Course | Student Panel' }) %>
-<%- include('../partials/navigation') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enroll in Courses - EDU LMS</title>
+    <%- include('../partials/header') %>
+    <style>
+        :root {
+            --primary-blue: #2563EB;
+            --success-green: #10B981;
+            --dark-gray: #1F2937;
+            --medium-gray: #6B7280;
+            --light-gray: #F8FAFC;
+            --white: #FFFFFF;
+        }
 
-<div class="student-page">
-  <!-- Sidebar -->
-  <aside class="sidebar">
+        .enroll-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 2rem;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .course-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .course-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .course-description {
+            color: var(--medium-gray);
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .enroll-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--success-green);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .enroll-btn:hover {
+            background: #0DA271;
+        }
+
+        .enroll-btn:disabled {
+            background: var(--medium-gray);
+            cursor: not-allowed;
+        }
+
+        .enrolled-badge {
+            padding: 0.5rem 1rem;
+            background: #D1FAE5;
+            color: #065F46;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--medium-gray);
+        }
+    </style>
+</head>
+<body>
     <%- include('../partials/sidebar', { user: user, activePage: 'enroll' }) %>
-  </aside>
+    
+    <div class="main-content">
+        <div class="enroll-container">
+            <h1 class="page-title">Available Courses</h1>
 
-  <!-- Main Content -->
-  <main class="content">
-    <header>
-      <button class="btn-back" onclick="history.back()">
-        <i class="fas fa-arrow-left"></i> Back
-      </button>
-      <h1>Enroll in a Course</h1>
-    </header>
+            <% if (availableCourses && availableCourses.length > 0) { %>
+                <div class="courses-grid">
+                    <% availableCourses.forEach(course => { %>
+                        <div class="course-card">
+                            <h3 class="course-title"><%= course.title %></h3>
+                            <p class="course-description"><%= course.description %></p>
+                            
+                            <div class="course-meta">
+                                <% if (course.isEnrolled) { %>
+                                    <span class="enrolled-badge">✅ Enrolled</span>
+                                    <a href="/student/courses/<%= course.id %>" style="color: var(--primary-blue); text-decoration: none; font-weight: 500;">View Course</a>
+                                <% } else { %>
+                                    <span style="color: var(--medium-gray); font-size: 0.875rem;">
+                                        📚 <%= course.category || 'General' %>
+                                    </span>
+                                    <form action="/student/enroll" method="POST" style="margin: 0;">
+                                        <input type="hidden" name="courseId" value="<%= course.id %>">
+                                        <button type="submit" class="enroll-btn">Enroll Now</button>
+                                    </form>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🎓</div>
+                    <h3>No Courses Available</h3>
+                    <p>There are no courses available for enrollment at the moment.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
 
-    <section class="page-content">
-      <% if (availableCourses && availableCourses.length) { %>
-        <form action="/student/enroll" method="POST">
-          <div class="courses-list">
-            <% availableCourses.forEach(function(course) { %>
-              <div class="course-card">
-                <label>
-                  <input type="radio" name="courseId" value="<%= course.id %>" <%= course.isEnrolled ? "disabled" : "" %> required>
-                  <span class="course-title"><i class="fas fa-book-open"></i> <%= course.title %></span>
-                </label>
-                <p><%= course.description %></p>
-                <p><strong>Instructor:</strong> <%= course.instructor || "N/A" %></p>
-                <p><strong>Status:</strong> <%= course.status %></p>
-                <p><strong>Enrollment Status:</strong>
-                  <span class="<%= course.isEnrolled ? 'enrolled' : 'not-enrolled' %>">
-                    <%= course.isEnrolled ? "Enrolled" : "Not Enrolled" %>
-                  </span>
-                </p>
-              </div>
-            <% }); %>
-          </div>
-          <button type="submit" class="btn" <%= availableCourses.every(c => c.isEnrolled) ? "disabled" : "" %>>Enroll</button>
-        </form>
-      <% } else { %>
-        <p>No available courses to enroll. Please check later.</p>
-      <% } %>
-    </section>
-  </main>
-</div>
-
-<footer style="margin-left: 260px;">
-  <%- include('../partials/footer') %>
-</footer>
-
-<style>
-body.student-page {
-  display: flex;
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f4f6f8;
-  min-height: 100vh;
-}
-
-.sidebar {
-  width: 250px;
-  background: #2c3e50;
-  color: white;
-  padding: 20px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  overflow-y: auto;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-}
-
-.content {
-  margin-left: 250px;
-  padding: 20px;
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  background: #34495e;
-  color: white;
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-}
-
-.btn-back {
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-}
-
-.btn-back i {
-  margin-right: 5px;
-}
-
-.page-content {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.courses-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
-.course-card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 5px;
-  width: 300px;
-  background: #fff;
-  transition: transform 0.2s ease-in-out;
-}
-
-.course-card:hover {
-  transform: scale(1.02);
-}
-
-.course-card label {
-  cursor: pointer;
-}
-
-.course-title {
-  font-size: 1.2em;
-  font-weight: bold;
-}
-
-.course-card p {
-  margin: 5px 0;
-}
-
-.enrolled {
-  color: green;
-  font-weight: bold;
-}
-
-.not-enrolled {
-  color: red;
-  font-weight: bold;
-}
-
-.btn {
-  display: inline-block;
-  padding: 10px 15px;
-  background: #3498db;
-  color: white;
-  border-radius: 4px;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-}
-
-.btn:hover {
-  background: #2980b9;
-}
-
-.btn:disabled {
-  background: grey;
-  cursor: not-allowed;
-}
-
-@media (max-width: 1024px) {
-  body.student-page {
-    flex-direction: column;
-  }
-  .sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-  }
-  .content {
-    margin-left: 0;
-  }
-}
-</style>
+    <%- include('../partials/footer') %>
+</body>
+</html>

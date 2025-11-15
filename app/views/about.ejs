@@ -1,9 +1,79 @@
-<%- include('partials/header', { title: 'About - EDU LMS' }) %>
-<%- include('partials/navigation') %>
-<div class="container py-5">
-  <h1>About EDU LMS</h1>
-  <p>EDU LMS is a modern learning platform for students, teachers, and administrators.</p>
-</div>
-<%- include('partials/footer') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - EDU LMS</title>
+    <%- include('./partials/header') %>
+    <style>
+        .about-header {
+            background: #f8f9fa;
+            padding: 80px 20px;
+            text-align: center;
+        }
+        .about-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        .about-content {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 0 20px;
+            line-height: 1.8;
+        }
+        .mission-vision {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .mission-card, .vision-card {
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .mission-card {
+            background: #e3f2fd;
+        }
+        .vision-card {
+            background: #f3e5f5;
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/navigation') %>
+    
+    <section class="about-header">
+        <h1>About EDU LMS</h1>
+        <p style="font-size: 1.25rem; color: #666;">Empowering education through technology</p>
+    </section>
 
+    <section class="about-content">
+        <h2>Our Story</h2>
+        <p>EDU LMS was founded with a simple mission: to make quality education accessible to everyone, everywhere. We believe that learning should be engaging, interactive, and available to all who seek knowledge.</p>
+        
+        <div class="mission-vision">
+            <div class="mission-card">
+                <h3>🎯 Our Mission</h3>
+                <p>To provide a comprehensive learning platform that empowers students and educators to achieve their full potential through innovative technology and engaging content.</p>
+            </div>
+            <div class="vision-card">
+                <h3>🔭 Our Vision</h3>
+                <p>To become the leading platform for online education, transforming how people learn and teach across the globe.</p>
+            </div>
+        </div>
 
+        <h2>What We Offer</h2>
+        <ul style="line-height: 2;">
+            <li>Comprehensive course management system</li>
+            <li>Interactive assignment and grading tools</li>
+            <li>Real-time progress tracking</li>
+            <li>Collaborative learning environment</li>
+            <li>Mobile-friendly platform</li>
+        </ul>
+    </section>
+
+    <%- include('./partials/footer') %>
+</body>
+</html>

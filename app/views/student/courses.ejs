@@ -1,160 +1,217 @@
-<%- include('../partials/header', { title: 'Courses | Student Panel' }) %>
-<%- include('../partials/navigation') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Courses - EDU LMS</title>
+    <%- include('../partials/header') %>
+    <style>
+        :root {
+            --primary-blue: #2563EB;
+            --secondary-blue: #3B82F6;
+            --success-green: #10B981;
+            --warning-orange: #F59E0B;
+            --dark-gray: #1F2937;
+            --medium-gray: #6B7280;
+            --light-gray: #F8FAFC;
+            --white: #FFFFFF;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+        }
 
-<div class="student-page">
-  <aside class="sidebar">
+        .courses-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin: 0;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .course-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .course-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .course-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .course-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .course-description {
+            color: var(--medium-gray);
+            line-height: 1.5;
+        }
+
+        .course-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: var(--light-gray);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--medium-gray);
+        }
+
+        .course-actions {
+            padding: 1rem 1.5rem;
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #E5E7EB;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success-green);
+            transition: width 0.3s ease;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--medium-gray);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
     <%- include('../partials/sidebar', { user: user, activePage: 'courses' }) %>
-  </aside>
-
-  <main class="content">
-    <header class="page-header">
-      <h1>My Courses</h1>
-    </header>
-
-    <section class="page-content">
-      <% if (courses && courses.length) { %>
-        <div class="courses-list">
-          <% courses.forEach(function(course) { %>
-            <div class="course-card">
-              <h2><%= course.title %></h2>
-              <p><%= course.description %></p>
-              <p>Status: <strong><%= course.status %></strong></p>
-
-              <% if (course.progress) { %>
-                <ul>
-                  <li>Total Assignments: <%= course.progress.totalAssignments %></li>
-                  <li>Completed Assignments: <%= course.progress.completedAssignments %></li>
-                  <li>Average Grade: 
-                    <%= course.progress.averageGrade !== null 
-                        ? course.progress.averageGrade.toFixed(2) 
-                        : "N/A" %>
-                  </li>
-                </ul>
-              <% } %>
-
-              <a href="/student/courses/<%= course.id %>" class="view-course-btn">View Course</a>
+    
+    <div class="main-content">
+        <div class="courses-container">
+            <div class="page-header">
+                <h1 class="page-title">My Courses</h1>
+                <a href="/student/enroll" class="btn btn-primary">Enroll in New Course</a>
             </div>
-          <% }); %>
+
+            <% if (courses && courses.length > 0) { %>
+                <div class="courses-grid">
+                    <% courses.forEach(course => { %>
+                        <div class="course-card">
+                            <div class="course-header">
+                                <h3 class="course-title"><%= course.title %></h3>
+                                <p class="course-description"><%= course.description %></p>
+                                
+                                <% if (course.progress) { %>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: <%= (course.progress.completedAssignments / course.progress.totalAssignments) * 100 %>%"></div>
+                                    </div>
+                                    <div style="font-size: 0.875rem; color: var(--medium-gray);">
+                                        Progress: <%= Math.round((course.progress.completedAssignments / course.progress.totalAssignments) * 100) %>%
+                                    </div>
+                                <% } %>
+                            </div>
+                            
+                            <div class="course-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value"><%= course.progress?.totalAssignments || 0 %></div>
+                                    <div class="stat-label">Assignments</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value"><%= course.progress?.averageGrade ? course.progress.averageGrade + '%' : 'N/A' %></div>
+                                    <div class="stat-label">Avg Grade</div>
+                                </div>
+                            </div>
+                            
+                            <div class="course-actions">
+                                <a href="/student/courses/<%= course.id %>" class="btn btn-primary">View Course</a>
+                                <a href="/student/assignments?course=<%= course.id %>" class="btn btn-outline">Assignments</a>
+                            </div>
+                        </div>
+                    <% }) %>
+                </div>
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-icon">📚</div>
+                    <h3>No Courses Enrolled</h3>
+                    <p>You haven't enrolled in any courses yet.</p>
+                    <a href="/student/enroll" class="btn btn-primary" style="margin-top: 1rem;">Browse Available Courses</a>
+                </div>
+            <% } %>
         </div>
-      <% } else { %>
-        <p>No courses found. Enroll in a course to get started.</p>
-      <% } %>
-    </section>
-  </main>
-</div>
+    </div>
 
-<footer><%- include('../partials/footer') %></footer>
-
-<style>
-body.student-page {
-  display: flex;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f4f6f8;
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 240px;
-  background: #2c3e50;
-  color: white;
-  padding: 20px;
-  position: fixed;
-  height: 100%;
-  overflow-y: auto;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.2);
-}
-
-/* Content */
-.content {
-  margin-left: 240px;
-  padding: 20px;
-  flex-grow: 1;
-}
-
-/* Page header */
-.page-header {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 20px;
-}
-.page-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-}
-
-/* Page content */
-.page-content {
-  background: white;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-/* Course cards */
-.course-card {
-  padding: 15px;
-  border-bottom: 1px solid #e0e0e0;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  background: #f9f9f9;
-}
-.course-card h2 {
-  margin: 0 0 5px;
-}
-.course-card ul {
-  list-style: none;
-  padding: 0;
-}
-.course-card li {
-  margin-bottom: 5px;
-}
-
-/* Button */
-.view-course-btn {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 8px 12px;
-  background: #667eea;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-}
-.view-course-btn:hover {
-  background: #5563c1;
-}
-
-/* Footer */
-footer {
-  margin-left: 120px;
-  padding: 15px 20px;
-  background: #fff;
-  border-top: 1px solid #e0e0e0;
-  text-align: center;
-  font-size: 0.9rem;
-  color: #555;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  body.student-page {
-    flex-direction: column;
-  }
-  .sidebar {
-    width: 100%;
-    position: relative;
-    height: auto;
-  }
-  .content {
-    margin-left: 0;
-    padding: 15px;
-  }
-  footer {
-    margin-left: 0;
-  }
-}
-</style>
+    <%- include('../partials/footer') %>
+</body>
+</html>

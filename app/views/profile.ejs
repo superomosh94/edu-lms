@@ -1,192 +1,136 @@
-<%- include('partials/header', { title: 'Profile - EDU LMS' }) %>
-
-<div class="profile-page">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <%- include('partials/sidebar', { user: user, activePage: 'profile' }) %>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="profile-content">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - EDU LMS</title>
+    <%- include('./partials/header') %>
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        .profile-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 1rem;
+        }
+        .profile-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        .profile-section {
+            margin-bottom: 2rem;
+        }
+        .profile-section h3 {
+            margin-bottom: 1rem;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 0.5rem;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        .info-item {
+            margin-bottom: 1rem;
+        }
+        .info-label {
+            font-weight: 500;
+            color: #666;
+        }
+        .info-value {
+            color: #333;
+        }
+        .btn-edit {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/navigation') %>
+    
     <div class="profile-container">
-      <div class="profile-header">
-        <h1>Your Profile</h1>
-        <p>Manage your account information</p>
-      </div>
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+            </div>
+            <h1><%= user.name || 'User' %></h1>
+            <p style="color: #666; font-size: 1.125rem;"><%= user.role || 'Member' %></p>
+        </div>
 
-      <% if (user) { %>
         <div class="profile-card">
-          <div class="profile-row">
-            <div class="profile-label">Name:</div>
-            <div class="profile-value"><%= user.name %></div>
-          </div>
-          <div class="profile-row">
-            <div class="profile-label">Email:</div>
-            <div class="profile-value"><%= user.email %></div>
-          </div>
-          <div class="profile-row">
-            <div class="profile-label">Role:</div>
-            <div class="profile-value"><%= user.roleName || user.role %></div>
-          </div>
+            <div class="profile-section">
+                <h3>Personal Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Full Name</div>
+                        <div class="info-value"><%= user.name || 'Not set' %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value"><%= user.email || 'Not set' %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Role</div>
+                        <div class="info-value"><%= user.role || 'Not set' %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Member Since</div>
+                        <div class="info-value"><%= user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Not available' %></div>
+                    </div>
+                </div>
+            </div>
 
-          <div class="profile-actions">
-            <a href="/settings/profile/edit">Edit Profile</a>
-            <a href="/settings/password">Change Password</a>
-            <a href="/">Go to Home</a>
-          </div>
+            <a href="/settings" class="btn-edit">Edit Profile</a>
         </div>
-      <% } else { %>
-        <div class="profile-error">
-          You are not logged in.
+
+        <% if (user.role === 'Student') { %>
+        <div class="profile-card">
+            <div class="profile-section">
+                <h3>Academic Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Enrolled Courses</div>
+                        <div class="info-value"><%= user.stats?.enrollments || 0 %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Completed Assignments</div>
+                        <div class="info-value"><%= user.stats?.completed || 0 %></div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Average Grade</div>
+                        <div class="info-value"><%= user.stats?.averageGrade ? user.stats.averageGrade + '%' : 'N/A' %></div>
+                    </div>
+                </div>
+            </div>
         </div>
-      <% } %>
+        <% } %>
     </div>
-  </main>
-</div>
 
-<%- include('partials/footer') %>
-
-<style>
-body.profile-page {
-  display: flex;
-  margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f4f6f9;
-  min-height: 100vh;
-  color: #333;
-}
-
-/* Sidebar */
-.sidebar {
-  width: 250px;
-  background: #2c3e50;
-  color: white;
-  padding: 20px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100vh;
-  overflow-y: auto;
-  box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-}
-
-/* Main content */
-.profile-content {
-  margin-left: 250px;
-  padding: 20px;
-  flex-grow: 1;
-  overflow-y: auto;
-}
-
-/* Profile container */
-.profile-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 1rem;
-}
-
-/* Profile header */
-.profile-header {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
-  padding: 20px;
-  border-radius: 8px;
-  text-align: center;
-}
-
-.profile-header h1 {
-  margin: 0;
-  font-size: 1.8rem;
-}
-
-.profile-header p {
-  margin-top: 5px;
-  font-size: 1rem;
-}
-
-/* Profile card */
-.profile-card {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  margin-top: 20px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.profile-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid #eee;
-}
-
-.profile-row:last-child {
-  border-bottom: none;
-}
-
-.profile-label {
-  font-weight: bold;
-  color: #555;
-}
-
-.profile-value {
-  color: #222;
-}
-
-/* Actions */
-.profile-actions {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.profile-actions a {
-  padding: 10px 20px;
-  background: #667eea;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: bold;
-  transition: background 0.3s ease;
-}
-
-.profile-actions a:hover {
-  background: #556cd6;
-}
-
-/* Error message */
-.profile-error {
-  background: #fee2e2;
-  padding: 15px;
-  border-radius: 8px;
-  color: #b91c1c;
-}
-
-/* Footer */
-footer {
-  margin-left: 280px;
-  padding: 20px;
-  background: #f8f9fa;
-  text-align: center;
-  color: #555;
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  body.profile-page {
-    flex-direction: column;
-  }
-  .sidebar {
-    position: relative;
-    width: 100%;
-    height: auto;
-  }
-  .profile-content {
-    margin-left: 0;
-  }
-  footer {
-    margin-left: 0;
-  }
-}
-</style>
+    <%- include('./partials/footer') %>
+</body>
+</html>

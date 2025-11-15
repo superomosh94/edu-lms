@@ -1,79 +1,60 @@
-<%- include('partials/header', { title: typeof title !== 'undefined' ? title : 'Error' }) %>
-<%- include('partials/navigation') %>
-
-<style>
-.error-page {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 40px;
-    text-align: center;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.error-page h1 {
-    color: #dc3545;
-    font-size: 3em;
-    margin-bottom: 20px;
-}
-
-.alert-error {
-    background: #f8d7da;
-    color: #721c24;
-    padding: 15px;
-    border-radius: 5px;
-    margin: 20px 0;
-    border-left: 4px solid #dc3545;
-}
-
-.error-details {
-    background: #f8f9fa;
-    padding: 15px;
-    border-radius: 5px;
-    margin-top: 20px;
-    text-align: left;
-}
-
-.error-details pre {
-    white-space: pre-wrap;
-    font-size: 12px;
-    color: #666;
-}
-
-.back-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    margin-top: 20px;
-}
-
-.back-button:hover {
-    background: #0056b3;
-}
-</style>
-
-<div class="container">
-    <div class="error-page">
-        <h1><%= typeof title !== 'undefined' ? title : 'Error' %></h1>
-        <div class="alert-error">
-            <p><%= typeof message !== 'undefined' ? message : 'Something went wrong. Please try again later.' %></p>
-        </div>
-        
-        <% if (typeof error !== 'undefined' && process.env.NODE_ENV === 'development') { %>
-            <div class="error-details">
-                <h3>Error Details (Development):</h3>
-                <pre><%= error ? error.stack : 'No error details available' %></pre>
-            </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error - EDU LMS</title>
+    <%- include('./partials/header') %>
+    <style>
+        .error-container {
+            text-align: center;
+            padding: 100px 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .error-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+        }
+        .error-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        .error-message {
+            font-size: 1.125rem;
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .btn-home {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 6px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <%- include('./partials/navigation') %>
+    
+    <div class="error-container">
+        <div class="error-icon">⚠️</div>
+        <h1 class="error-title"><%= title || 'Something went wrong' %></h1>
+        <p class="error-message">
+            <%= message || 'We encountered an unexpected error. Please try again later.' %>
+        </p>
+        <% if (error && process.env.NODE_ENV === 'development') { %>
+            <details style="text-align: left; margin: 2rem 0;">
+                <summary>Technical Details</summary>
+                <pre style="background: #f5f5f5; padding: 1rem; border-radius: 6px; overflow-x: auto;"><%= error.stack %></pre>
+            </details>
         <% } %>
-        
-        <a href="/dashboard" class="back-button">Return to Dashboard</a>
-        <a href="/" class="back-button" style="background: #6c757d; margin-left: 10px;">Go Home</a>
+        <a href="/" class="btn-home">Go Back Home</a>
     </div>
-</div>
 
-<%- include('partials/footer') %>
-  
+    <%- include('./partials/footer') %>
+</body>
+</html>

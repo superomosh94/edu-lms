@@ -1,119 +1,197 @@
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    background: #f4f6f9;
-    color: #0e3e81;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= course.title %> - EDU LMS</title>
+    <%- include('../partials/header') %>
+    <style>
+        :root {
+            --primary-blue: #2563EB;
+            --secondary-blue: #3B82F6;
+            --success-green: #10B981;
+            --warning-orange: #F59E0B;
+            --dark-gray: #1F2937;
+            --medium-gray: #6B7280;
+            --light-gray: #F8FAFC;
+            --white: #FFFFFF;
+        }
 
-  .layout {
-    display: flex;
-    min-height: 100vh;
-  }
+        .course-detail-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
 
-  #main-content {
-    padding: 20px;
-    background: #f9fafb;
-    flex: 1;
-    overflow-y: auto;
-    margin-left: 270px;
-  }
+        .course-header {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
 
-  #course-title {
-    font-size: 28px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    color: #1b2e55;
-  }
+        .course-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark-gray);
+            margin-bottom: 1rem;
+        }
 
-  #course-description {
-    font-size: 16px;
-    margin-bottom: 20px;
-    color: #4b5563;
-    line-height: 1.6;
-  }
+        .course-description {
+            color: var(--medium-gray);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
 
-  #assignments-heading {
-    font-size: 22px;
-    font-weight: bold;
-    margin-top: 30px;
-    margin-bottom: 10px;
-    color: #111827;
-  }
+        .course-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
 
-  #assignments-list {
-    list-style-type: none;
-    padding: 0;
-  }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--medium-gray);
+        }
 
-  .assignment-item {
-    padding: 12px;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+        .assignments-section {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
 
-  .assignment-title {
-    font-weight: bold;
-    color: #111827;
-  }
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--dark-gray);
+        }
 
-  .assignment-status {
-    color: #2563eb;
-    font-weight: bold;
-  }
+        .assignment-list {
+            space-y: 1rem;
+        }
 
-  .assignment-grade {
-    color: #16a34a;
-    font-weight: bold;
-  }
+        .assignment-item {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            padding: 1.5rem;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
 
-  #no-assignments {
-    font-style: italic;
-    color: #6b7280;
-  }
+        .assignment-info {
+            flex: 1;
+        }
 
-  footer {
-    background: #f1f5f9;
-    padding: 15px;
-    text-align: center;
-    margin-left: 260px;
-    border-top: 1px solid #e5e7eb;
-  }
-</style>
+        .assignment-title {
+            font-weight: 600;
+            color: var(--dark-gray);
+            margin-bottom: 0.5rem;
+        }
 
-<div class="layout">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <%- include('../partials/sidebar') %>
-  </aside>
+        .assignment-meta {
+            color: var(--medium-gray);
+            font-size: 0.875rem;
+        }
 
-  <!-- Main Content -->
-  <div id="main-content">
-    <h1 id="course-title"><%= course.title %></h1>
-    <p id="course-description"><%= course.description %></p>
+        .assignment-status {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
 
-    <h2 id="assignments-heading">Assignments</h2>
-    <% if (assignments.length > 0) { %>
-      <ul id="assignments-list">
-        <% assignments.forEach(assignment => { %>
-          <li class="assignment-item">
-            <span class="assignment-title"><%= assignment.title %></span> -
-            Status: <span class="assignment-status"><%= assignment.submissionStatus %></span>
-            <% if (assignment.grade) { %>
-              - Grade: <span class="assignment-grade"><%= assignment.grade %></span>
-            <% } %>
-          </li>
-        <% }); %>
-      </ul>
-    <% } else { %>
-      <p id="no-assignments">No assignments found for this course.</p>
-    <% } %>
-  </div>
-</div>
+        .status-submitted {
+            background: #D1FAE5;
+            color: #065F46;
+        }
 
-<footer><%- include('../partials/footer') %></footer>
+        .status-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/sidebar', { user: user, activePage: 'courses' }) %>
+    
+    <div class="main-content">
+        <div class="course-detail-container">
+            <div class="course-header">
+                <h1 class="course-title"><%= course.title %></h1>
+                <p class="course-description"><%= course.description %></p>
+                
+                <div class="course-meta">
+                    <div class="meta-item">
+                        <span>📅</span>
+                        <span>Enrolled: <%= new Date(course.enrolled_at).toLocaleDateString() %></span>
+                    </div>
+                    <div class="meta-item">
+                        <span>📝</span>
+                        <span><%= assignments.length %> Assignments</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="assignments-section">
+                <h2 class="section-title">Course Assignments</h2>
+                
+                <% if (assignments && assignments.length > 0) { %>
+                    <div class="assignment-list">
+                        <% assignments.forEach(assignment => { %>
+                            <div class="assignment-item">
+                                <div class="assignment-info">
+                                    <h3 class="assignment-title"><%= assignment.title %></h3>
+                                    <div class="assignment-meta">
+                                        Due: <%= new Date(assignment.due_date).toLocaleDateString() %> • 
+                                        <%= assignment.description %>
+                                    </div>
+                                </div>
+                                
+                                <div class="assignment-actions">
+                                    <% if (assignment.submissionStatus === 'submitted') { %>
+                                        <span class="assignment-status status-submitted">
+                                            ✅ Submitted
+                                            <% if (assignment.grade) { %> - <%= assignment.grade %>%<% } %>
+                                        </span>
+                                    <% } else { %>
+                                        <span class="assignment-status status-pending">⏳ Pending</span>
+                                        <a href="/student/assignments/<%= assignment.id %>" class="btn btn-primary">Submit Work</a>
+                                    <% } %>
+                                </div>
+                            </div>
+                        <% }) %>
+                    </div>
+                <% } else { %>
+                    <div style="text-align: center; padding: 3rem; color: var(--medium-gray);">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
+                        <h3>No Assignments Yet</h3>
+                        <p>Check back later for course assignments.</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer') %>
+</body>
+</html>
