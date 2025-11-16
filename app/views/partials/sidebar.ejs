@@ -368,7 +368,7 @@ hr {
       <% if (menuItems && menuItems.length) { %>
         <% menuItems.forEach((item, index) => { %>
           <li>
-            <a href="<%= item.url %>" class="nav-link <%= activePage === item.page ? 'active' : '' %>" style="color: rgb(162, 255, 0);">
+            <a href="<%= item.url %>" class="nav-link <%= activePage === item.page ? 'active' : '' %>" style="color: gold;">
               <i class="<%= item.icon.startsWith('fa-') ? item.icon : 'fas fa-' + item.icon %>"></i> 
               <span><%= item.label %></span>
             </a>

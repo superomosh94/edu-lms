@@ -239,7 +239,8 @@
 
         /* Quick Stats */
         .quick-stats {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
             margin-bottom: 1.5rem;
         }
@@ -247,14 +248,13 @@
         .quick-stat-item {
             background: white;
             border-radius: 8px;
-            padding: 1rem;
-            flex: 1;
+            padding: 1.5rem;
             text-align: center;
             box-shadow: var(--card-shadow);
         }
 
         .quick-stat-item .number {
-            font-size: 1.5rem;
+            font-size: 1.75rem;
             font-weight: 700;
             color: var(--primary);
         }
@@ -367,7 +367,7 @@
             }
 
             .quick-stats {
-                flex-direction: column;
+                grid-template-columns: 1fr;
             }
 
             .teacher-actions {
@@ -380,6 +380,15 @@
 
             .action-btn {
                 justify-content: center;
+            }
+
+            .bulk-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .bulk-actions select {
+                max-width: none;
             }
         }
 
@@ -437,21 +446,6 @@
             transform: translateY(-2px);
         }
 
-        /* Tabs */
-        .nav-tabs .nav-link {
-            border: none;
-            color: var(--secondary);
-            font-weight: 500;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px 8px 0 0;
-        }
-
-        .nav-tabs .nav-link.active {
-            background: var(--primary);
-            color: white;
-            border: none;
-        }
-
         /* Due Date Warning */
         .due-date-warning {
             color: var(--danger);
@@ -461,6 +455,24 @@
         .due-date-normal {
             color: var(--success);
             font-weight: 500;
+        }
+
+        /* Course Filter */
+        .course-filter {
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .course-filter h6 {
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+        }
+
+        .form-check {
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
@@ -473,18 +485,12 @@
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <%- include('../partials/sidebar', { menu: menu, activePage: 'assignments' }) %>
+            <%- include('../partials/sidebar', { menu: menu, activePage: 'assignments', user: user }) %>
         </div>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
-            <%- include('../partials/header') %>
-
             <div class="container-fluid py-4">
-                <!-- Flash Messages -->
-                <%- include('../partials/flash-messages') %>
-
                 <!-- Header -->
                 <div class="d-flex justify-content-between align-items-center mb-4 page-header">
                     <div>
@@ -519,47 +525,50 @@
                         <i class="fas fa-book"></i>
                         Manage Courses
                     </a>
-                    <a href="/teacher/announcements" class="action-btn secondary">
-                        <i class="fas fa-bullhorn"></i>
-                        Post Announcement
-                    </a>
                 </div>
 
                 <!-- Quick Stats -->
                 <div class="quick-stats">
                     <div class="quick-stat-item">
-                        <div class="number"><%= stats ? stats.total : 0 %></div>
+                        <div class="number"><%= stats.total %></div>
                         <div class="label">Total Assignments</div>
                     </div>
                     <div class="quick-stat-item">
-                        <div class="number"><%= stats ? stats.ungraded : 0 %></div>
+                        <div class="number"><%= stats.ungraded %></div>
                         <div class="label">Need Grading</div>
                     </div>
                     <div class="quick-stat-item">
-                        <div class="number"><%= stats ? stats.dueThisWeek : 0 %></div>
+                        <div class="number"><%= stats.dueThisWeek %></div>
                         <div class="label">Due This Week</div>
                     </div>
                     <div class="quick-stat-item">
-                        <div class="number"><%= stats ? stats.averageSubmissions : '0' %>%</div>
+                        <div class="number"><%= stats.averageSubmissions %>%</div>
                         <div class="label">Avg. Submission Rate</div>
                     </div>
                 </div>
 
-                <!-- Bulk Actions -->
-                <div class="bulk-actions">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="selectAll">
-                        <label class="form-check-label" for="selectAll">Select All</label>
+                <!-- Course Filter -->
+                <% if (courses && courses.length > 0) { %>
+                <div class="course-filter">
+                    <h6><i class="fas fa-filter me-2"></i>Filter by Course</h6>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input course-checkbox" type="checkbox" id="course-all" checked>
+                                <label class="form-check-label" for="course-all">All Courses</label>
+                            </div>
+                        </div>
+                        <% courses.forEach(course => { %>
+                        <div class="col-md-3">
+                            <div class="form-check">
+                                <input class="form-check-input course-checkbox" type="checkbox" id="course-<%= course.id %>" checked>
+                                <label class="form-check-label" for="course-<%= course.id %>"><%= course.title %></label>
+                            </div>
+                        </div>
+                        <% }); %>
                     </div>
-                    <select class="form-select" id="bulkAction">
-                        <option selected>Bulk Actions...</option>
-                        <option value="publish">Publish Selected</option>
-                        <option value="unpublish">Unpublish Selected</option>
-                        <option value="duplicate">Duplicate Selected</option>
-                        <option value="delete">Delete Selected</option>
-                    </select>
-                    <button class="btn btn-outline-primary" id="applyBulkAction">Apply</button>
                 </div>
+                <% } %>
 
                 <!-- Assignments List -->
                 <% if (!assignments || assignments.length === 0) { %>
@@ -581,31 +590,24 @@
                 <% } else { %>
                     <div class="row g-4 assignments-list" id="assignmentsContainer">
                         <% assignments.forEach(function(assignment) { 
-                            var isOverdue = assignment.due_date && new Date(assignment.due_date) < new Date() && assignment.submissions_count < (assignment.total_students || 1);
-                            var assignmentStatus = isOverdue ? 'overdue' : 'published';
-                            var statusText = assignmentStatus.charAt(0).toUpperCase() + assignmentStatus.slice(1);
+                            const isOverdue = assignment.due_date && new Date(assignment.due_date) < new Date();
+                            const assignmentStatus = isOverdue ? 'overdue' : 'published';
+                            const statusText = isOverdue ? 'Overdue' : 'Published';
                             
-                            var assignmentTitle = assignment.title || 'Untitled Assignment';
-                            var assignmentDescription = assignment.description || 'No description provided';
-                            var dueDate = assignment.due_date ? new Date(assignment.due_date).toLocaleDateString() : 'No due date';
-                            var courseId = assignment.course_id || 'all';
-                            var courseName = assignment.course_name || 'General';
-                            
-                            var totalStudents = assignment.total_students || 1;
-                            var submissions = assignment.submissions_count || 0;
-                            var submissionRate = totalStudents > 0 ? Math.round((submissions / totalStudents) * 100) : 0;
-                            var graded = (assignment.submissions_count || 0) - (assignment.ungraded_count || 0);
+                            const totalStudents = assignment.total_students || 25;
+                            const submissions = assignment.submissions_count || 0;
+                            const submissionRate = Math.round((submissions / totalStudents) * 100);
+                            const ungraded = assignment.ungraded_count || 0;
+                            const graded = submissions - ungraded;
                         %>
                             <div class="col-xl-4 col-lg-6 assignment-item" 
-                                 data-status="<%= assignmentStatus %>" 
-                                 data-course="<%= courseId %>">
+                                 data-course="<%= assignment.course_id %>">
                                 <div class="card assignment-card border-0 shadow-sm h-100">
                                     <div class="card-header bg-transparent border-0 pb-0">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <span class="badge status-badge <%= assignmentStatus %> mb-2">
                                                 <i class="fas <%= 
-                                                    assignmentStatus === 'published' ? 'fa-eye' :
-                                                    assignmentStatus === 'overdue' ? 'fa-exclamation-triangle' : 'fa-eye-slash'
+                                                    assignmentStatus === 'published' ? 'fa-eye' : 'fa-exclamation-triangle'
                                                 %> me-1"></i>
                                                 <%= statusText %>
                                             </span>
@@ -614,42 +616,51 @@
                                                     <i class="fas fa-ellipsis-v"></i>
                                                 </button>
                                                 <ul class="dropdown-menu">
-                                                    <li><a class="dropdown-item" href="/teacher/assignments/view/<%= assignment.id %>">
-                                                        <i class="fas fa-eye me-2"></i>View
-                                                    </a></li>
-                                                    <li><a class="dropdown-item" href="/teacher/assignments/edit/<%= assignment.id %>">
-                                                        <i class="fas fa-edit me-2"></i>Edit
-                                                    </a></li>
-                                                    <li><a class="dropdown-item" href="/teacher/submissions?assignment=<%= assignment.id %>">
-                                                        <i class="fas fa-file-alt me-2"></i>Submissions (<%= submissions %>)
-                                                    </a></li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="/teacher/assignments/<%= assignment.id %>">
+                                                            <i class="fas fa-eye me-2"></i>View
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="/teacher/assignments/<%= assignment.id %>/edit">
+                                                            <i class="fas fa-edit me-2"></i>Edit
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a class="dropdown-item" href="/teacher/submissions?assignment=<%= assignment.id %>">
+                                                            <i class="fas fa-file-alt me-2"></i>Submissions (<%= submissions %>)
+                                                        </a>
+                                                    </li>
                                                     <li><hr class="dropdown-divider"></li>
-                                                    <li><a class="dropdown-item text-success" href="/teacher/assignments/duplicate/<%= assignment.id %>">
-                                                        <i class="fas fa-copy me-2"></i>Duplicate
-                                                    </a></li>
-                                                    <li><a class="dropdown-item text-danger" href="/teacher/assignments/delete/<%= assignment.id %>" 
-                                                           onclick="return confirm('Are you sure you want to delete this assignment? This will also delete all submissions.')">
-                                                        <i class="fas fa-trash me-2"></i>Delete
-                                                    </a></li>
+                                                    <li>
+                                                        <form method="POST" action="/teacher/assignments/<%= assignment.id %>/delete" class="d-inline">
+                                                            <button type="submit" class="dropdown-item text-danger" 
+                                                                    onclick="return confirm('Are you sure you want to delete this assignment?')">
+                                                                <i class="fas fa-trash me-2"></i>Delete
+                                                            </button>
+                                                        </form>
+                                                    </li>
                                                 </ul>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="card-body">
-                                        <h5 class="card-title mb-3"><%= assignmentTitle %></h5>
+                                        <h5 class="card-title mb-3"><%= assignment.title %></h5>
                                         <p class="card-text text-muted mb-3">
-                                            <%= assignmentDescription.substring(0, 100) + (assignmentDescription.length > 100 ? '...' : '') %>
+                                            <%= assignment.description ? 
+                                                (assignment.description.substring(0, 100) + (assignment.description.length > 100 ? '...' : '')) 
+                                                : 'No description provided' %>
                                         </p>
                                         
                                         <div class="assignment-meta">
                                             <div class="d-flex align-items-center mb-2">
                                                 <i class="fas fa-book text-primary me-2"></i>
-                                                <small class="text-muted"><%= courseName %></small>
+                                                <small class="text-muted"><%= assignment.course_name %></small>
                                             </div>
                                             <div class="d-flex align-items-center mb-2">
                                                 <i class="fas fa-calendar-alt <%= isOverdue ? 'text-danger' : 'text-warning' %> me-2"></i>
                                                 <small class="<%= isOverdue ? 'due-date-warning' : 'due-date-normal' %>">
-                                                    Due: <%= dueDate %>
+                                                    Due: <%= assignment.due_date ? new Date(assignment.due_date).toLocaleDateString() : 'No due date' %>
                                                     <% if (isOverdue) { %>
                                                         <i class="fas fa-exclamation-circle ms-1"></i>
                                                     <% } %>
@@ -671,19 +682,19 @@
                                             </div>
                                             <div class="d-flex justify-content-between mt-1">
                                                 <small class="text-muted">Graded: <%= graded %></small>
-                                                <small class="text-muted">Pending: <%= submissions - graded %></small>
+                                                <small class="text-muted">Pending: <%= ungraded %></small>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="card-footer bg-transparent border-0 pt-0">
                                         <div class="teacher-actions">
-                                            <a href="/teacher/assignments/edit/<%= assignment.id %>" class="btn btn-outline-primary btn-sm">
+                                            <a href="/teacher/assignments/<%= assignment.id %>/edit" class="btn btn-outline-primary btn-sm">
                                                 <i class="fas fa-edit me-1"></i>Edit
                                             </a>
                                             <a href="/teacher/submissions?assignment=<%= assignment.id %>" class="btn btn-primary btn-sm">
-                                                <i class="fas fa-file-alt me-1"></i>Grade (<%= submissions - graded %>)
+                                                <i class="fas fa-file-alt me-1"></i>Grade (<%= ungraded %>)
                                             </a>
-                                            <a href="/teacher/assignments/view/<%= assignment.id %>" class="btn btn-outline-secondary btn-sm">
+                                            <a href="/teacher/assignments/<%= assignment.id %>" class="btn btn-outline-secondary btn-sm">
                                                 <i class="fas fa-eye me-1"></i>View
                                             </a>
                                         </div>
@@ -697,8 +708,7 @@
         </main>
     </div>
 
-    <%- include('../partials/footer-scripts') %>
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Mobile menu toggle
@@ -711,68 +721,51 @@
                 });
             }
 
-            // Bulk actions functionality
-            const selectAll = document.getElementById('selectAll');
-            const bulkAction = document.getElementById('bulkAction');
-            const applyBulkAction = document.getElementById('applyBulkAction');
-            
-            if (selectAll && bulkAction && applyBulkAction) {
-                selectAll.addEventListener('change', function() {
-                    const checkboxes = document.querySelectorAll('.assignment-select');
-                    checkboxes.forEach(checkbox => {
-                        checkbox.checked = selectAll.checked;
-                    });
-                });
-
-                applyBulkAction.addEventListener('click', function() {
-                    const selectedAction = bulkAction.value;
-                    const selectedAssignments = document.querySelectorAll('.assignment-select:checked');
-                    
-                    if (selectedAssignments.length === 0) {
-                        alert('Please select at least one assignment.');
-                        return;
-                    }
-
-                    if (selectedAction === 'delete') {
-                        if (!confirm(`Are you sure you want to delete ${selectedAssignments.length} assignment(s)? This will also delete all submissions.`)) {
-                            return;
-                        }
-                    }
-
-                    console.log(`Applying ${selectedAction} to ${selectedAssignments.length} assignments`);
-                    
-                    selectAll.checked = false;
-                    selectedAssignments.forEach(checkbox => {
-                        checkbox.checked = false;
-                    });
-                });
-            }
-
             // Course filter functionality
             const courseCheckboxes = document.querySelectorAll('.course-checkbox');
+            const courseAll = document.getElementById('course-all');
+            
             if (courseCheckboxes.length > 0) {
-                courseCheckboxes.forEach(checkbox => {
-                    checkbox.addEventListener('change', function() {
-                        filterAssignments();
+                // Select All functionality
+                courseAll.addEventListener('change', function() {
+                    courseCheckboxes.forEach(checkbox => {
+                        if (checkbox !== courseAll) {
+                            checkbox.checked = courseAll.checked;
+                        }
                     });
+                    filterAssignments();
                 });
-            }
 
-            function filterAssignments() {
-                const selectedCourses = Array.from(courseCheckboxes)
-                    .filter(cb => cb.checked && cb.id !== 'course-all')
-                    .map(cb => cb.id.replace('course-', ''));
-                
-                const showAll = document.getElementById('course-all').checked;
-                
-                document.querySelectorAll('.assignment-item').forEach(item => {
-                    const courseId = item.dataset.course;
-                    if (showAll || selectedCourses.includes(courseId)) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
+                // Individual checkbox functionality
+                courseCheckboxes.forEach(checkbox => {
+                    if (checkbox !== courseAll) {
+                        checkbox.addEventListener('change', function() {
+                            // If any individual checkbox is unchecked, uncheck "Select All"
+                            const allChecked = Array.from(courseCheckboxes)
+                                .filter(cb => cb !== courseAll)
+                                .every(cb => cb.checked);
+                            courseAll.checked = allChecked;
+                            filterAssignments();
+                        });
                     }
                 });
+
+                function filterAssignments() {
+                    const selectedCourses = Array.from(courseCheckboxes)
+                        .filter(cb => cb.checked && cb.id !== 'course-all')
+                        .map(cb => cb.id.replace('course-', ''));
+                    
+                    const showAll = courseAll.checked;
+                    
+                    document.querySelectorAll('.assignment-item').forEach(item => {
+                        const courseId = item.dataset.course;
+                        if (showAll || selectedCourses.includes(courseId)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                }
             }
         });
     </script>

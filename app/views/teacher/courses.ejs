@@ -221,6 +221,34 @@
             text-decoration: none;
         }
 
+        /* Status Badges */
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .status-badge.active { 
+            background: #d1fae5; 
+            color: #065f46; 
+        }
+        
+        .status-badge.inactive { 
+            background: #e5e7eb; 
+            color: #4b5563; 
+        }
+        
+        .status-badge.draft { 
+            background: #fef3c7; 
+            color: #d97706; 
+        }
+
+        .status-badge.pending { 
+            background: #dbeafe; 
+            color: #1d4ed8; 
+        }
+
         /* Responsive Design */
         @media (max-width: 992px) {
             .sidebar {
@@ -331,18 +359,12 @@
 
         <!-- Sidebar -->
         <div class="sidebar">
-            <%- include('../partials/sidebar', { menu: menu, activePage: 'courses' }) %>
+            <%- include('../partials/sidebar', { menu: menu, activePage: 'courses', user: user }) %>
         </div>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Header -->
-            <%- include('../partials/header') %>
-
             <div class="container-fluid py-4">
-                <!-- Flash Messages -->
-                <%- include('../partials/flash-messages') %>
-
                 <!-- Header -->
                 <div class="d-flex justify-content-between align-items-center mb-4 page-header">
                     <div>
@@ -398,13 +420,29 @@
                     </div>
                 <% } else { %>
                     <div class="course-grid">
-                        <% courses.forEach(function(course) { %>
+                        <% courses.forEach(function(course) { 
+                            // NOW USING DYNAMIC DATA FROM THE ENHANCED CONTROLLER
+                            const studentCount = course.student_count || 0;
+                            const assignmentCount = course.assignment_count || 0;
+                            const avgGrade = course.average_grade || 0;
+                            const status = course.status || 'draft';
+                            const statusClass = status.toLowerCase();
+                            
+                            // Determine if we should show N/A for average grade
+                            const showGrade = avgGrade > 0;
+                            const gradeDisplay = showGrade ? avgGrade + '%' : 'N/A';
+                        %>
                             <div class="card course-card border-0 shadow-sm h-100">
                                 <div class="card-header">
                                     <h5 class="mb-1 text-white"><%= course.title %></h5>
                                     <div class="d-flex justify-content-between align-items-center text-white-50">
-                                        <span class="badge bg-light text-dark">
-                                            <%= course.status || 'Active' %>
+                                        <span class="badge status-badge <%= statusClass %>">
+                                            <i class="fas <%= 
+                                                statusClass === 'active' ? 'fa-eye' :
+                                                statusClass === 'inactive' ? 'fa-eye-slash' :
+                                                statusClass === 'draft' ? 'fa-edit' : 'fa-clock'
+                                            %> me-1"></i>
+                                            <%= status %>
                                         </span>
                                         <small>Created: <%= new Date(course.created_at).toLocaleDateString() %></small>
                                     </div>
@@ -414,24 +452,30 @@
                                     
                                     <div class="course-stats">
                                         <div class="stat-item">
-                                            <div class="stat-number">25</div>
+                                            <div class="stat-number"><%= studentCount %></div>
                                             <div class="stat-label">Students</div>
                                         </div>
                                         <div class="stat-item">
-                                            <div class="stat-number">5</div>
+                                            <div class="stat-number"><%= assignmentCount %></div>
                                             <div class="stat-label">Assignments</div>
                                         </div>
                                         <div class="stat-item">
-                                            <div class="stat-number">85%</div>
+                                            <div class="stat-number"><%= gradeDisplay %></div>
                                             <div class="stat-label">Avg Grade</div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="card-footer">
                                     <div class="course-actions">
-                                        <a href="/teacher/courses/<%= course.id %>" class="btn btn-outline-primary btn-sm">View</a>
-                                        <a href="/teacher/courses/<%= course.id %>/edit" class="btn btn-outline-secondary btn-sm">Edit</a>
-                                        <a href="/teacher/assignments?course=<%= course.id %>" class="btn btn-outline-info btn-sm">Assignments</a>
+                                        <a href="/teacher/courses/<%= course.id %>" class="btn btn-outline-primary btn-sm">
+                                            <i class="fas fa-eye me-1"></i>View
+                                        </a>
+                                        <a href="/teacher/courses/<%= course.id %>/edit" class="btn btn-outline-secondary btn-sm">
+                                            <i class="fas fa-edit me-1"></i>Edit
+                                        </a>
+                                        <a href="/teacher/assignments?course=<%= course.id %>" class="btn btn-outline-info btn-sm">
+                                            <i class="fas fa-tasks me-1"></i>Assignments
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -442,8 +486,7 @@
         </main>
     </div>
 
-    <%- include('../partials/footer-scripts') %>
-    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Mobile menu toggle

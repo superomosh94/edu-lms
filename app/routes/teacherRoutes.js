@@ -18,6 +18,7 @@ router.get('/courses', teacherController.showCoursesPage);
 // Create Course
 router.get('/courses/create', teacherController.showCreateCoursePage);
 router.post('/courses/create', teacherController.createCourse);
+router.get('/courses/:id', teacherController.viewCourse);
 
 // Assignments
 router.get('/assignments', teacherController.showAssignmentsPage);
@@ -29,6 +30,20 @@ router.post(
     validationMiddleware.validateAssignment,
     teacherController.createAssignment
 );
+
+// View Single Assignment (MUST come before edit route)
+router.get('/assignments/:id', teacherController.viewAssignment);
+
+// Edit Assignment
+router.get('/assignments/:id/edit', teacherController.showEditAssignmentPage);
+router.post(
+    '/assignments/:id/edit',
+    validationMiddleware.validateAssignment,
+    teacherController.updateAssignment
+);
+
+// Delete Assignment
+router.post('/assignments/:id/delete', teacherController.deleteAssignment);
 
 // Submissions
 router.get('/submissions', teacherController.showSubmissionsPage);

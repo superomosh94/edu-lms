@@ -1,34 +1,518 @@
 <%- include('../partials/header', { title: 'Create Assignment' }) %>
 
-<div class="container mt-4">
-  <h2>Create New Assignment</h2>
-  <form action="/teacher/assignments/create" method="POST">
-    <div class="mb-3">
-      <label for="course" class="form-label">Course</label>
-      <select class="form-select" id="course" name="course_id" required>
-        <% courses.forEach(course => { %>
-          <option value="<%= course.id %>"><%= course.title %></option>
-        <% }) %>
-      </select>
+<style>
+  :root {
+    --primary: #3498db;
+    --primary-dark: #2980b9;
+    --primary-light: #ebf5fb;
+    --success: #27ae60;
+    --warning: #f39c12;
+    --danger: #e74c3c;
+    --dark: #2c3e50;
+    --gray: #95a5a6;
+    --light: #ecf0f1;
+    --white: #ffffff;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+    --radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  .main-container {
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 250px;
+    background: var(--white);
+    box-shadow: var(--shadow);
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+  }
+
+  .content-wrapper {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+    min-height: 100vh;
+  }
+
+  .assignment-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .assignment-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .assignment-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  }
+
+  .assignment-header h2 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    position: relative;
+  }
+
+  .assignment-header p {
+    opacity: 0.9;
+    font-size: 1.1rem;
+  }
+
+  .assignment-form {
+    background: var(--white);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: var(--transition);
+  }
+
+  .assignment-form:hover {
+    box-shadow: var(--shadow-hover);
+  }
+
+  .form-group {
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .form-label {
+    display: block;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    transition: var(--transition);
+  }
+
+  .form-label::after {
+    content: '*';
+    color: var(--danger);
+    margin-left: 4px;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e9ecef;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: var(--transition);
+    background: var(--white);
+    font-family: inherit;
+  }
+
+  .form-control:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .form-select {
+    width: 100%;
+    padding: 1rem 1.25rem;
+    border: 2px solid #e9ecef;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    background: var(--white);
+    cursor: pointer;
+    transition: var(--transition);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 16px;
+  }
+
+  .form-select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+    transform: translateY(-2px);
+  }
+
+  textarea.form-control {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.6;
+  }
+
+  .form-hint {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  .btn {
+    padding: 1rem 2.5rem;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 1.1rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn:hover::before {
+    left: 100%;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+  }
+
+  .btn-primary:active {
+    transform: translateY(-1px);
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .character-count {
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--gray);
+    margin-top: 0.5rem;
+  }
+
+  .character-count.warning {
+    color: var(--warning);
+  }
+
+  .character-count.error {
+    color: var(--danger);
+  }
+
+  .error-message {
+    background: #f8d7da;
+    color: #721c24;
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid #f5c6cb;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .success-message {
+    background: #d4edda;
+    color: #155724;
+    padding: 1rem;
+    border-radius: var(--radius);
+    border: 1px solid #c3e6cb;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 1024px) {
+    .sidebar {
+      width: 200px;
+    }
+    
+    .content-wrapper {
+      margin-left: 200px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .main-container {
+      flex-direction: column;
+    }
+
+    .sidebar {
+      position: relative;
+      width: 100%;
+      height: auto;
+    }
+
+    .content-wrapper {
+      margin-left: 0;
+      padding: 1rem;
+    }
+
+    .assignment-header {
+      padding: 2rem 1.5rem;
+    }
+
+    .assignment-header h2 {
+      font-size: 1.8rem;
+    }
+
+    .assignment-form {
+      padding: 1.5rem;
+    }
+
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .assignment-header h2 {
+      font-size: 1.5rem;
+    }
+
+    .assignment-form {
+      padding: 1.25rem;
+    }
+
+    .form-control, .form-select {
+      padding: 0.875rem 1rem;
+    }
+  }
+
+  /* Animation for form elements */
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .form-group {
+    animation: slideIn 0.5s ease-out;
+  }
+
+  .form-group:nth-child(1) { animation-delay: 0.1s; }
+  .form-group:nth-child(2) { animation-delay: 0.2s; }
+  .form-group:nth-child(3) { animation-delay: 0.3s; }
+  .form-group:nth-child(4) { animation-delay: 0.4s; }
+</style>
+
+<div class="main-container">
+    <div class="sidebar">
+        <%- include('../partials/sidebar', { menu: menu, activePage: 'assignments', user: user }) %>
     </div>
 
-    <div class="mb-3">
-      <label for="title" class="form-label">Assignment Title</label>
-      <input type="text" class="form-control" id="title" name="title" required>
-    </div>
+    <div class="content-wrapper">
+        <div class="assignment-container">
+            <!-- Page Header -->
+            <div class="assignment-header">
+                <h2>Create New Assignment</h2>
+                <p>Design engaging learning activities for your students</p>
+            </div>
 
-    <div class="mb-3">
-      <label for="description" class="form-label">Description</label>
-      <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
-    </div>
+            <!-- Error/Success Messages -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="error-message">
+                    <strong>Error:</strong> <%= typeof error === 'string' ? error : 'Please check your input and try again.' %>
+                </div>
+            <% } %>
 
-    <div class="mb-3">
-      <label for="due_date" class="form-label">Due Date</label>
-      <input type="date" class="form-control" id="due_date" name="due_date" required>
-    </div>
+            <% if (typeof success !== 'undefined' && success) { %>
+                <div class="success-message">
+                    <strong>Success:</strong> <%= typeof success === 'string' ? success : 'Assignment created successfully.' %>
+                </div>
+            <% } %>
 
-    <button type="submit" class="btn btn-primary">Create Assignment</button>
-  </form>
+            <!-- Assignment Form -->
+            <form action="/teacher/assignments/create" method="POST" class="assignment-form">
+                <!-- Course Selection -->
+                <div class="form-group">
+                    <label for="course" class="form-label">Course</label>
+                    <select class="form-select" id="course" name="course_id" required>
+                        <option value="">Select a course</option>
+                        <% courses.forEach(course => { %>
+                            <option value="<%= course.id %>" <%= (typeof course_id !== 'undefined' && course_id == course.id) ? 'selected' : '' %>>
+                                <%= course.title %> <% if (course.course_code) { %>(<%= course.course_code %>)<% } %>
+                            </option>
+                        <% }) %>
+                    </select>
+                    <span class="form-hint">Choose the course for this assignment</span>
+                </div>
+
+                <!-- Assignment Title -->
+                <div class="form-group">
+                    <label for="title" class="form-label">Assignment Title</label>
+                    <input type="text" class="form-control" id="title" name="title" required 
+                           placeholder="Enter a clear and descriptive title"
+                           value="<%= typeof title !== 'undefined' ? title : '' %>"
+                           maxlength="255">
+                    <div class="character-count" id="title-count">0/255 characters</div>
+                    <span class="form-hint">Be specific about what students need to complete</span>
+                </div>
+
+                <!-- Assignment Description -->
+                <div class="form-group">
+                    <label for="description" class="form-label">Description & Instructions</label>
+                    <textarea class="form-control" id="description" name="description" rows="6" required
+                              placeholder="Provide detailed instructions, requirements, and evaluation criteria..."
+                              maxlength="2000"><%= typeof description !== 'undefined' ? description : '' %></textarea>
+                    <div class="character-count" id="description-count">0/2000 characters</div>
+                    <span class="form-hint">Include all necessary details for students to complete the assignment successfully</span>
+                </div>
+
+                <!-- Due Date and Points -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="due_date" class="form-label">Due Date</label>
+                        <input type="datetime-local" class="form-control" id="due_date" name="due_date" required
+                               value="<%= typeof due_date !== 'undefined' ? due_date : '' %>"
+                               min="<%= new Date().toISOString().slice(0,16) %>">
+                        <span class="form-hint">Set a realistic deadline for submission</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="max_points" class="form-label">Maximum Points</label>
+                        <input type="number" class="form-control" id="max_points" name="max_points" 
+                               placeholder="100"
+                               value="<%= typeof max_points !== 'undefined' ? max_points : '100' %>"
+                               min="1" max="1000" step="0.5">
+                        <span class="form-hint">Total points possible for this assignment</span>
+                    </div>
+                </div>
+
+                <!-- Additional Instructions -->
+                <div class="form-group">
+                    <label for="instructions" class="form-label">Additional Instructions (Optional)</label>
+                    <textarea class="form-control" id="instructions" name="instructions" rows="4"
+                              placeholder="Any special instructions, formatting requirements, or submission guidelines..."
+                              maxlength="1000"><%= typeof instructions !== 'undefined' ? instructions : '' %></textarea>
+                    <div class="character-count" id="instructions-count">0/1000 characters</div>
+                    <span class="form-hint">Optional: Specify file formats, word counts, or other requirements</span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary">
+                    Create Assignment
+                </button>
+            </form>
+        </div>
+    </div>
 </div>
+
+<script>
+  // Character counter functionality
+  function setupCharacterCounter(textareaId, counterId, maxLength) {
+    const textarea = document.getElementById(textareaId);
+    const counter = document.getElementById(counterId);
+    
+    function updateCounter() {
+      const length = textarea.value.length;
+      counter.textContent = `${length}/${maxLength} characters`;
+      
+      // Update color based on usage
+      counter.className = 'character-count';
+      if (length > maxLength * 0.8) {
+        counter.classList.add('warning');
+      }
+      if (length > maxLength * 0.95) {
+        counter.classList.add('error');
+      }
+    }
+    
+    textarea.addEventListener('input', updateCounter);
+    updateCounter(); // Initialize counter
+  }
+
+  // Initialize character counters
+  document.addEventListener('DOMContentLoaded', function() {
+    setupCharacterCounter('title', 'title-count', 255);
+    setupCharacterCounter('description', 'description-count', 2000);
+    setupCharacterCounter('instructions', 'instructions-count', 1000);
+    
+    // Set minimum datetime for due date (current time)
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    document.getElementById('due_date').min = now.toISOString().slice(0, 16);
+    
+    // Form validation
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+      const dueDate = new Date(document.getElementById('due_date').value);
+      const now = new Date();
+      
+      if (dueDate <= now) {
+        e.preventDefault();
+        alert('Due date must be in the future.');
+        return false;
+      }
+      
+      // Show loading state
+      const submitBtn = this.querySelector('button[type="submit"]');
+      submitBtn.innerHTML = 'Creating Assignment...';
+      submitBtn.disabled = true;
+    });
+  });
+</script>
 
 <%- include('../partials/footer') %>

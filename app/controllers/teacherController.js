@@ -1,5 +1,5 @@
 // ==================================
-// Teacher Controller (Fixed Version - No points column)
+// Teacher Controller (Enhanced Version with Course Statistics)
 // ==================================
 
 const pool = require('../controllers/config/db');
@@ -48,13 +48,30 @@ async function showTeacherDashboard(req, res) {
 }
 
 // ------------------------------
-// Courses
+// Courses (ENHANCED - Now includes statistics)
 // ------------------------------
 async function showCoursesPage(req, res) {
   try {
     const teacherId = req.session.userId;
+    
+    // Enhanced query to include course statistics
     const [courses] = await pool.query(
-      `SELECT id, title, description, status, created_at FROM courses WHERE teacher_id = ?`,
+      `SELECT 
+        c.id, 
+        c.title, 
+        c.description, 
+        c.status, 
+        c.created_at,
+        COUNT(DISTINCT e.student_id) AS student_count,
+        COUNT(DISTINCT a.id) AS assignment_count,
+        COALESCE(ROUND(AVG(s.grade)), 0) AS average_grade
+       FROM courses c
+       LEFT JOIN enrollments e ON c.id = e.course_id AND e.status = 'active'
+       LEFT JOIN assignments a ON c.id = a.course_id
+       LEFT JOIN submissions s ON a.id = s.assignment_id AND s.grade IS NOT NULL
+       WHERE c.teacher_id = ?
+       GROUP BY c.id, c.title, c.description, c.status, c.created_at
+       ORDER BY c.created_at DESC`,
       [teacherId]
     );
 
@@ -68,6 +85,90 @@ async function showCoursesPage(req, res) {
   } catch (error) {
     console.error('Courses error:', error);
     res.status(500).render('error', { title: 'Error', message: 'Unable to load courses.' });
+  }
+}
+
+
+// ------------------------------
+// View Single Course 
+// ------------------------------
+async function viewCourse(req, res) {
+  try {
+    const courseId = req.params.id;
+    const teacherId = req.session.userId;
+
+    // Fetch course details with statistics
+    const [courses] = await pool.query(
+      `SELECT 
+        c.id, 
+        c.title, 
+        c.description, 
+        c.status, 
+        c.created_at,
+        COUNT(DISTINCT e.student_id) AS student_count
+       FROM courses c
+       LEFT JOIN enrollments e ON c.id = e.course_id AND e.status = 'active'
+       WHERE c.id = ? AND c.teacher_id = ?
+       GROUP BY c.id, c.title, c.description, c.status, c.created_at`,
+      [courseId, teacherId]
+    );
+
+    if (courses.length === 0) {
+      return res.status(404).render('error', { 
+        title: 'Not Found', 
+        message: 'Course not found or you do not have access to this course.' 
+      });
+    }
+
+    const course = courses[0];
+
+    // Fetch assignments for this course
+    const [assignments] = await pool.query(
+      `SELECT 
+        a.id, 
+        a.title, 
+        a.description, 
+        a.due_date, 
+        a.created_at,
+        COUNT(DISTINCT s.id) AS submissions_count,
+        COUNT(DISTINCT CASE WHEN s.grade IS NULL THEN s.id END) AS ungraded_count
+       FROM assignments a
+       LEFT JOIN submissions s ON a.id = s.assignment_id
+       WHERE a.course_id = ?
+       GROUP BY a.id, a.title, a.description, a.due_date, a.created_at
+       ORDER BY a.due_date ASC`,
+      [courseId]
+    );
+
+    // Calculate course statistics
+    const totalAssignments = assignments.length;
+    const activeAssignments = assignments.filter(a => new Date(a.due_date) > new Date()).length;
+    const completedAssignments = assignments.filter(a => new Date(a.due_date) < new Date()).length;
+    const totalSubmissions = assignments.reduce((sum, a) => sum + (a.submissions_count || 0), 0);
+    const totalUngraded = assignments.reduce((sum, a) => sum + (a.ungraded_count || 0), 0);
+
+    res.render('teacher/course-details', {
+      title: course.title + ' - Course Details',
+      activePage: 'courses',
+      menu: getMenu(),
+      user: { name: req.session.userName },
+      course: course,
+      assignments: assignments,
+      stats: {
+        totalAssignments,
+        activeAssignments,
+        completedAssignments,
+        totalSubmissions,
+        totalUngraded,
+        studentCount: course.student_count || 0
+      }
+    });
+  } catch (error) {
+    console.error('View course error:', error);
+    res.status(500).render('error', { 
+      title: 'Error', 
+      message: 'Unable to load course details.' 
+    });
   }
 }
 
@@ -252,7 +353,7 @@ async function showEditAssignmentPage(req, res) {
 }
 
 // ------------------------------
-// Update Assignment (FIXED - No points parameter)
+// Update Assignment (FIXED - Remove updated_at column)
 // ------------------------------
 async function updateAssignment(req, res) {
   try {
@@ -267,12 +368,16 @@ async function updateAssignment(req, res) {
     );
 
     if (assignments.length === 0) {
-      return res.status(403).render('error', { title: 'Access Denied', message: 'Cannot update this assignment.' });
+      return res.status(403).render('error', { 
+        title: 'Access Denied', 
+        message: 'Cannot update this assignment.' 
+      });
     }
 
+    // FIXED: Remove updated_at column from query
     await pool.query(
       `UPDATE assignments 
-       SET course_id = ?, title = ?, description = ?, due_date = ?, updated_at = NOW()
+       SET course_id = ?, title = ?, description = ?, due_date = ?
        WHERE id = ?`,
       [course_id, title, description, due_date, assignmentId]
     );
@@ -280,7 +385,10 @@ async function updateAssignment(req, res) {
     res.redirect('/teacher/assignments');
   } catch (error) {
     console.error('Update assignment error:', error);
-    res.status(500).render('error', { title: 'Error', message: 'Unable to update assignment.' });
+    res.status(500).render('error', { 
+      title: 'Error', 
+      message: 'Unable to update assignment.' 
+    });
   }
 }
 
@@ -681,6 +789,7 @@ async function showReportsPage(req, res) {
     res.status(500).render('error', { title: 'Error', message: 'Unable to load reports.' });
   }
 }
+
 // ------------------------------
 // Dashboard Helper
 // ------------------------------
@@ -712,11 +821,12 @@ async function fetchTeacherDashboard(userId) {
 }
 
 // ------------------------------
-// Exports
+// Exports (UPDATED - Added viewCourse)
 // ------------------------------
 module.exports = {
   showTeacherDashboard,
   showCoursesPage,
+  viewCourse, // NEW: Added this export
   showCreateCoursePage,
   createCourse,
   showAssignmentsPage,

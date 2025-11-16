@@ -5,9 +5,9 @@
     <!-- Brand & Mobile Toggle Container -->
     <div class="navbar-header-container">
       <!-- Brand -->
-      <a class="navbar-brand d-flex align-items-center fw-bold" href="<%= user && user.role === 'teacher' ? '/teacher' : (user && user.role === 'admin' ? '/admin' : '/dashboard') %>">
+      <a class="navbar-brand d-flex align-items-center fw-bold" href="/dashboard">
         <div class="brand-glow">
-          <i class="fas fa-graduation-cap me-2 text-warning"></i>
+          <i class="fas fa-graduation-cap me-2 text-gold"></i>
         </div>
         <span class="brand-text">EDU LMS</span>
         <small class="text-light ms-2 fw-normal d-none d-sm-inline tagline">Learn. Grow. Achieve.</small>
@@ -22,20 +22,53 @@
     <!-- Navbar Content -->
     <div class="collapse navbar-collapse" id="navbarContent">
 
-      <!-- Left Menu - Dynamic based on user role -->
+      <!-- Left Menu - Role-based Navigation -->
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <% if (user && user.role === 'teacher') { %>
+        <% if (user && user.role === 'student') { %>
+          <!-- Student Navigation -->
+          <li class="nav-item">
+            <a class="nav-link px-3<%= activePage === 'dashboard' ? ' active' : '' %>" href="/dashboard">
+              <i class="fas fa-tachometer-alt me-1"></i>
+              <span class="nav-text">My Learning Space</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3<%= activePage === 'courses' ? ' active' : '' %>" href="/courses">
+              <i class="fas fa-book me-1"></i>
+              <span class="nav-text">My Courses</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3<%= activePage === 'assignments' ? ' active' : '' %>" href="/assignments">
+              <i class="fas fa-tasks me-1"></i>
+              <span class="nav-text">Assignments</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3<%= activePage === 'grades' ? ' active' : '' %>" href="/grades">
+              <i class="fas fa-chart-bar me-1"></i>
+              <span class="nav-text">Performance</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link px-3<%= activePage === 'resources' ? ' active' : '' %>" href="/resources">
+              <i class="fas fa-folder me-1"></i>
+              <span class="nav-text">Resources</span>
+            </a>
+          </li>
+
+        <% } else if (user && user.role === 'teacher') { %>
           <!-- Teacher Navigation -->
           <li class="nav-item">
             <a class="nav-link px-3<%= activePage === 'dashboard' ? ' active' : '' %>" href="/teacher">
               <i class="fas fa-tachometer-alt me-1"></i>
-              <span class="nav-text">Dashboard</span>
+              <span class="nav-text">Teacher Dashboard</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link px-3<%= activePage === 'courses' ? ' active' : '' %>" href="/teacher/courses">
               <i class="fas fa-book me-1"></i>
-              <span class="nav-text">Courses</span>
+              <span class="nav-text">My Courses</span>
             </a>
           </li>
           <li class="nav-item">
@@ -56,30 +89,25 @@
               <span class="nav-text">Gradebook</span>
             </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link px-3<%= activePage === 'reports' ? ' active' : '' %>" href="/teacher/reports">
-              <i class="fas fa-chart-line me-1"></i>
-              <span class="nav-text">Reports</span>
-            </a>
-          </li>
+
         <% } else if (user && user.role === 'admin') { %>
           <!-- Admin Navigation -->
           <li class="nav-item">
             <a class="nav-link px-3<%= activePage === 'dashboard' ? ' active' : '' %>" href="/admin">
               <i class="fas fa-tachometer-alt me-1"></i>
-              <span class="nav-text">Dashboard</span>
+              <span class="nav-text">Admin Dashboard</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link px-3<%= activePage === 'users' ? ' active' : '' %>" href="/admin/users">
               <i class="fas fa-users me-1"></i>
-              <span class="nav-text">Users</span>
+              <span class="nav-text">User Management</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link px-3<%= activePage === 'courses' ? ' active' : '' %>" href="/admin/courses">
               <i class="fas fa-book me-1"></i>
-              <span class="nav-text">Courses</span>
+              <span class="nav-text">Course Management</span>
             </a>
           </li>
           <li class="nav-item">
@@ -88,51 +116,51 @@
               <span class="nav-text">Analytics</span>
             </a>
           </li>
-        <% } else { %>
-          <!-- Student Navigation (default) -->
           <li class="nav-item">
-            <a class="nav-link px-3<%= activePage === 'dashboard' ? ' active' : '' %>" href="/dashboard">
-              <i class="fas fa-tachometer-alt me-1"></i>
-              <span class="nav-text">Dashboard</span>
+            <a class="nav-link px-3<%= activePage === 'settings' ? ' active' : '' %>" href="/admin/settings">
+              <i class="fas fa-cog me-1"></i>
+              <span class="nav-text">System Settings</span>
+            </a>
+          </li>
+
+        <% } else { %>
+          <!-- Guest/Default Navigation -->
+          <li class="nav-item">
+            <a class="nav-link px-3<%= activePage === 'home' ? ' active' : '' %>" href="/">
+              <i class="fas fa-home me-1"></i>
+              <span class="nav-text">Home</span>
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link px-3<%= activePage === 'courses' ? ' active' : '' %>" href="/courses">
               <i class="fas fa-book me-1"></i>
-              <span class="nav-text">Courses</span>
+              <span class="nav-text">Browse Courses</span>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link px-3<%= activePage === 'assignments' ? ' active' : '' %>" href="/assignments">
-              <i class="fas fa-tasks me-1"></i>
-              <span class="nav-text">Assignments</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link px-3<%= activePage === 'grades' ? ' active' : '' %>" href="/grades">
-              <i class="fas fa-chart-bar me-1"></i>
-              <span class="nav-text">Grades</span>
+            <a class="nav-link px-3<%= activePage === 'about' ? ' active' : '' %>" href="../about">
+              <i class="fas fa-info-circle me-1"></i>
+              <span class="nav-text">About</span>
             </a>
           </li>
         <% } %>
 
-        <!-- Management Dropdown for Teachers and Admins -->
+        <!-- Quick Actions Dropdown for Teachers and Admins -->
         <% if (user && (user.role === 'teacher' || user.role === 'admin')) { %>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle px-3<%= activePage === 'management' ? ' active' : '' %>" href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
+          <a class="nav-link dropdown-toggle px-3<%= activePage === 'quick-actions' ? ' active' : '' %>" href="javascript:void(0)" role="button" data-bs-toggle="dropdown">
             <i class="fas fa-plus-circle me-1"></i>
-            <span class="nav-text">Create</span>
+            <span class="nav-text">Quick Actions</span>
           </a>
           <ul class="dropdown-menu shadow-sm">
-            <% if (user.role === 'admin') { %>
-              <li><a class="dropdown-item" href="/admin/users/create"><i class="fas fa-user-plus me-2 text-info"></i>New User</a></li>
-              <li><a class="dropdown-item" href="/admin/courses/create"><i class="fas fa-book-medical me-2 text-success"></i>New Course</a></li>
-              <li><a class="dropdown-item" href="/admin/announcements"><i class="fas fa-bullhorn me-2 text-warning"></i>Announcement</a></li>
-            <% } %>
             <% if (user.role === 'teacher') { %>
-              <li><a class="dropdown-item" href="/teacher/courses/create"><i class="fas fa-book-medical me-2 text-success"></i>New Course</a></li>
-              <li><a class="dropdown-item" href="/teacher/assignments/create"><i class="fas fa-tasks me-2 text-primary"></i>New Assignment</a></li>
-              <li><a class="dropdown-item" href="/teacher/announcements"><i class="fas fa-bullhorn me-2 text-warning"></i>Announcement</a></li>
+              <li><a class="dropdown-item" href="/teacher/courses/create"><i class="fas fa-book-medical me-2 text-success"></i>Create Course</a></li>
+              <li><a class="dropdown-item" href="/teacher/assignments/create"><i class="fas fa-tasks me-2 text-primary"></i>Create Assignment</a></li>
+              <li><a class="dropdown-item" href="/teacher/announcements"><i class="fas fa-bullhorn me-2 text-warning"></i>Post Announcement</a></li>
+            <% } else if (user.role === 'admin') { %>
+              <li><a class="dropdown-item" href="/admin/users/create"><i class="fas fa-user-plus me-2 text-info"></i>Add User</a></li>
+              <li><a class="dropdown-item" href="/admin/courses/create"><i class="fas fa-book-medical me-2 text-success"></i>Create Course</a></li>
+              <li><a class="dropdown-item" href="/admin/announcements"><i class="fas fa-bullhorn me-2 text-warning"></i>System Announcement</a></li>
             <% } %>
           </ul>
         </li>
@@ -153,38 +181,30 @@
 
         <!-- Notifications -->
         <li class="nav-item dropdown notification-container">
-          <a class="nav-link position-relative notification-pulse" href="javascript:void(0)" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
+          <a class="nav-link position-relative" href="javascript:void(0)" id="notificationDropdown" role="button" data-bs-toggle="dropdown">
             <i class="fas fa-bell fa-lg"></i>
             <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
           </a>
-          <ul id="notificationList" class="dropdown-menu dropdown-menu-end shadow notification-dropdown">
+          <ul class="dropdown-menu dropdown-menu-end shadow notification-dropdown">
             <li class="dropdown-header bg-primary text-white">
               <i class="fas fa-bell me-2"></i>Notifications
             </li>
-            <ul id="notifications" class="notification-content list-unstyled mb-0"></ul>
+            <div id="notifications" class="notification-content">
+              <div class="dropdown-item text-center text-muted py-4">
+                <i class="fas fa-bell-slash fa-2x mb-2 opacity-50"></i>
+                <div>No new notifications</div>
+              </div>
+            </div>
             <li>
-              <a class="dropdown-item text-center view-all-link" id="viewAllNotifications" href="<%= user ? `/${user.role}/notifications` : '/notifications' %>">
-                <i class="fas fa-list me-1"></i>View All Notifications
-              </a>
-            </li>
-          </ul>
-        </li>
-
-        <!-- Messages -->
-        <li class="nav-item dropdown message-container">
-          <a class="nav-link position-relative message-pulse" href="javascript:void(0)" id="messageDropdown" role="button" data-bs-toggle="dropdown">
-            <i class="fas fa-envelope fa-lg"></i>
-            <span id="messageBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning">0</span>
-          </a>
-          <ul id="messageList" class="dropdown-menu dropdown-menu-end shadow message-dropdown">
-            <li class="dropdown-header bg-info text-white">
-              <i class="fas fa-envelope me-2"></i>Messages
-            </li>
-            <ul id="messages" class="message-content list-unstyled mb-0"></ul>
-            <li>
-              <a class="dropdown-item text-center view-all-link" href="/messages">
-                <i class="fas fa-inbox me-1"></i>View All Messages
-              </a>
+              <% if (user) { %>
+                <a class="dropdown-item text-center view-all-link" href="/<%= user.role %>/notifications">
+                  <i class="fas fa-list me-1"></i>View All Notifications
+                </a>
+              <% } else { %>
+                <a class="dropdown-item text-center view-all-link" href="/notifications">
+                  <i class="fas fa-list me-1"></i>View All Notifications
+                </a>
+              <% } %>
             </li>
           </ul>
         </li>
@@ -196,8 +216,16 @@
               <% if (user && user.avatar) { %>
                 <img src="<%= user.avatar %>" alt="Profile" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
               <% } else { %>
-                <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                  <i class="fas fa-user text-white"></i>
+                <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);">
+                  <% if (user && user.name) { %>
+                    <%
+                      const parts = user.name.split(' ');
+                      const initials = parts.map(p => p[0]).join('').toUpperCase().substring(0, 2);
+                    %>
+                    <span style="font-size: 0.8rem; font-weight: 700; color: #252838;"><%= initials %></span>
+                  <% } else { %>
+                    <i class="fas fa-user" style="color: #252838;"></i>
+                  <% } %>
                 </div>
               <% } %>
             </div>
@@ -217,8 +245,16 @@
                   <% if (user && user.avatar) { %>
                     <img src="<%= user.avatar %>" alt="Profile" class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover;">
                   <% } else { %>
-                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                      <i class="fas fa-user text-white fa-lg"></i>
+                    <div class="avatar-placeholder rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: linear-gradient(135deg, #D4AF37 0%, #FFD700 100%);">
+                      <% if (user && user.name) { %>
+                        <%
+                          const parts = user.name.split(' ');
+                          const initials = parts.map(p => p[0]).join('').toUpperCase().substring(0, 2);
+                        %>
+                        <span style="font-size: 1.2rem; font-weight: 700; color: #252838;"><%= initials %></span>
+                      <% } else { %>
+                        <i class="fas fa-user fa-lg" style="color: #252838;"></i>
+                      <% } %>
                     </div>
                   <% } %>
                 </div>
@@ -244,17 +280,13 @@
 
 <style>
 :root {
-  --primary: #2c5aa0;
-  --primary-dark: #1e3d72;
-  --secondary: #6c757d;
-  --success: #28a745;
-  --info: #17a2b8;
-  --warning: #ffc107;
-  --danger: #dc3545;
-  --light: #f8f9fa;
-  --dark: #343a40;
-  --accent: #667eea;
-  --accent-dark: #764ba2;
+  --primary: #1f3a93;
+  --secondary: #4a69bd;
+  --success: #27ae60;
+  --info: #16a085;
+  --warning: #f39c12;
+  --danger: #c0392b;
+  --gold: #FFD700;
 }
 
 [data-theme="dark"] {
@@ -267,11 +299,11 @@
 
 /* Base Navbar Styles */
 .gradient-navbar { 
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark)); 
+  background: linear-gradient(135deg, var(--primary), var(--secondary)); 
   transition: all 0.4s ease; 
   padding: 0.5rem 0;
-  border-bottom: 3px solid var(--warning);
-  box-shadow: 0 4px 20px rgba(44, 90, 160, 0.3);
+  border-bottom: 3px solid var(--gold);
+  box-shadow: 0 4px 20px rgba(31, 58, 147, 0.3);
   backdrop-filter: blur(10px);
 }
 
@@ -285,7 +317,7 @@
 
 .navbar-brand {
   font-size: 1.5rem;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
   margin-right: auto;
   position: relative;
   padding: 0.5rem 1rem;
@@ -299,31 +331,35 @@
 
 .brand-glow {
   display: inline-block;
-  animation: gentlePulse 3s ease-in-out infinite;
+  animation: gentlePulse 4s infinite;
 }
 
 @keyframes gentlePulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.1); opacity: 0.8; }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
 }
 
 .brand-text {
-  font-weight: 800;
-  background: linear-gradient(45deg, #ffffff, var(--warning));
+  font-weight: 700;
+  background: linear-gradient(45deg, #ffffff, var(--gold));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .tagline {
   font-style: italic;
-  opacity: 0.9;
+  opacity: 0.8;
   transition: opacity 0.3s ease;
 }
 
 .navbar-brand:hover .tagline {
   opacity: 1;
+}
+
+.text-gold {
+  color: var(--gold) !important;
 }
 
 /* Main Navbar Layout */
@@ -338,7 +374,7 @@
 .navbar-nav.me-auto {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
 }
 
 /* Right Menu Container */
@@ -352,7 +388,6 @@
 /* Individual Right Menu Items */
 .theme-container,
 .notification-container,
-.message-container,
 .profile-container {
   display: flex;
   align-items: center;
@@ -360,18 +395,16 @@
 
 /* Navigation Links */
 .navbar .nav-link { 
-  color: rgba(255, 255, 255, 0.95); 
-  padding: 0.75rem 1rem; 
+  color: rgba(255, 255, 255, 0.9); 
+  padding: 10px 15px; 
   border-radius: 8px; 
   transition: all 0.3s ease; 
-  font-weight: 600;
+  font-weight: 500;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
   white-space: nowrap;
-  margin: 0 0.125rem;
-  font-size: 0.9rem;
 }
 
 .navbar .nav-link::before {
@@ -380,41 +413,49 @@
   bottom: 0;
   left: 50%;
   width: 0;
-  height: 3px;
-  background: var(--warning);
+  height: 2px;
+  background: var(--gold);
   transition: all 0.3s ease;
   transform: translateX(-50%);
-  border-radius: 2px;
 }
 
 .navbar .nav-link:hover::before {
-  width: 70%;
+  width: 80%;
 }
 
 .navbar .nav-link:hover { 
-  color: #ffffff; 
-  background: rgba(255, 255, 255, 0.15); 
+  color: var(--gold); 
+  background: rgba(255, 215, 0, 0.1); 
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .navbar .nav-link.active { 
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.25), rgba(255, 193, 7, 0.15)); 
-  color: #ffffff; 
-  font-weight: 700;
-  border: 1px solid rgba(255, 193, 7, 0.4);
-  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1)); 
+  color: var(--gold); 
+  font-weight: 600;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
 }
 
 .navbar .nav-link.active::before {
-  width: 70%;
-  background: var(--warning);
+  width: 80%;
+  background: var(--gold);
 }
 
-/* User Profile Styling */
-.user-name {
-  text-align: left;
+/* Enhanced User Profile with Gold Theme */
+.user-profile-link {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 25px;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.user-profile-link:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  border-color: rgba(212, 175, 55, 0.3);
 }
 
 .role-badge {
@@ -438,16 +479,16 @@
   color: white;
 }
 
-.role-teacher { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+.role-teacher { background: linear-gradient(135deg, var(--gold), #B8860B); }
 .role-admin { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
-.role-student { background: linear-gradient(135deg, #3498db, #2980b9); }
+.role-student { background: linear-gradient(135deg, var(--info), #16a085); }
 
-/* Dropdown Styling */
+/* Enhanced Dropdown Styling */
 .dropdown-menu { 
-  background: linear-gradient(135deg, #2d3748, #4a5568);
+  background: linear-gradient(135deg, #1e293b, #2d3748);
   border-radius: 12px; 
   padding: 0.5rem 0; 
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(212, 175, 55, 0.2);
   min-width: 220px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
@@ -457,31 +498,79 @@
   border-radius: 12px 12px 0 0;
   padding: 0.75rem 1rem;
   font-weight: 600;
+  background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
 }
 
 .dropdown-item {
   padding: 0.75rem 1rem;
-  color: #e2e8f0;
+  color: #FDF6E3;
   transition: all 0.2s ease;
   font-weight: 500;
 }
 
 .dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background: rgba(212, 175, 55, 0.1);
+  color: var(--gold);
   transform: translateX(5px);
 }
 
-/* Notification & Message Dropdowns */
-.notification-dropdown,
-.message-dropdown {
+/* Enhanced Theme Switch */
+.theme-switch { 
+  position: relative; 
+  display: inline-block; 
+  width: 52px; 
+  height: 26px; 
+}
+
+.theme-switch input { 
+  opacity: 0; 
+  width: 0; 
+  height: 0; 
+}
+
+.theme-slider { 
+  position: absolute; 
+  cursor: pointer; 
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0; 
+  background: linear-gradient(135deg, var(--gold), #B8860B);
+  transition: .4s; 
+  border-radius: 34px; 
+  border: 2px solid rgba(212, 175, 55, 0.3);
+}
+
+.theme-slider:before { 
+  position: absolute; 
+  content: ""; 
+  height: 18px; 
+  width: 18px; 
+  left: 2px; 
+  bottom: 2px; 
+  background: linear-gradient(135deg, #FFF8DC, #ffffff);
+  transition: .4s; 
+  border-radius: 50%; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+input:checked + .theme-slider { 
+  background: linear-gradient(135deg, #4a5568, #2d3748); 
+}
+
+input:checked + .theme-slider:before { 
+  transform: translateX(26px); 
+  background: linear-gradient(135deg, #cbd5e0, #a0aec0);
+}
+
+/* Notification Dropdown */
+.notification-dropdown {
   width: min(350px, 90vw);
   max-height: 400px;
   overflow-y: auto;
 }
 
-.notification-content,
-.message-content {
+.notification-content {
   max-height: 300px;
   overflow-y: auto;
 }
@@ -500,111 +589,7 @@
   border: 2px solid var(--primary);
 }
 
-/* Notification and Message Pulse Effects */
-.notification-pulse, .message-pulse {
-  position: relative;
-}
-
-.notification-pulse.pulse-active::after, 
-.message-pulse.pulse-active::after {
-  content: '';
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--warning);
-  animation: notificationPulse 2s infinite;
-  box-shadow: 0 0 10px var(--warning);
-}
-
-@keyframes notificationPulse {
-  0% { transform: scale(0.8); opacity: 1; }
-  70% { transform: scale(1.5); opacity: 0; }
-  100% { transform: scale(0.8); opacity: 0; }
-}
-
-/* User Profile Positioning */
-.user-profile-link {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 25px;
-  padding: 0.5rem 1rem !important;
-  transition: all 0.3s ease;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.user-profile-link:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.avatar-placeholder {
-  transition: all 0.3s ease;
-}
-
-.user-profile-link:hover .avatar-placeholder {
-  transform: scale(1.1);
-}
-
-/* Theme Switch */
-.theme-switch { 
-  position: relative; 
-  display: inline-block; 
-  width: 52px; 
-  height: 26px; 
-}
-.theme-switch input { 
-  opacity: 0; 
-  width: 0; 
-  height: 0; 
-}
-.theme-slider { 
-  position: absolute; 
-  cursor: pointer; 
-  top: 0; 
-  left: 0; 
-  right: 0; 
-  bottom: 0; 
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  transition: .4s; 
-  border-radius: 34px; 
-  border: 2px solid rgba(255, 255, 255, 0.3);
-}
-.theme-slider:before { 
-  position: absolute; 
-  content: ""; 
-  height: 18px; 
-  width: 18px; 
-  left: 2px; 
-  bottom: 2px; 
-  background: linear-gradient(135deg, #ffd700, #ffed4e);
-  transition: .4s; 
-  border-radius: 50%; 
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-input:checked + .theme-slider { 
-  background: linear-gradient(135deg, #4a5568, #2d3748); 
-}
-input:checked + .theme-slider:before { 
-  transform: translateX(26px); 
-  background: linear-gradient(135deg, #cbd5e0, #a0aec0);
-}
-
-.theme-label {
-  font-weight: 600;
-}
-
 /* ========== RESPONSIVE DESIGN ========== */
-
-/* Large Desktop (1200px+) */
-@media (min-width: 1200px) {
-  .navbar .container-fluid {
-    gap: 2rem;
-  }
-}
 
 /* Tablet (992px - 1199px) */
 @media (max-width: 1199.98px) {
@@ -625,30 +610,17 @@ input:checked + .theme-slider:before {
   }
   
   .navbar .container-fluid {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    align-items: center;
     gap: 0.5rem;
   }
   
   .right-menu-container {
-    order: 3;
-    width: 100%;
-    justify-content: space-between;
-    margin: 0.5rem 0 0 0;
-    padding: 0.5rem 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    width: auto;
+    margin: 0;
   }
   
-  .navbar-nav.me-auto {
-    order: 1;
-    width: 100%;
-    justify-content: flex-start;
-    margin: 0.5rem 0;
-    gap: 0.5rem;
-  }
-  
-  .notification-dropdown,
-  .message-dropdown {
+  .notification-dropdown {
     width: 300px;
     right: 0 !important;
     left: auto !important;
@@ -657,10 +629,6 @@ input:checked + .theme-slider:before {
 
 /* Mobile Portrait (576px - 767px) */
 @media (max-width: 767.98px) {
-  .navbar-brand small {
-    display: none;
-  }
-  
   .nav-link {
     padding: 0.5rem 0.75rem;
     font-size: 0.8rem;
@@ -670,8 +638,7 @@ input:checked + .theme-slider:before {
     display: none !important;
   }
   
-  .notification-dropdown,
-  .message-dropdown {
+  .notification-dropdown {
     width: 280px;
   }
   
@@ -699,8 +666,7 @@ input:checked + .theme-slider:before {
     font-size: 1rem;
   }
   
-  .notification-dropdown,
-  .message-dropdown {
+  .notification-dropdown {
     width: 250px;
   }
   
@@ -735,28 +701,11 @@ input:checked + .theme-slider:before {
 .badge.pulse {
   animation: pulse 2s infinite;
 }
-
-/* View All Links */
-.view-all-link {
-  background: rgba(255, 255, 255, 0.05);
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.view-all-link:hover {
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
-}
-
-/* Gradient backgrounds */
-.bg-gradient-primary {
-  background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
-}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // Theme Toggle with enhanced functionality
+  // Theme Toggle
   const toggle = document.getElementById('themeToggle');
   const currentTheme = localStorage.getItem('theme') || 'light';
   
@@ -778,18 +727,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Enhanced notification and message system
-  const initializeNotifications = async () => {
-    const role = "<%= user ? user.role : 'guest' %>";
-    const paths = {
-      student: "/student/notifications/count",
-      teacher: "/teacher/notifications/count", 
-      admin: "/admin/notifications/count",
-      guest: "/notifications/count"
-    };
-
+  // Load notifications
+  const loadNotifications = async () => {
     try {
-      const response = await fetch(paths[role] || paths.guest);
+      const role = "<%= user ? user.role : 'guest' %>";
+      const response = await fetch(`/${role}/notifications/count`);
       const data = await response.json();
       
       const badge = document.getElementById('notificationBadge');
@@ -797,51 +739,30 @@ document.addEventListener('DOMContentLoaded', () => {
       
       if (data.count > 0) {
         badge.classList.add('pulse');
-        document.getElementById('notificationDropdown').classList.add('pulse-active');
       }
       
-      // Update notification content
       const notifContainer = document.getElementById('notifications');
       if (data.notifications?.length) {
         notifContainer.innerHTML = data.notifications.map(n => `
-          <li>
-            <a class="dropdown-item d-flex align-items-start py-2" href="${n.link}">
-              <i class="fas fa-${n.icon || 'bell'} mt-1 me-2 text-${n.type || 'warning'}"></i>
-              <div class="flex-grow-1">
-                <div class="fw-semibold">${n.title}</div>
-                <small class="text-muted">${n.message}</small>
-                <div class="text-xs text-muted mt-1">${new Date(n.timestamp).toLocaleDateString()}</div>
-              </div>
-            </a>
-          </li>
-        `).join('');
-      } else {
-        notifContainer.innerHTML = `
-          <li>
-            <div class="dropdown-item text-center text-muted py-4">
-              <i class="fas fa-bell-slash fa-2x mb-2 opacity-50"></i>
-              <div>No new notifications</div>
+          <a class="dropdown-item d-flex align-items-start py-2" href="${n.link}">
+            <i class="fas fa-${n.icon || 'bell'} mt-1 me-2 text-${n.type || 'warning'}"></i>
+            <div class="flex-grow-1">
+              <div class="fw-semibold">${n.title}</div>
+              <small class="text-muted">${n.message}</small>
+              <div class="text-xs text-muted mt-1">${new Date(n.timestamp).toLocaleDateString()}</div>
             </div>
-          </li>
-        `;
+          </a>
+        `).join('');
       }
     } catch (error) {
       console.error('Failed to load notifications:', error);
     }
   };
 
-  // Initialize all components
-  initializeNotifications();
+  // Initialize notifications
+  loadNotifications();
   
-  // Add interactive effects
-  const interactiveElements = document.querySelectorAll('.nav-link, .dropdown-item, .btn');
-  interactiveElements.forEach(el => {
-    el.addEventListener('mouseenter', function() {
-      this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-    });
-  });
-
   // Auto-refresh notifications every 30 seconds
-  setInterval(initializeNotifications, 30000);
+  setInterval(loadNotifications, 30000);
 });
 </script>
