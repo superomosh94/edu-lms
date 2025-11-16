@@ -26,9 +26,11 @@
 
         .page-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
         }
 
         .page-title {
@@ -36,6 +38,38 @@
             font-weight: 700;
             color: var(--dark-gray);
             margin: 0;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border: 1px solid #E5E7EB;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-total .stat-number { color: var(--primary-blue); }
+        .stat-pending .stat-number { color: var(--warning-orange); }
+        .stat-submitted .stat-number { color: var(--success-green); }
+        .stat-overdue .stat-number { color: var(--error-red); }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--medium-gray);
         }
 
         .filters {
@@ -62,7 +96,9 @@
         }
 
         .assignments-list {
-            space-y: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
         }
 
         .assignment-card {
@@ -81,9 +117,10 @@
 
         .assignment-header {
             display: flex;
-            justify-content: between;
-            align-items: start;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 1rem;
+            gap: 1rem;
         }
 
         .assignment-title {
@@ -105,6 +142,7 @@
             color: var(--medium-gray);
             font-size: 0.875rem;
             margin-bottom: 1rem;
+            flex-wrap: wrap;
         }
 
         .assignment-description {
@@ -117,6 +155,7 @@
             display: flex;
             gap: 1rem;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .status-badge {
@@ -141,17 +180,31 @@
             color: #991B1B;
         }
 
+        .status-graded {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+
         .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
             font-weight: 500;
             text-decoration: none;
             transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .btn-primary {
             background: var(--primary-blue);
             color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-blue);
         }
 
         .btn-outline {
@@ -160,10 +213,80 @@
             border: 1px solid var(--primary-blue);
         }
 
+        .btn-outline:hover {
+            background: var(--primary-blue);
+            color: var(--white);
+        }
+
         .empty-state {
             text-align: center;
             padding: 4rem 2rem;
             color: var(--medium-gray);
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .refresh-btn {
+            background: transparent;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #F3F4F6;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .alert-success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .alert-error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        .grade-badge {
+            background: #E0E7FF;
+            color: #3730A3;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .submission-info {
+            font-size: 0.875rem;
+            color: var(--medium-gray);
+            margin-top: 0.5rem;
         }
     </style>
 </head>
@@ -172,99 +295,407 @@
     
     <div class="main-content">
         <div class="assignments-container">
+            <!-- Alert Messages -->
+            <div id="alertMessage" class="alert"></div>
+
             <div class="page-header">
-                <h1 class="page-title">My Assignments</h1>
+                <div>
+                    <h1 class="page-title">My Assignments</h1>
+                    <p class="text-muted" style="color: var(--medium-gray); margin-top: 0.5rem;">
+                        Track and manage your learning assignments
+                    </p>
+                </div>
+                <button class="refresh-btn" id="refreshBtn">
+                    <i class="fas fa-refresh"></i> Refresh
+                </button>
             </div>
 
+            <!-- Statistics -->
+            <div class="stats-container" id="statsContainer">
+                <div class="stat-card stat-total">
+                    <div class="stat-number" id="totalCount">0</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-card stat-pending">
+                    <div class="stat-number" id="pendingCount">0</div>
+                    <div class="stat-label">Pending</div>
+                </div>
+                <div class="stat-card stat-submitted">
+                    <div class="stat-number" id="submittedCount">0</div>
+                    <div class="stat-label">Submitted</div>
+                </div>
+                <div class="stat-card stat-overdue">
+                    <div class="stat-number" id="overdueCount">0</div>
+                    <div class="stat-label">Overdue</div>
+                </div>
+            </div>
+
+            <!-- Filters -->
             <div class="filters">
                 <button class="filter-btn active" data-filter="all">All Assignments</button>
                 <button class="filter-btn" data-filter="pending">Pending</button>
                 <button class="filter-btn" data-filter="submitted">Submitted</button>
                 <button class="filter-btn" data-filter="graded">Graded</button>
+                <button class="filter-btn" data-filter="overdue">Overdue</button>
             </div>
 
-            <% if (assignments && assignments.length > 0) { %>
-                <div class="assignments-list">
-                    <% assignments.forEach(assignment => { %>
-                        <div class="assignment-card" data-status="<%= assignment.submissionStatus %>">
-                            <div class="assignment-header">
-                                <div>
-                                    <h3 class="assignment-title"><%= assignment.title %></h3>
-                                    <div class="assignment-course"><%= assignment.course_name %></div>
-                                </div>
-                                <div class="assignment-actions">
-                                    <% if (assignment.submissionStatus === 'submitted') { %>
-                                        <span class="status-badge status-submitted">
-                                            ✅ Submitted
-                                            <% if (assignment.grade) { %> - <%= assignment.grade %>%<% } %>
-                                        </span>
-                                        <a href="/student/submissions/<%= assignment.submission_id %>" class="btn btn-outline">View Submission</a>
-                                    <% } else { %>
-                                        <% const isOverdue = new Date(assignment.due_date) < new Date(); %>
-                                        <span class="status-badge <%= isOverdue ? 'status-overdue' : 'status-pending' %>">
-                                            <%= isOverdue ? '⚠️ Overdue' : '⏳ Pending' %>
-                                        </span>
-                                        <a href="/student/assignments/<%= assignment.id %>" class="btn btn-primary">Submit Work</a>
-                                    <% } %>
-                                </div>
-                            </div>
-                            
-                            <div class="assignment-meta">
-                                <span>📅 Due: <%= new Date(assignment.due_date).toLocaleDateString() %></span>
-                                <span>📝 <%= assignment.description %></span>
-                            </div>
-                            
-                            <% if (assignment.instructions) { %>
-                                <div class="assignment-description">
-                                    <%= assignment.instructions %>
-                                </div>
-                            <% } %>
-                        </div>
-                    <% }) %>
+            <!-- Loading State -->
+            <div id="loadingState" class="empty-state">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">
+                    <i class="fas fa-spinner fa-spin"></i>
                 </div>
-            <% } else { %>
-                <div class="empty-state">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
-                    <h3>No Assignments</h3>
-                    <p>You don't have any assignments at the moment.</p>
-                </div>
-            <% } %>
+                <h3>Loading Assignments</h3>
+                <p>Please wait while we load your assignments...</p>
+            </div>
+
+            <!-- Assignments List -->
+            <div id="assignmentsList" class="assignments-list" style="display: none;">
+                <!-- Dynamic content will be loaded here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
+                <h3>No Assignments</h3>
+                <p>You don't have any assignments at the moment.</p>
+                <button class="btn btn-primary" onclick="loadAssignments()">
+                    <i class="fas fa-refresh"></i> Try Again
+                </button>
+            </div>
         </div>
     </div>
 
     <%- include('../partials/footer') %>
 
     <script>
-        // Filter functionality
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                // Update active state
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
-                
-                const filter = this.dataset.filter;
-                const assignments = document.querySelectorAll('.assignment-card');
-                
-                assignments.forEach(assignment => {
-                    if (filter === 'all') {
-                        assignment.style.display = 'block';
-                    } else {
-                        const status = assignment.dataset.status;
-                        const hasGrade = assignment.querySelector('.status-submitted')?.textContent.includes('%');
-                        
-                        if (filter === 'pending' && status === 'pending') {
-                            assignment.style.display = 'block';
-                        } else if (filter === 'submitted' && status === 'submitted' && !hasGrade) {
-                            assignment.style.display = 'block';
-                        } else if (filter === 'graded' && status === 'submitted' && hasGrade) {
-                            assignment.style.display = 'block';
-                        } else {
-                            assignment.style.display = 'none';
-                        }
-                    }
+        let currentAssignments = [];
+        let currentFilter = 'all';
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // First, try to load from server-side rendered data
+            if (typeof assignments !== 'undefined' && assignments.length > 0) {
+                currentAssignments = assignments;
+                displayAssignments();
+                updateStatistics();
+            } else {
+                // Fall back to API call
+                loadAssignments();
+            }
+            setupEventListeners();
+            startAutoRefresh();
+        });
+
+        function setupEventListeners() {
+            // Filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    filterAssignments();
                 });
             });
-        });
+
+            // Refresh button
+            document.getElementById('refreshBtn').addEventListener('click', loadAssignments);
+        }
+
+        async function loadAssignments() {
+            showLoadingState();
+            
+            try {
+                // Try to get assignments from the student assignments endpoint
+                const response = await fetch('/student/assignments/api', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    credentials: 'same-origin'
+                });
+
+                if (!response.ok) {
+                    // If student endpoint fails, try the general assignments endpoint
+                    const fallbackResponse = await fetch('/assignments/api', {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'same-origin'
+                    });
+
+                    if (!fallbackResponse.ok) {
+                        throw new Error(`HTTP error! status: ${fallbackResponse.status}`);
+                    }
+
+                    const fallbackResult = await fallbackResponse.json();
+                    processAssignmentsData(fallbackResult);
+                } else {
+                    const result = await response.json();
+                    processAssignmentsData(result);
+                }
+            } catch (error) {
+                console.error('Error loading assignments:', error);
+                showError('Failed to load assignments. Please try again.');
+                showEmptyState();
+            }
+        }
+
+        function processAssignmentsData(result) {
+            if (result.success) {
+                // Handle different possible response structures
+                if (result.data && result.data.assignments) {
+                    currentAssignments = result.data.assignments;
+                } else if (result.assignments) {
+                    currentAssignments = result.assignments;
+                } else if (Array.isArray(result.data)) {
+                    currentAssignments = result.data;
+                } else if (Array.isArray(result)) {
+                    currentAssignments = result;
+                } else {
+                    currentAssignments = [];
+                }
+                
+                // Enhance assignments with submission status if needed
+                enhanceAssignmentsWithSubmissionStatus();
+                displayAssignments();
+                updateStatistics();
+                showSuccess('Assignments loaded successfully');
+            } else {
+                throw new Error(result.message || 'Failed to load assignments');
+            }
+        }
+
+        function enhanceAssignmentsWithSubmissionStatus() {
+            // If assignments don't have submission status, we need to determine it
+            currentAssignments = currentAssignments.map(assignment => {
+                // Check if assignment already has submission status
+                if (!assignment.submissionStatus) {
+                    const dueDate = assignment.due_date || assignment.dueDate;
+                    const isOverdue = dueDate && new Date(dueDate) < new Date();
+                    
+                    // For now, we'll assume all are pending unless we have submission data
+                    // In a real app, you'd check against submission records
+                    assignment.submissionStatus = 'pending';
+                    
+                    if (isOverdue) {
+                        assignment.submissionStatus = 'overdue';
+                    }
+                    
+                    // Check if there's a submission (this would come from your database)
+                    if (assignment.submitted || assignment.submission_id) {
+                        assignment.submissionStatus = assignment.grade ? 'graded' : 'submitted';
+                    }
+                }
+                return assignment;
+            });
+        }
+
+        function displayAssignments() {
+            const assignmentsList = document.getElementById('assignmentsList');
+            
+            if (currentAssignments.length === 0) {
+                showEmptyState();
+                return;
+            }
+
+            assignmentsList.innerHTML = currentAssignments.map(assignment => {
+                const dueDate = assignment.due_date || assignment.dueDate;
+                const isOverdue = dueDate && new Date(dueDate) < new Date() && assignment.submissionStatus === 'pending';
+                const isGraded = assignment.grade !== undefined && assignment.grade !== null;
+                const submissionStatus = assignment.submissionStatus || 'pending';
+                
+                let displayStatus = submissionStatus;
+                if (isOverdue && submissionStatus === 'pending') {
+                    displayStatus = 'overdue';
+                } else if (isGraded && submissionStatus === 'submitted') {
+                    displayStatus = 'graded';
+                }
+
+                const courseName = assignment.course_name || assignment.courseName || 
+                                 assignment.course_title || (assignment.course && assignment.course.name) || 
+                                 'General Course';
+
+                return `
+                    <div class="assignment-card" data-status="${displayStatus}">
+                        <div class="assignment-header">
+                            <div>
+                                <h3 class="assignment-title">${assignment.title || 'Untitled Assignment'}</h3>
+                                <div class="assignment-course">${courseName}</div>
+                            </div>
+                            <div class="assignment-actions">
+                                ${getStatusBadge(displayStatus, assignment)}
+                                ${getActionButtons(displayStatus, assignment)}
+                            </div>
+                        </div>
+                        
+                        <div class="assignment-meta">
+                            <span>📅 Due: ${dueDate ? new Date(dueDate).toLocaleDateString() : 'No due date'}</span>
+                            ${assignment.points ? `<span>⭐ ${assignment.points} points</span>` : ''}
+                            <span>📝 ${getStatusText(displayStatus)}</span>
+                        </div>
+                        
+                        ${assignment.description ? `
+                            <div class="assignment-description">
+                                ${assignment.description.substring(0, 150)}${assignment.description.length > 150 ? '...' : ''}
+                            </div>
+                        ` : ''}
+
+                        ${assignment.submittedAt ? `
+                            <div class="submission-info">
+                                <small>Submitted on: ${new Date(assignment.submittedAt).toLocaleDateString()}</small>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            showAssignmentsList();
+            filterAssignments();
+        }
+
+        function getStatusBadge(status, assignment) {
+            const badges = {
+                pending: `<span class="status-badge status-pending">⏳ Pending</span>`,
+                submitted: `<span class="status-badge status-submitted">✅ Submitted</span>`,
+                overdue: `<span class="status-badge status-overdue">⚠️ Overdue</span>`,
+                graded: `
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span class="status-badge status-graded">⭐ Graded</span>
+                        <span class="grade-badge">${assignment.grade}%</span>
+                    </div>
+                `
+            };
+            return badges[status] || badges.pending;
+        }
+
+        function getActionButtons(status, assignment) {
+            const baseUrl = '/assignments';
+            const buttons = {
+                pending: `<a href="${baseUrl}/${assignment.id}/submit" class="btn btn-primary">Submit Work</a>`,
+                overdue: `<a href="${baseUrl}/${assignment.id}/submit" class="btn btn-primary">Submit Now</a>`,
+                submitted: `<a href="/student/submissions/${assignment.submission_id || assignment.id}" class="btn btn-outline">View Submission</a>`,
+                graded: `<a href="/student/submissions/${assignment.submission_id || assignment.id}" class="btn btn-outline">View Feedback</a>`
+            };
+            return buttons[status] || buttons.pending;
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                pending: 'Awaiting submission',
+                submitted: 'Submitted - Awaiting grade',
+                overdue: 'Overdue - Please submit',
+                graded: 'Graded - View feedback'
+            };
+            return texts[status] || 'Unknown status';
+        }
+
+        function filterAssignments() {
+            const assignments = document.querySelectorAll('.assignment-card');
+            let visibleCount = 0;
+
+            assignments.forEach(assignment => {
+                const status = assignment.dataset.status;
+                const shouldShow = currentFilter === 'all' || status === currentFilter;
+                
+                assignment.style.display = shouldShow ? 'block' : 'none';
+                if (shouldShow) visibleCount++;
+            });
+
+            // Show empty state if no assignments match filter
+            if (visibleCount === 0 && currentAssignments.length > 0) {
+                showFilteredEmptyState();
+            }
+        }
+
+        function updateStatistics() {
+            const stats = {
+                total: currentAssignments.length,
+                pending: currentAssignments.filter(a => a.submissionStatus === 'pending' && 
+                    (!a.due_date || new Date(a.due_date || a.dueDate) > new Date())).length,
+                submitted: currentAssignments.filter(a => a.submissionStatus === 'submitted' || a.submissionStatus === 'graded').length,
+                overdue: currentAssignments.filter(a => a.submissionStatus === 'pending' && 
+                    a.due_date && new Date(a.due_date || a.dueDate) < new Date()).length
+            };
+
+            document.getElementById('totalCount').textContent = stats.total;
+            document.getElementById('pendingCount').textContent = stats.pending;
+            document.getElementById('submittedCount').textContent = stats.submitted;
+            document.getElementById('overdueCount').textContent = stats.overdue;
+        }
+
+        function showLoadingState() {
+            document.getElementById('loadingState').style.display = 'block';
+            document.getElementById('assignmentsList').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function showAssignmentsList() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('assignmentsList').style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function showEmptyState() {
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('assignmentsList').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'block';
+        }
+
+        function showFilteredEmptyState() {
+            const assignmentsList = document.getElementById('assignmentsList');
+            const emptyHtml = `
+                <div class="empty-state">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                    <h3>No Matching Assignments</h3>
+                    <p>No assignments match your current filter. Try adjusting your filter criteria.</p>
+                    <button class="btn btn-primary" onclick="resetFilters()">
+                        Reset Filters
+                    </button>
+                </div>
+            `;
+            assignmentsList.innerHTML = emptyHtml;
+        }
+
+        function resetFilters() {
+            const allBtn = document.querySelector('.filter-btn[data-filter="all"]');
+            if (allBtn) {
+                allBtn.click();
+            }
+            filterAssignments();
+        }
+
+        function showSuccess(message) {
+            showAlert(message, 'success');
+        }
+
+        function showError(message) {
+            showAlert(message, 'error');
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alertMessage');
+            alert.textContent = message;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        function startAutoRefresh() {
+            // Auto-refresh every 2 minutes
+            setInterval(() => {
+                if (document.visibilityState === 'visible') {
+                    loadAssignments();
+                }
+            }, 120000);
+        }
+
+        // Export functions for global access
+        window.loadAssignments = loadAssignments;
+        window.resetFilters = resetFilters;
     </script>
 </body>
 </html>

@@ -1,255 +1,597 @@
-<!-- IMPORT HEADER PARTIAL -->
-<%- include('../partials/header', { title: 'Login' }) %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Login - EduLMS</title>
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --primary-blue-dark: #1d4ed8;
+            --dark-bg: #0f172a;
+            --dark-card: #1e293b;
+            --dark-text: #f1f5f9;
+            --light-text: #94a3b8;
+            --white: #ffffff;
+            --error-red: #ef4444;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1),
+                        0 4px 6px -2px rgba(0,0,0,0.05);
+        }
 
-<style>
-:root {
-  --primary-blue: #2563eb;
-  --primary-blue-dark: #1d4ed8;
-  --dark-bg: #0f172a;
-  --dark-card: #1e293b;
-  --dark-text: #f1f5f9;
-  --light-text: #94a3b8;
-  --white: #ffffff;
-  --error-red: #ef4444;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1),
-               0 4px 6px -2px rgba(0,0,0,0.05);
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--dark-bg);
-  color: var(--dark-text);
-  margin: 0;
-}
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
 
-.auth-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-}
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
 
-.auth-card {
-  background: var(--dark-card);
-  padding: 2rem;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
-  width: 100%;
-  max-width: 420px;
-  box-sizing: border-box;
-}
+        .auth-card {
+            background: var(--dark-card);
+            padding: 2.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 440px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-.auth-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--success-green));
+        }
 
-.auth-header h2 {
-  margin: 0;
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--white);
-}
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
 
-.auth-header h4 {
-  margin: 0.2rem 0;
-  font-size: 1.1rem;
-  font-weight: 500;
-  color: var(--light-text);
-}
+        .auth-logo {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 1rem;
+            background: var(--primary-blue);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
 
-.auth-header p {
-  color: var(--light-text);
-  font-size: 0.95rem;
-  margin-top: 0.5rem;
-}
+        .auth-header h2 {
+            margin: 0;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 0.5rem;
+        }
 
-.form-group {
-  margin-bottom: 1.25rem;
-}
+        .auth-header h4 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+        }
 
-.form-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--light-text);
-}
+        .auth-header p {
+            color: var(--light-text);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
 
-.form-control {
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--white);
-  font-size: 1rem;
-  box-sizing: border-box;
-}
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
 
-.form-control::placeholder {
-  color: var(--white);
-  opacity: 1;
-}
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
 
-.form-control:focus {
-  border-color: var(--primary-blue);
-  outline: none;
-}
+        .form-control {
+            width: 100%;
+            padding: 0.875rem;
+            border-radius: var(--radius-md);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--white);
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
 
-.password-wrapper {
-  position: relative;
-}
+        .form-control::placeholder {
+            color: var(--light-text);
+            opacity: 0.7;
+        }
 
-.toggle-password {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--light-text);
-  display: flex;
-  align-items: center;
-}
+        .form-control:focus {
+            border-color: var(--primary-blue);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: rgba(255, 255, 255, 0.08);
+        }
 
-.toggle-password svg {
-  width: 20px;
-  height: 20px;
-}
+        .form-control:invalid {
+            border-color: var(--error-red);
+        }
 
-.btn-primary {
-  display: inline-block;
-  width: 100%;
-  padding: 0.75rem;
-  border-radius: var(--radius-md);
-  background: var(--primary-blue);
-  color: var(--white);
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
+        .password-wrapper {
+            position: relative;
+        }
 
-.btn-primary:hover {
-  background: var(--primary-blue-dark);
-}
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--light-text);
+            padding: 4px;
+            border-radius: 4px;
+            transition: color 0.2s ease;
+        }
 
-.auth-footer {
-  text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  color: var(--light-text);
-}
+        .toggle-password:hover {
+            color: var(--white);
+            background: rgba(255, 255, 255, 0.1);
+        }
 
-.auth-footer a {
-  color: var(--primary-blue);
-  font-weight: 500;
-  text-decoration: none;
-}
+        .toggle-password svg {
+            width: 20px;
+            height: 20px;
+            display: block;
+        }
 
-.auth-footer a:hover {
-  color: var(--primary-blue-dark);
-}
+        .eye-closed {
+            display: none;
+        }
 
-.error {
-  color: var(--error-red);
-  text-align: center;
-  margin-bottom: 1rem;
-}
+        .eye-open {
+            display: block;
+        }
 
-/* RESPONSIVE DESIGN */
-@media (max-width: 768px) {
-  .auth-card {
-    padding: 1.5rem;
-    margin: 1rem;
-  }
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            gap: 0.75rem;
+        }
 
-  .auth-header h2 {
-    font-size: 1.4rem;
-  }
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary-blue);
+        }
 
-  .form-control {
-    padding: 0.65rem;
-  }
+        .checkbox-group label {
+            color: var(--light-text);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
 
-  .btn-primary {
-    padding: 0.65rem;
-  }
-}
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 0.875rem;
+            border-radius: var(--radius-md);
+            background: var(--primary-blue);
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
 
-@media (max-width: 480px) {
-  .auth-card {
-    padding: 1rem;
-    margin: 0.5rem;
-  }
+        .btn-primary:hover {
+            background: var(--primary-blue-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
 
-  .auth-header h2 {
-    font-size: 1.2rem;
-  }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
 
-  .auth-header h4 {
-    font-size: 1rem;
-  }
+        .btn-primary:disabled {
+            background: var(--light-text);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
 
-  .form-label {
-    font-size: 0.9rem;
-  }
+        .btn-loading .btn-text {
+            opacity: 0;
+        }
 
-  .form-control {
-    padding: 0.6rem;
-    font-size: 0.9rem;
-  }
+        .btn-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid var(--white);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
 
-  .btn-primary {
-    padding: 0.6rem;
-    font-size: 0.95rem;
-  }
-}
-</style>
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
 
-<div class="auth-container">
-  <div class="auth-card">
-    <div class="auth-header">
-      <h2>Login</h2>
-      <h4>Welcome back to EduLMS</h4>
-      <p>Sign in to access your account</p>
+        .auth-footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: var(--light-text);
+        }
+
+        .auth-footer a {
+            color: var(--primary-blue);
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .auth-footer a:hover {
+            color: var(--primary-blue-dark);
+            text-decoration: underline;
+        }
+
+        .security-notice {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.85rem;
+        }
+
+        .security-notice h5 {
+            color: var(--warning-orange);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .security-notice ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .security-notice li {
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .security-notice li::before {
+            content: '🔒';
+            font-size: 0.8rem;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--error-red);
+            padding: 0.875rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success-green);
+            padding: 0.875rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .attempts-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--warning-orange);
+            padding: 0.875rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        .test-credentials {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: var(--radius-md);
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .test-credentials h5 {
+            color: var(--success-green);
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .test-credentials ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .test-credentials li {
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .test-credentials li::before {
+            content: '👤';
+            font-size: 0.8rem;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 768px) {
+            .auth-card {
+                padding: 2rem;
+                margin: 1rem;
+            }
+
+            .auth-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .form-control {
+                padding: 0.75rem;
+            }
+
+            .btn-primary {
+                padding: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 1.5rem;
+                margin: 0.5rem;
+            }
+
+            .auth-header h2 {
+                font-size: 1.3rem;
+            }
+
+            .auth-header h4 {
+                font-size: 1rem;
+            }
+
+            .form-label {
+                font-size: 0.85rem;
+            }
+
+            .form-control {
+                padding: 0.7rem;
+                font-size: 0.95rem;
+            }
+
+            .btn-primary {
+                padding: 0.7rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Focus styles for accessibility */
+        .form-control:focus-visible,
+        .btn-primary:focus-visible,
+        .toggle-password:focus-visible {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">E</div>
+                <h2>Secure Login</h2>
+                <h4>Welcome back to EduLMS</h4>
+                <p>Sign in to access your learning dashboard</p>
+            </div>
+
+            <!-- Security Notice -->
+            <div class="security-notice">
+                <h5>Security Tips:</h5>
+                <ul>
+                    <li>Never share your password with anyone</li>
+                    <li>Ensure you're on the official EduLMS website</li>
+                    <li>Log out after each session, especially on shared devices</li>
+                </ul>
+            </div>
+
+            <!-- Flash Messages -->
+            <%- include('../partials/flash-messages') %>
+            <!-- Traditional Login Form (Primary Method) -->
+            <form action="/auth/login" method="POST" id="loginForm" novalidate>
+                <div class="form-group">
+                    <label for="email" class="form-label">Email Address</label>
+                    <input 
+                        type="email" 
+                        id="email" 
+                        name="email" 
+                        placeholder="e.g. admin@example.com" 
+                        required 
+                        class="form-control"
+                        autocomplete="email"
+                        value="<%= typeof email !== 'undefined' ? email : '' %>"
+                    >
+                </div>
+
+                <div class="form-group password-wrapper">
+                    <label for="password" class="form-label">Password</label>
+                    <input 
+                        type="password" 
+                        id="password" 
+                        name="password" 
+                        placeholder="Enter your password" 
+                        required 
+                        class="form-control"
+                        autocomplete="current-password"
+                    >
+                    <button type="button" id="togglePassword" class="toggle-password" aria-label="Show password">
+                        <svg class="eye-open" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <svg class="eye-closed" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.57-4.362M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rememberMe" name="rememberMe">
+                    <label for="rememberMe">Remember this device</label>
+                </div>
+
+                <button type="submit" class="btn-primary" id="loginButton">
+                    <span class="btn-text">Login</span>
+                    <div class="btn-spinner" id="loginSpinner"></div>
+                </button>
+            </form>
+
+            <!-- Test Credentials -->
+            <div class="test-credentials">
+                <h5>Test Credentials:</h5>
+                <ul>
+                    <li><strong>Admin:</strong> admin@example.com / password123</li>
+                    <li><strong>Teacher:</strong> teacher1@example.com / password123</li>
+                    <li><strong>Student:</strong> student1@example.com / password123</li>
+                </ul>
+            </div>
+
+            <div class="auth-footer">
+                <p><a href="/auth/forgot-password">Forgot your password?</a></p>
+                <p>Don't have an account? <a href="/auth/register">Create one here</a></p>
+            </div>
+        </div>
     </div>
 
-    <% if (error) { %>
-      <div class="error"><%= error %></div>
-    <% } %>
+    <script>
+        // Password visibility toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('password');
+            const eyeOpen = togglePassword.querySelector('.eye-open');
+            const eyeClosed = togglePassword.querySelector('.eye-closed');
+            const loginForm = document.getElementById('loginForm');
+            const loginButton = document.getElementById('loginButton');
+            const loginSpinner = document.getElementById('loginSpinner');
 
-    <form action="/auth/login" method="POST" class="auth-form">
-      <div class="form-group">
-        <label for="email" class="form-label">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="e.g. you@example.com" required class="form-control">
-      </div>
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                
+                eyeOpen.style.display = isPassword ? 'none' : 'block';
+                eyeClosed.style.display = isPassword ? 'block' : 'none';
+                
+                this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+            });
 
-      <div class="form-group password-wrapper">
-        <label for="password" class="form-label">Password</label>
-        <input type="password" id="password" name="password" placeholder="Enter your password" required class="form-control">
-        <button type="button" id="togglePassword" class="toggle-password" aria-label="Show password">
-          <svg id="eyeOpen" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-          </svg>
-          <svg id="eyeClosed" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display:none;">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.57-4.362M9.88 9.88A3 3 0 0114.12 14.12M6.1 6.1l11.8 11.8" />
-          </svg>
-        </button>
-      </div>
+            // Form submission handling for traditional form
+            loginForm.addEventListener('submit', function(e) {
+                // Show loading state
+                loginButton.disabled = true;
+                loginButton.classList.add('btn-loading');
+                loginSpinner.style.display = 'block';
+                
+                // Form will submit normally after this
+            });
 
-      <button type="submit" class="btn-primary">Login</button>
-    </form>
+            // Auto-fill test credentials for easier testing
+            function autoFillTestCredentials() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const testUser = urlParams.get('test');
+                
+                if (testUser) {
+                    const credentials = {
+                        admin: { email: 'admin@example.com', password: 'password123' },
+                        teacher: { email: 'teacher1@example.com', password: 'password123' },
+                        student: { email: 'student1@example.com', password: 'password123' }
+                    };
+                    
+                    const creds = credentials[testUser];
+                    if (creds) {
+                        document.getElementById('email').value = creds.email;
+                        document.getElementById('password').value = creds.password;
+                    }
+                }
+            }
 
-    <div class="auth-footer">
-  <p>Don't have an account? <a href="/auth/register">Register</a></p>
-    </div>
-  </div>
-</div>
+            // Auto-focus on email field
+            const emailInput = document.getElementById('email');
+            if (!emailInput.value) {
+                emailInput.focus();
+            }
 
-<script src="/public/js/auth.js"></script>
+            // Initialize auto-fill
+            autoFillTestCredentials();
+        });
+    </script>
+</body>
+</html>
