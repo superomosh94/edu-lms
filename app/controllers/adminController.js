@@ -121,7 +121,6 @@ const adminController = {
                 activeUsers,
                 inactiveUsers,
                 totalCourses,
-                activeCourses,
                 totalPayments,
                 totalRevenue
             ] = await Promise.all([
@@ -144,7 +143,6 @@ const adminController = {
                 executeSingleResultQuery('SELECT COUNT(*) AS count FROM users WHERE is_active = 1'),
                 executeSingleResultQuery('SELECT COUNT(*) AS count FROM users WHERE is_active = 0'),
                 executeSingleResultQuery('SELECT COUNT(*) AS count FROM courses'),
-                executeSingleResultQuery('SELECT COUNT(*) AS count FROM courses WHERE status = "active"'),
                 executeSingleResultQuery('SELECT COUNT(*) AS count FROM payments'),
                 executeSingleResultQuery(`
                     SELECT COALESCE(SUM(amount), 0) AS total 
@@ -168,9 +166,9 @@ const adminController = {
                 },
                 courses: {
                     total: totalCourses?.count || 0,
-                    active: activeCourses?.count || 0,
-                    pending: 0, // Hardcoded to 0 since no pending courses exist
-                    draft: 0    // Hardcoded to 0 since no draft courses exist
+                    active: 0, // Hardcoded to 0
+                    pending: 0, // Hardcoded to 0
+                    draft: 0    // Hardcoded to 0
                 },
                 payments: {
                     total: totalPayments?.count || 0,

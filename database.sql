@@ -200,7 +200,9 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
   INDEX idx_token (token),
   INDEX idx_expires_at (expires_at)
 );
-
+-- Connect to your production database and run:
+ALTER TABLE courses 
+MODIFY COLUMN status ENUM('draft', 'pending', 'active', 'inactive') NOT NULL DEFAULT 'draft';
 -- ==========================================
 -- SAMPLE DATA
 -- ==========================================
