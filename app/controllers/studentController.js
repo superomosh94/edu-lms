@@ -138,6 +138,56 @@ const studentController = {
         }
     },
 
+    // UPDATED: Assignment submission page
+    getAssignmentSubmitPage: async (req, res) => {
+        try {
+            const assignmentId = req.params.id;
+            const studentId = req.userId;
+            if (!studentId) throw new Error('Student ID is missing');
+
+            console.log('Loading assignment submission page for ID:', assignmentId);
+
+            const assignment = await Assignment.findById(assignmentId);
+            if (!assignment) {
+                return res.status(404).render('error', {
+                    title: "Not Found",
+                    message: "Assignment not found"
+                });
+            }
+
+            // Check if student is enrolled in the course
+            const isEnrolled = await Course.isStudentEnrolled(assignment.course_id, studentId);
+            if (!isEnrolled) {
+                return res.status(403).render('error', {
+                    title: "Access Denied",
+                    message: "You are not enrolled in this course"
+                });
+            }
+
+            // Check if already submitted
+            const existingSubmission = await Assignment.getStudentSubmission(assignmentId, studentId);
+            if (existingSubmission) {
+                return res.status(400).render('error', {
+                    title: "Already Submitted",
+                    message: "You have already submitted this assignment"
+                });
+            }
+
+            res.render('student/submit-assignment', {
+                title: `Submit: ${assignment.title}`,
+                assignment: assignment
+            });
+        } catch (error) {
+            console.error('Get assignment submit page error:', error);
+            res.status(500).render('error', {
+                title: "Error",
+                message: "Unable to load assignment submission page",
+                error
+            });
+        }
+    },
+
+    // UPDATED: Assignment detail page
     getAssignmentDetail: async (req, res) => {
         try {
             const assignmentId = req.params.id;
@@ -238,6 +288,72 @@ const studentController = {
         } catch (error) {
             console.error('Get notifications error:', error);
             res.status(500).render('error', { title: "Error", message: "Unable to load notifications", error });
+        }
+    },
+
+    // UPDATED: Submit assignment
+    submitAssignment: async (req, res) => {
+        try {
+            const studentId = req.userId;
+            const assignmentId = req.params.id;
+            const { submissionContent, notes } = req.body;
+
+            if (!studentId || !assignmentId) {
+                throw new Error('Missing required data');
+            }
+
+            console.log('Submitting assignment:', assignmentId, 'for student:', studentId);
+
+            // Check if assignment exists and is active
+            const assignment = await Assignment.findById(assignmentId);
+            if (!assignment) {
+                return res.status(404).render('error', {
+                    title: "Not Found", 
+                    message: "Assignment not found"
+                });
+            }
+
+            // Check deadline
+            const dueDate = assignment.due_date || assignment.deadline;
+            if (dueDate && new Date() > new Date(dueDate)) {
+                return res.status(400).render('error', {
+                    title: "Submission Error",
+                    message: "Assignment deadline has passed"
+                });
+            }
+
+            // Check if already submitted
+            const existingSubmission = await Assignment.getStudentSubmission(assignmentId, studentId);
+            if (existingSubmission) {
+                return res.status(400).render('error', {
+                    title: "Already Submitted",
+                    message: "You have already submitted this assignment"
+                });
+            }
+
+            // Create submission
+            const submission = await Assignment.createSubmission({
+                assignmentId,
+                studentId,
+                content: submissionContent,
+                notes: notes || '',
+                submittedAt: new Date()
+            });
+
+            await auditHelper.logAction(studentId, 'SUBMIT_ASSIGNMENT', 
+                `Submitted assignment ID ${assignmentId}`);
+
+            console.log('Assignment submitted successfully:', submission.id);
+
+            res.redirect('/student/submissions');
+            
+        } catch (error) {
+            console.error('Submit assignment error:', error);
+            res.status(500).render('error', {
+                title: "Error", 
+                message: "Submission failed", 
+                error
+            });
         }
     },
 

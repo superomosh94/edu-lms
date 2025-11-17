@@ -36,15 +36,31 @@ class Assignment {
     return rows[0].count || 0;
   }
 
+  // FIXED: Get assignments for student with proper submission status
   static async getByStudent(studentId) {
     const [rows] = await pool.query(
       `
-      SELECT a.*, s.id AS submissionId, s.grade, s.submitted_at AS submittedAt
+      SELECT 
+        a.*, 
+        c.title AS course_title,
+        c.course_code,
+        s.id AS submission_id, 
+        s.grade, 
+        s.submitted_at AS submittedAt,
+        s.content AS submission_content,
+        CASE 
+          WHEN s.id IS NOT NULL THEN 'submitted'
+          WHEN a.due_date < NOW() THEN 'overdue'
+          ELSE 'pending'
+        END AS submissionStatus
       FROM assignments a
-      JOIN submissions s ON a.id = s.assignment_id
-      WHERE s.student_id = ?
+      JOIN courses c ON a.course_id = c.id
+      JOIN enrollments e ON c.id = e.course_id
+      LEFT JOIN submissions s ON a.id = s.assignment_id AND s.student_id = ?
+      WHERE e.student_id = ? AND e.status = 'active'
+      ORDER BY a.due_date ASC
       `,
-      [studentId]
+      [studentId, studentId]
     );
     return rows;
   }
@@ -52,10 +68,17 @@ class Assignment {
   static async getStudentSubmissions(studentId) {
     const [rows] = await pool.query(
       `
-      SELECT s.*, a.title AS assignmentTitle, a.due_date
+      SELECT 
+        s.*, 
+        a.title AS assignment_title, 
+        a.due_date,
+        c.title AS course_title,
+        c.course_code
       FROM submissions s
       JOIN assignments a ON s.assignment_id = a.id
+      JOIN courses c ON a.course_id = c.id
       WHERE s.student_id = ?
+      ORDER BY s.submitted_at DESC
       `,
       [studentId]
     );
@@ -108,7 +131,6 @@ class Assignment {
     return rows[0].average || null;
   }
 
-  // Added method to match studentController call
   static async getAverageGradeByStudent(studentId) {
     return this.getAverageGrade(studentId);
   }
@@ -124,10 +146,18 @@ class Assignment {
   static async getGradesByStudent(studentId) {
     const [rows] = await pool.query(
       `
-      SELECT a.id AS assignmentId, a.title AS assignmentTitle, s.grade, s.submitted_at AS submittedAt
+      SELECT 
+        a.id AS assignment_id, 
+        a.title AS assignment_title, 
+        s.grade, 
+        s.submitted_at AS submitted_at,
+        s.feedback,
+        c.title AS course_title
       FROM submissions s
       JOIN assignments a ON s.assignment_id = a.id
-      WHERE s.student_id = ?
+      JOIN courses c ON a.course_id = c.id
+      WHERE s.student_id = ? AND s.grade IS NOT NULL
+      ORDER BY s.submitted_at DESC
       `,
       [studentId]
     );
@@ -137,9 +167,10 @@ class Assignment {
   static async getTotalAssignmentsCount(studentId) {
     const [rows] = await pool.query(
       `
-      SELECT COUNT(*) AS count
-      FROM submissions s
-      WHERE s.student_id = ?
+      SELECT COUNT(DISTINCT a.id) AS count
+      FROM assignments a
+      JOIN enrollments e ON a.course_id = e.course_id
+      WHERE e.student_id = ? AND e.status = 'active'
       `,
       [studentId]
     );
@@ -161,11 +192,13 @@ class Assignment {
   static async getPendingCount(studentId) {
     const [rows] = await pool.query(
       `
-      SELECT COUNT(*) AS count
-      FROM submissions s
-      WHERE s.student_id = ? AND s.grade IS NULL
+      SELECT COUNT(DISTINCT a.id) AS count
+      FROM assignments a
+      JOIN enrollments e ON a.course_id = e.course_id
+      LEFT JOIN submissions s ON a.id = s.assignment_id AND s.student_id = ?
+      WHERE e.student_id = ? AND e.status = 'active' AND s.id IS NULL
       `,
-      [studentId]
+      [studentId, studentId]
     );
     return rows[0].count || 0;
   }
@@ -188,6 +221,40 @@ class Assignment {
       [assignmentId, studentId]
     );
     return rows[0] || null;
+  }
+
+  // ADD THIS MISSING METHOD - createSubmission
+  static async createSubmission(submissionData) {
+    try {
+      const { assignmentId, studentId, content, notes, submittedAt } = submissionData;
+      
+      const [result] = await pool.query(
+        `INSERT INTO submissions (assignment_id, student_id, content, submitted_at) 
+         VALUES (?, ?, ?, ?)`,
+        [assignmentId, studentId, content, submittedAt || new Date()]
+      );
+      
+      return {
+        id: result.insertId,
+        assignmentId,
+        studentId,
+        content,
+        submittedAt: submittedAt || new Date()
+      };
+    } catch (error) {
+      console.error('Error creating submission:', error);
+      throw error;
+    }
+  }
+
+  // ADD THIS HELPER METHOD TO CHECK IF STUDENT IS ENROLLED
+  static async isStudentEnrolled(studentId, courseId) {
+    const [rows] = await pool.query(
+      `SELECT * FROM enrollments 
+       WHERE student_id = ? AND course_id = ? AND status = 'active'`,
+      [studentId, courseId]
+    );
+    return rows.length > 0;
   }
 }
 

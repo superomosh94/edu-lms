@@ -15,12 +15,15 @@ router.get('/courses', studentController.getMyCourses);
 router.get('/courses/:courseId', studentController.getCourse);
 
 // Enrollments
-router.get('/enroll', studentController.getEnrollPage); // New GET route for enroll page
-router.post('/enroll', studentController.postEnroll);  // New POST route for enrollment submission
+router.get('/enroll', studentController.getEnrollPage);
+router.post('/enroll', studentController.postEnroll);
 
-// Assignments
+// Assignments - ADD THE MISSING ROUTE HERE
 router.get('/assignments', studentController.getAssignments);
-router.get('/assignments/:id', studentController.getAssignmentDetail);
+router.get('/assignments/:id', studentController.getAssignmentDetail); // ADD THIS LINE
+router.get('/assignments/:id/detail', studentController.getAssignmentDetail); // Detail page
+router.get('/assignments/:id/submit', studentController.getAssignmentSubmitPage); // Submission page
+router.post('/assignments/:id/submit', studentController.submitAssignment); // Submission action
 
 // Submissions
 router.get('/submissions', studentController.getMySubmissions);
