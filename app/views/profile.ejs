@@ -3,134 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - EDU LMS</title>
-    <%- include('./partials/header') %>
+    <title><%= title %> | EDU LMS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         .profile-container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
+        
         .profile-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-        .profile-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            margin: 0 auto 1rem;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
         }
-        .profile-card {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-        }
-        .profile-section {
-            margin-bottom: 2rem;
-        }
-        .profile-section h3 {
-            margin-bottom: 1rem;
-            color: #333;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 0.5rem;
-        }
-        .info-grid {
+        
+        .profile-stats {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
-        .info-item {
-            margin-bottom: 1rem;
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
         }
-        .info-label {
-            font-weight: 500;
-            color: #666;
-        }
-        .info-value {
-            color: #333;
-        }
-        .btn-edit {
-            background: #667eea;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
+        
+        .profile-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
-    <%- include('./partials/navigation') %>
+    <%- include('./partials/sidebar') %>
     
-    <div class="profile-container">
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <%= user.name ? user.name.charAt(0).toUpperCase() : 'U' %>
+    <div class="main-content">
+        <div class="profile-container">
+            <div class="profile-header">
+                <h1><i class="fas fa-user-circle"></i> My Profile</h1>
+                <p>Manage your personal information and academic details</p>
             </div>
-            <h1><%= user.name || 'User' %></h1>
-            <p style="color: #666; font-size: 1.125rem;"><%= user.role || 'Member' %></p>
-        </div>
-
-        <div class="profile-card">
-            <div class="profile-section">
-                <h3>Personal Information</h3>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">Full Name</div>
-                        <div class="info-value"><%= user.name || 'Not set' %></div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Email</div>
-                        <div class="info-value"><%= user.email || 'Not set' %></div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Role</div>
-                        <div class="info-value"><%= user.role || 'Not set' %></div>
-                    </div>
-                    <div class="info-item">
-                        <div class="info-label">Member Since</div>
-                        <div class="info-value"><%= user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Not available' %></div>
-                    </div>
+            
+            <div class="profile-stats">
+                <div class="stat-card">
+                    <h3><%= stats.enrolledCourses %></h3>
+                    <p>Enrolled Courses</p>
+                </div>
+                <div class="stat-card">
+                    <h3><%= stats.completedAssignments %>/<%= stats.totalAssignments %></h3>
+                    <p>Assignments Completed</p>
+                </div>
+                <div class="stat-card">
+                    <h3><%= stats.averageGrade %>%</h3>
+                    <p>Average Grade</p>
                 </div>
             </div>
-
-            <a href="/settings" class="btn-edit">Edit Profile</a>
-        </div>
-
-        <% if (user.role === 'Student') { %>
-        <div class="profile-card">
-            <div class="profile-section">
-                <h3>Academic Information</h3>
-                <div class="info-grid">
-                    <div class="info-item">
-                        <div class="info-label">Enrolled Courses</div>
-                        <div class="info-value"><%= user.stats?.enrollments || 0 %></div>
+            
+            <div class="profile-form">
+                <form action="/student/profile" method="POST">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" value="<%= student.name %>" class="form-control">
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">Completed Assignments</div>
-                        <div class="info-value"><%= user.stats?.completed || 0 %></div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="<%= student.email %>" class="form-control">
                     </div>
-                    <div class="info-item">
-                        <div class="info-label">Average Grade</div>
-                        <div class="info-value"><%= user.stats?.averageGrade ? user.stats.averageGrade + '%' : 'N/A' %></div>
+                    
+                    <div class="form-group">
+                        <label for="bio">Bio</label>
+                        <textarea id="bio" name="bio" class="form-control" rows="4"><%= student.bio || '' %></textarea>
                     </div>
-                </div>
+                    
+                    <div class="form-group">
+                        <label for="interests">Academic Interests</label>
+                        <input type="text" id="interests" name="interests" value="<%= student.interests || '' %>" class="form-control">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact_info">Contact Information</label>
+                        <textarea id="contact_info" name="contact_info" class="form-control" rows="3"><%= student.contact_info || '' %></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Update Profile
+                    </button>
+                </form>
             </div>
         </div>
-        <% } %>
     </div>
-
-    <%- include('./partials/footer') %>
 </body>
 </html>

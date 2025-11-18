@@ -5,12 +5,16 @@ const crypto = require('crypto');
 // Ensure user is authenticated
 exports.authenticate = (req, res, next) => {
   if (req.session && req.session.userId) {
-    req.userId = req.session.userId; // <-- Add this line
-    req.roleName = req.session.roleName ? req.session.roleName.toLowerCase() : null; // Store role
+    req.userId = req.session.userId;
+    req.roleName = req.session.roleName ? req.session.roleName.toLowerCase() : null;
     return next();
   }
 
-  if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+  // Safe check for JSON requests
+  const isJsonRequest = req.xhr || 
+    (req.headers.accept && req.headers.accept.indexOf('json') > -1);
+
+  if (isJsonRequest) {
     return res.status(401).json({ error: 'Authentication required' });
   }
 
@@ -33,7 +37,11 @@ exports.requireRole = (roles) => {
     console.log("User ID:", req.session.userId, "Role:", userRole);
 
     if (!roles.map(r => r.toLowerCase()).includes(userRole)) {
-      if (req.xhr || req.headers.accept.indexOf('json') > -1) {
+      // Safe check for JSON requests
+      const isJsonRequest = req.xhr || 
+        (req.headers.accept && req.headers.accept.indexOf('json') > -1);
+
+      if (isJsonRequest) {
         return res.status(403).json({ error: 'Insufficient permissions' });
       }
 

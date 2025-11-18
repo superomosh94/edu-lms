@@ -356,6 +356,7 @@ const studentController = {
             });
         }
     },
+    
 
     updateProfile: async (req, res) => {
         try {
