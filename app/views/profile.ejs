@@ -41,6 +41,38 @@
             border-radius: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn-primary:hover {
+            background: #5a6fd8;
+        }
     </style>
 </head>
 <body>
@@ -59,11 +91,11 @@
                     <p>Enrolled Courses</p>
                 </div>
                 <div class="stat-card">
-                    <h3><%= stats.completedAssignments %>/<%= stats.totalAssignments %></h3>
+                    <h3><%= stats.completedAssignments || 0 %>/<%= stats.totalAssignments || 0 %></h3>
                     <p>Assignments Completed</p>
                 </div>
                 <div class="stat-card">
-                    <h3><%= stats.averageGrade %>%</h3>
+                    <h3><%= stats.averageGrade || 0 %>%</h3>
                     <p>Average Grade</p>
                 </div>
             </div>
@@ -72,30 +104,30 @@
                 <form action="/student/profile" method="POST">
                     <div class="form-group">
                         <label for="name">Full Name</label>
-                        <input type="text" id="name" name="name" value="<%= student.name %>" class="form-control">
+                        <input type="text" id="name" name="name" value="<%= user.name %>" class="form-control">
                     </div>
                     
                     <div class="form-group">
                         <label for="email">Email</label>
-                        <input type="email" id="email" name="email" value="<%= student.email %>" class="form-control">
+                        <input type="email" id="email" name="email" value="<%= user.email %>" class="form-control">
                     </div>
                     
                     <div class="form-group">
                         <label for="bio">Bio</label>
-                        <textarea id="bio" name="bio" class="form-control" rows="4"><%= student.bio || '' %></textarea>
+                        <textarea id="bio" name="bio" class="form-control" rows="4"><%= user.bio || '' %></textarea>
                     </div>
                     
                     <div class="form-group">
                         <label for="interests">Academic Interests</label>
-                        <input type="text" id="interests" name="interests" value="<%= student.interests || '' %>" class="form-control">
+                        <input type="text" id="interests" name="interests" value="<%= user.interests || '' %>" class="form-control">
                     </div>
                     
                     <div class="form-group">
                         <label for="contact_info">Contact Information</label>
-                        <textarea id="contact_info" name="contact_info" class="form-control" rows="3"><%= student.contact_info || '' %></textarea>
+                        <textarea id="contact_info" name="contact_info" class="form-control" rows="3"><%= user.contact_info || '' %></textarea>
                     </div>
                     
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn-primary">
                         <i class="fas fa-save"></i> Update Profile
                     </button>
                 </form>
