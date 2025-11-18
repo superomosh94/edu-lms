@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const pool = require('../controllers/config/db'); // Make sure to import pool
+const pool = require('../controllers/config/db');
 const { authenticate, requireActiveUser } = require('../middlewares/authMiddleware');
 
 router.get('/', authenticate, (req, res) => {
@@ -13,9 +13,9 @@ router.get('/help', (req, res) => {
 
 router.get('/profile', authenticate, async (req, res) => {
   try {
-    // Get user basic info from database
+    // Get user basic info from database - using 'name' instead of 'username'
     const [users] = await pool.query(
-      'SELECT id, username, email, first_name, last_name, date_of_birth, phone, address, profile_image, bio, created_at FROM users WHERE id = ?',
+      'SELECT id, name, email, created_at FROM users WHERE id = ?',
       [req.session.userId]
     );
 
@@ -27,31 +27,33 @@ router.get('/profile', authenticate, async (req, res) => {
 
     // Get user stats from database
     const [enrolledCourses] = await pool.query(
-      'SELECT COUNT(*) as count FROM enrollments WHERE user_id = ?',
+      'SELECT COUNT(*) as count FROM enrollments WHERE student_id = ?',
       [req.session.userId]
     );
 
     const [completedCourses] = await pool.query(
-      'SELECT COUNT(*) as count FROM enrollments WHERE user_id = ? AND progress = 100',
+      `SELECT COUNT(*) as count FROM enrollments e 
+       WHERE e.student_id = ?`,
       [req.session.userId]
     );
 
     const [activeCourses] = await pool.query(
-      'SELECT COUNT(*) as count FROM enrollments WHERE user_id = ? AND progress > 0 AND progress < 100',
+      `SELECT COUNT(*) as count FROM enrollments e 
+       WHERE e.student_id = ? AND e.status = 'active'`,
       [req.session.userId]
     );
 
     // Prepare stats object for the template
     const stats = {
-      enrolledCourses: enrolledCourses[0].count,
-      completedCourses: completedCourses[0].count,
-      activeCourses: activeCourses[0].count
+      enrolledCourses: enrolledCourses[0].count || 0,
+      completedCourses: completedCourses[0].count || 0,
+      activeCourses: activeCourses[0].count || 0
     };
 
     res.render('profile', {
       title: 'Your Profile',
       user: user,
-      stats: stats, // This is what your template needs
+      stats: stats,
       currentPage: 'profile'
     });
 
