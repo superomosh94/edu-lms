@@ -6,10 +6,17 @@
     <title>Edu-LMS | Modern Learning Management System for Kenya</title>
     <meta name="description" content="Edu-LMS is a comprehensive learning management system designed for Kenyan educational institutions. Streamline courses, assignments, attendance, and more.">
     
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="LMS, Learning Management System, Kenya, Education, Online Learning, School Management">
+    <link rel="canonical" href="https://edu-lms-zeqh.onrender.com">
+    
     <!-- Open Graph / Social Media Metadata -->
     <meta property="og:title" content="Edu-LMS | Modern Learning Management System">
     <meta property="og:description" content="Streamline educational processes with our comprehensive LMS solution designed for Kenyan institutions.">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="https://edu-lms-zeqh.onrender.com/images/og-image.jpg">
+    <meta name="twitter:card" content="summary_large_image">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -83,6 +90,7 @@
             color: var(--dark-text);
             line-height: 1.6;
             overflow-x: hidden;
+            width: 100%;
         }
         
         h1, h2, h3, h4, h5, h6 {
@@ -90,6 +98,8 @@
             font-weight: 600;
             line-height: 1.3;
             margin-bottom: var(--space-md);
+            word-wrap: break-word;
+            hyphens: auto;
         }
         
         h1 {
@@ -164,6 +174,23 @@
             margin: 0 auto;
         }
         
+        /* Skip link for accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px;
+            z-index: 1001;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+        }
+        
+        .skip-link:focus {
+            top: 6px;
+        }
+        
         /* Button Styles */
         .btn {
             display: inline-flex;
@@ -181,6 +208,8 @@
             position: relative;
             overflow: hidden;
             z-index: 1;
+            min-height: 44px;
+            justify-content: center;
         }
         
         .btn::before {
@@ -274,6 +303,8 @@
             font-size: 1.5rem;
             font-weight: 700;
             color: var(--white);
+            min-height: 44px;
+            justify-content: center;
         }
         
         .logo span {
@@ -298,6 +329,10 @@
             font-weight: 500;
             transition: color 0.3s ease;
             position: relative;
+            display: block;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
         }
         
         .nav-link:hover {
@@ -340,6 +375,10 @@
             border: none;
             color: var(--dark-text);
             font-size: 1.5rem;
+            min-height: 44px;
+            min-width: 44px;
+            align-items: center;
+            justify-content: center;
         }
         
         /* Hero Section */
@@ -412,6 +451,8 @@
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-xl);
             transition: transform 0.3s ease;
+            aspect-ratio: 16/9;
+            object-fit: cover;
         }
         
         .hero-image img:hover {
@@ -540,6 +581,7 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.5s ease;
+            aspect-ratio: 16/9;
         }
         
         .demo-image:hover img {
@@ -601,6 +643,7 @@
             justify-content: center;
             color: var(--white);
             font-weight: bold;
+            flex-shrink: 0;
         }
         
         .author-info h4 {
@@ -732,6 +775,9 @@
             align-items: center;
             font-weight: 500;
             transition: background-color 0.3s ease;
+            min-height: 44px;
+            word-break: break-word;
+            padding-right: 3rem;
         }
         
         .faq-question:hover {
@@ -742,6 +788,8 @@
             content: '+';
             font-size: 1.5rem;
             transition: transform 0.3s ease;
+            position: absolute;
+            right: var(--space-md);
         }
         
         .faq-item.active .faq-question::after {
@@ -784,6 +832,10 @@
             font-weight: 500;
         }
         
+        .required {
+            color: var(--accent-red);
+        }
+        
         .form-control {
             width: 100%;
             padding: 0.75rem;
@@ -794,17 +846,18 @@
             font-family: inherit;
             font-size: 1rem;
             transition: border-color 0.3s ease;
+            min-height: 44px;
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
         }
         
         .form-control:focus {
             outline: none;
             border-color: var(--primary-blue);
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        textarea.form-control {
-            min-height: 150px;
-            resize: vertical;
         }
         
         .contact-info {
@@ -836,6 +889,7 @@
             color: var(--white);
             font-size: 1.2rem;
             flex-shrink: 0;
+            min-height: 50px;
         }
         
         /* Footer */
@@ -879,6 +933,8 @@
         .footer-links a {
             color: var(--light-text);
             transition: color 0.3s ease;
+            display: block;
+            padding: 0.25rem 0;
         }
         
         .footer-links a:hover {
@@ -893,8 +949,8 @@
         }
         
         .social-link {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.05);
             display: flex;
@@ -933,6 +989,12 @@
         }
         
         /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 100%;
+            }
+        }
+        
         @media (max-width: 992px) {
             h1 {
                 font-size: 2.2rem;
@@ -962,11 +1024,17 @@
             .pricing-card.featured:hover {
                 transform: translateY(-5px);
             }
+            
+            .hero-image::before {
+                width: 300px;
+                height: 300px;
+                filter: blur(40px);
+            }
         }
         
         @media (max-width: 768px) {
             .hamburger {
-                display: block;
+                display: flex;
             }
             
             .nav-menu {
@@ -981,6 +1049,8 @@
                 box-shadow: var(--shadow-lg);
                 padding: var(--space-lg) 0;
                 z-index: 999;
+                height: calc(100vh - 70px);
+                overflow-y: auto;
             }
             
             .nav-menu.active {
@@ -989,6 +1059,12 @@
             
             .nav-item {
                 margin: var(--space-md) 0;
+            }
+            
+            .nav-link {
+                padding: var(--space-sm) var(--space-md);
+                font-size: 1.1rem;
+                justify-content: center;
             }
             
             .hero {
@@ -1011,21 +1087,79 @@
             
             .hero-buttons {
                 flex-direction: column;
-                gap: var(--space-sm);
+                gap: var(--space-md);
             }
             
             .btn {
                 width: 100%;
-                justify-content: center;
             }
             
             .pricing-card {
                 padding: var(--space-lg);
             }
+            
+            .feature-card,
+            .role-card {
+                padding: var(--space-md);
+            }
+            
+            .btn-large {
+                padding: 0.875rem 1.25rem;
+                font-size: 1rem;
+            }
+        }
+        
+        /* Extra small devices */
+        @media (max-width: 375px) {
+            html {
+                font-size: 14px;
+            }
+            
+            .hero-text h1 {
+                font-size: 1.6rem;
+                line-height: 1.2;
+            }
+            
+            .hero-text p {
+                font-size: 1rem;
+            }
+            
+            .container {
+                padding: 0 var(--space-sm);
+            }
+            
+            .hero {
+                padding-top: 5rem;
+                padding-bottom: var(--space-xl);
+            }
+        }
+        
+        /* Safe area support for notched devices */
+        @supports(padding: max(0px)) {
+            .container {
+                padding-left: max(var(--space-md), env(safe-area-inset-left));
+                padding-right: max(var(--space-md), env(safe-area-inset-right));
+            }
+        }
+        
+        /* Reduced motion for accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            
+            html {
+                scroll-behavior: auto;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Skip link for keyboard users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     <!-- Header & Navigation -->
     <header id="header">
         <nav class="navbar container" aria-label="Main navigation">
@@ -1061,393 +1195,403 @@
         </nav>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="home">
-        <div class="container">
-            <div class="hero-content">
-                <div class="hero-text fade-in-up">
-                    <h1>Transform Education with Modern LMS</h1>
-                    <p>Edu-LMS is a comprehensive learning management system designed for Kenyan educational institutions. Streamline courses, assignments, attendance, and more in one unified platform.</p>
-                    <div class="hero-buttons">
-                        <a href="/auth/register" class="btn btn-primary btn-large">
-                            <i class="fas fa-rocket"></i> Get Started
-                        </a>
-                        <a href="#demo" class="btn btn-secondary btn-large">
-                            <i class="fas fa-play-circle"></i> View Demo
-                        </a>
-                        <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'm%20interested%20in%20your%20LMS%20solution" class="btn btn-whatsapp btn-large" target="_blank">
-                            <i class="fab fa-whatsapp"></i> Chat on WhatsApp
-                        </a>
-                    </div>
-                </div>
-                <div class="hero-image fade-in-up">
-                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Students collaborating in a modern classroom">
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="section" id="features">
-        <div class="container">
-            <div class="section-title">
-                <h2>Powerful Features</h2>
-                <p>Discover the comprehensive set of tools designed to enhance the learning experience for everyone involved.</p>
-            </div>
-            
-            <div class="features-grid">
-                <article class="feature-card fade-in-up">
-                    <div class="feature-icon"><i class="fas fa-book"></i></div>
-                    <h3>Course Management</h3>
-                    <p>Easily create, organize, and manage courses with intuitive tools. Upload materials, set prerequisites, and track progress.</p>
-                </article>
-                
-                <article class="feature-card fade-in-up">
-                    <div class="feature-icon"><i class="fas fa-tasks"></i></div>
-                    <h3>Assignments & Grading</h3>
-                    <p>Create assignments, set due dates, and provide feedback. Automated grading saves time and ensures consistency.</p>
-                </article>
-                
-                <article class="feature-card fade-in-up">
-                    <div class="feature-icon"><i class="fas fa-users"></i></div>
-                    <h3>Attendance Tracking</h3>
-                    <p>Monitor student attendance with QR codes or manual entry. Generate reports for administrators and parents.</p>
-                </article>
-                
-                <article class="feature-card fade-in-up">
-                    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
-                    <h3>Analytics & Reports</h3>
-                    <p>Gain insights with detailed analytics on student performance, engagement, and course effectiveness.</p>
-                </article>
-                
-                <article class="feature-card fade-in-up">
-                    <div class="feature-icon"><i class="fas fa-credit-card"></i></div>
-                    <h3>Payment Processing</h3>
-                    <p>Handle tuition fees, course payments, and other transactions securely with integrated payment gateways including M-Pesa.</p>
-                </article>
-                
-                <article class="feature-card fade-in-up">
-                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                    <h3>Audit Logs & Security</h3>
-                    <p>Maintain comprehensive audit trails and ensure data security with role-based access controls.</p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Roles Section -->
-    <section class="section" id="roles">
-        <div class="container">
-            <div class="section-title">
-                <h2>Designed for Every Role</h2>
-                <p>Edu-LMS provides tailored experiences for each user role within your educational institution.</p>
-            </div>
-            
-            <div class="roles-grid">
-                <article class="role-card fade-in-up">
-                    <div class="role-icon"><i class="fas fa-user-tie"></i></div>
-                    <h3>Administrator</h3>
-                    <p>Full system control with user management, course oversight, and comprehensive reporting capabilities.</p>
-                </article>
-                
-                <article class="role-card fade-in-up">
-                    <div class="role-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                    <h3>Teacher</h3>
-                    <p>Create courses, manage assignments, track student progress, and communicate with students and parents.</p>
-                </article>
-                
-                <article class="role-card fade-in-up">
-                    <div class="role-icon"><i class="fas fa-user-graduate"></i></div>
-                    <h3>Student</h3>
-                    <p>Access course materials, submit assignments, track progress, and engage with learning content.</p>
-                </article>
-                
-                <article class="role-card fade-in-up">
-                    <div class="role-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-                    <h3>Finance</h3>
-                    <p>Manage payments, invoices, and financial reports with integrated accounting tools.</p>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Demo Section -->
-    <section class="section" id="demo">
-        <div class="container">
-            <div class="section-title">
-                <h2>Platform Preview</h2>
-                <p>See how Edu-LMS can transform your educational institution with our interactive demo.</p>
-            </div>
-            
-            <div class="demo-container fade-in-up">
-                <div class="demo-image">
-                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Dashboard preview showing analytics and course management">
-                </div>
-            </div>
-            
-            <div style="text-align: center; margin-top: var(--space-lg);">
-                <a href="#contact" class="btn btn-primary btn-large">
-                    <i class="fas fa-calendar-check"></i> Request Live Demo
-                </a>
-                <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'd%20like%20to%20schedule%20a%20demo" class="btn btn-whatsapp btn-large" target="_blank" style="margin-left: var(--space-md);">
-                    <i class="fab fa-whatsapp"></i> Schedule Demo via WhatsApp
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section class="section" id="testimonials">
-        <div class="container">
-            <div class="section-title">
-                <h2>What Kenyan Institutions Say</h2>
-                <p>Hear from educational institutions across Kenya that have transformed their operations with Edu-LMS.</p>
-            </div>
-            
-            <div class="testimonials-container">
-                <article class="testimonial-card fade-in-up">
-                    <div class="testimonial-content">
-                        <p>"Edu-LMS has revolutionized how we manage our courses and track student progress. The intuitive interface reduced our training time by 60%."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">JS</div>
-                        <div class="author-info">
-                            <h4>Dr. Jane Smith</h4>
-                            <p>Principal, Nairobi High School</p>
-                        </div>
-                    </div>
-                </article>
-                
-                <article class="testimonial-card fade-in-up">
-                    <div class="testimonial-content">
-                        <p>"The analytics and reporting features have given us insights we never had before. We've improved student retention by 25% since implementation."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">MJ</div>
-                        <div class="author-info">
-                            <h4>Michael Johnson</h4>
-                            <p>IT Director, Kenya University</p>
-                        </div>
-                    </div>
-                </article>
-                
-                <article class="testimonial-card fade-in-up">
-                    <div class="testimonial-content">
-                        <p>"As a teacher, I appreciate how Edu-LMS simplifies assignment management and grading. It's saved me hours each week on administrative tasks."</p>
-                    </div>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">SD</div>
-                        <div class="author-info">
-                            <h4>Sarah Davis</h4>
-                            <p>Mathematics Teacher, Mombasa Academy</p>
-                        </div>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section class="section" id="pricing">
-        <div class="container">
-            <div class="section-title">
-                <h2>Affordable Pricing for Kenyan Institutions</h2>
-                <p>Choose the plan that fits your institution's needs. All plans include core features with scalable options.</p>
-            </div>
-            
-            <div class="pricing-grid">
-                <article class="pricing-card fade-in-up">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Starter</h3>
-                        <div class="pricing-price">KSh 2,900<span class="pricing-period">/month</span></div>
-                        <p>Perfect for small schools and individual instructors</p>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Up to 100 students</li>
-                        <li><i class="fas fa-check"></i> 5 teacher accounts</li>
-                        <li><i class="fas fa-check"></i> Basic course management</li>
-                        <li><i class="fas fa-check"></i> Assignment tracking</li>
-                        <li><i class="fas fa-check"></i> Email support</li>
-                        <li><i class="fas fa-check"></i> Basic reports</li>
-                    </ul>
-                    <a href="/auth/register" class="btn btn-secondary">Get Started</a>
-                </article>
-                
-                <article class="pricing-card featured fade-in-up">
-                    <div class="pricing-badge">Most Popular</div>
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Pro</h3>
-                        <div class="pricing-price">KSh 7,900<span class="pricing-period">/month</span></div>
-                        <p>Ideal for growing institutions</p>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Up to 500 students</li>
-                        <li><i class="fas fa-check"></i> 20 teacher accounts</li>
-                        <li><i class="fas fa-check"></i> Advanced analytics</li>
-                        <li><i class="fas fa-check"></i> Attendance tracking</li>
-                        <li><i class="fas fa-check"></i> Priority support</li>
-                        <li><i class="fas fa-check"></i> Custom branding</li>
-                        <li><i class="fas fa-check"></i> M-Pesa integration</li>
-                    </ul>
-                    <a href="/auth/register" class="btn btn-primary">Get Started</a>
-                </article>
-                
-                <article class="pricing-card fade-in-up">
-                    <div class="pricing-header">
-                        <h3 class="pricing-name">Enterprise</h3>
-                        <div class="pricing-price">Custom</div>
-                        <p>For large institutions with specific needs</p>
-                    </div>
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check"></i> Unlimited students</li>
-                        <li><i class="fas fa-check"></i> Unlimited teachers</li>
-                        <li><i class="fas fa-check"></i> Full feature access</li>
-                        <li><i class="fas fa-check"></i> Advanced security</li>
-                        <li><i class="fas fa-check"></i> Dedicated account manager</li>
-                        <li><i class="fas fa-check"></i> Custom integrations</li>
-                        <li><i class="fas fa-check"></i> On-premise deployment</li>
-                    </ul>
-                    <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'm%20interested%20in%20the%20Enterprise%20plan" class="btn btn-secondary" target="_blank">Contact Sales</a>
-                </article>
-            </div>
-            
-            <div style="text-align: center; margin-top: var(--space-xl);">
-                <p>All plans include a 30-day free trial. Annual billing available with 15% discount.</p>
-                <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I%20have%20questions%20about%20your%20pricing%20plans" class="btn btn-whatsapp" target="_blank" style="margin-top: var(--space-md);">
-                    <i class="fab fa-whatsapp"></i> Chat with us on WhatsApp
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="section" id="faq">
-        <div class="container">
-            <div class="section-title">
-                <h2>Frequently Asked Questions</h2>
-                <p>Find answers to common questions about Edu-LMS implementation and features.</p>
-            </div>
-            
-            <div class="faq-container">
-                <article class="faq-item fade-in-up">
-                    <div class="faq-question">How long does it take to implement Edu-LMS?</div>
-                    <div class="faq-answer">
-                        <p>Implementation time varies based on your institution's size and requirements. For most schools, the basic setup takes 2-4 weeks. Our team provides dedicated support throughout the process to ensure a smooth transition.</p>
-                    </div>
-                </article>
-                
-                <article class="faq-item fade-in-up">
-                    <div class="faq-question">Can we integrate Edu-LMS with our existing systems?</div>
-                    <div class="faq-answer">
-                        <p>Yes, Edu-LMS offers API access and pre-built integrations for popular student information systems, payment gateways including M-Pesa, and authentication providers. Our Enterprise plan includes custom integration services.</p>
-                    </div>
-                </article>
-                
-                <article class="faq-item fade-in-up">
-                    <div class="faq-question">Is training provided for our staff?</div>
-                    <div class="faq-answer">
-                        <p>Absolutely. We provide comprehensive training materials, video tutorials, and live training sessions for administrators and teachers. Ongoing support is available through our help center and dedicated support team.</p>
-                    </div>
-                </article>
-                
-                <article class="faq-item fade-in-up">
-                    <div class="faq-question">How secure is our data with Edu-LMS?</div>
-                    <div class="faq-answer">
-                        <p>Security is our top priority. We employ industry-standard encryption, regular security audits, and comply with data protection regulations. Role-based access controls ensure that users only see information relevant to their responsibilities.</p>
-                    </div>
-                </article>
-                
-                <article class="faq-item fade-in-up">
-                    <div class="faq-question">Can we customize the platform to match our branding?</div>
-                    <div class="faq-answer">
-                        <p>Yes, both Pro and Enterprise plans include branding customization options. You can add your logo, colors, and domain to create a seamless experience for your users.</p>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section class="section" id="contact">
-        <div class="container">
-            <div class="section-title">
-                <h2>Get In Touch</h2>
-                <p>Have questions or ready to get started? Contact our team for a personalized demo or consultation.</p>
-            </div>
-            
-            <div class="contact-container">
-                <div class="contact-form fade-in-up">
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <label for="name" class="form-label">Full Name</label>
-                            <input type="text" id="name" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="email" class="form-label">Email Address</label>
-                            <input type="email" id="email" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="phone" class="form-label">Phone Number</label>
-                            <input type="tel" id="phone" class="form-control" placeholder="e.g., 0712 345 678">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="institution" class="form-label">Institution Name</label>
-                            <input type="text" id="institution" class="form-control">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea id="message" class="form-control" required></textarea>
-                        </div>
-                        
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-paper-plane"></i> Send Message
-                        </button>
-                    </form>
-                </div>
-                
-                <div class="contact-info">
-                    <div class="info-item fade-in-up">
-                        <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <div>
-                            <h3>Our Office</h3>
-                            <p>Westlands Business District<br>Nairobi, Kenya</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item fade-in-up">
-                        <div class="info-icon"><i class="fas fa-phone"></i></div>
-                        <div>
-                            <h3>Phone Number</h3>
-                            <p>+254 712 345 678<br>Mon-Fri from 8am to 6pm</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item fade-in-up">
-                        <div class="info-icon"><i class="fas fa-envelope"></i></div>
-                        <div>
-                            <h3>Email Address</h3>
-                            <p>info@edulms.co.ke<br>We reply within 24 hours</p>
-                        </div>
-                    </div>
-                    
-                    <div class="info-item fade-in-up">
-                        <div class="info-icon"><i class="fab fa-whatsapp"></i></div>
-                        <div>
-                            <h3>WhatsApp</h3>
-                            <p>+254 712 345 678<br>Quick responses during business hours</p>
-                            <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'm%20interested%20in%20your%20services" class="btn btn-whatsapp" target="_blank" style="margin-top: var(--space-sm);">
-                                <i class="fab fa-whatsapp"></i> Message us on WhatsApp
+    <main id="main-content">
+        <!-- Hero Section -->
+        <section class="hero" id="home">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text fade-in-up">
+                        <h1>Transform Education with Modern LMS</h1>
+                        <p>Edu-LMS is a comprehensive learning management system designed for Kenyan educational institutions. Streamline courses, assignments, attendance, and more in one unified platform.</p>
+                        <div class="hero-buttons">
+                            <a href="/auth/register" class="btn btn-primary btn-large">
+                                <i class="fas fa-rocket"></i> Get Started
+                            </a>
+                            <a href="#demo" class="btn btn-secondary btn-large">
+                                <i class="fas fa-play-circle"></i> View Demo
+                            </a>
+                            <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'm%20interested%20in%20your%20LMS%20solution" class="btn btn-whatsapp btn-large" target="_blank" rel="noopener">
+                                <i class="fab fa-whatsapp"></i> Chat on WhatsApp
                             </a>
                         </div>
                     </div>
+                    <div class="hero-image fade-in-up">
+                        <img 
+                            src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                            alt="Students collaborating in a modern classroom"
+                            loading="lazy"
+                        >
+                    </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
+
+        <!-- Features Section -->
+        <section class="section" id="features">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Powerful Features</h2>
+                    <p>Discover the comprehensive set of tools designed to enhance the learning experience for everyone involved.</p>
+                </div>
+                
+                <div class="features-grid">
+                    <article class="feature-card fade-in-up">
+                        <div class="feature-icon"><i class="fas fa-book"></i></div>
+                        <h3>Course Management</h3>
+                        <p>Easily create, organize, and manage courses with intuitive tools. Upload materials, set prerequisites, and track progress.</p>
+                    </article>
+                    
+                    <article class="feature-card fade-in-up">
+                        <div class="feature-icon"><i class="fas fa-tasks"></i></div>
+                        <h3>Assignments & Grading</h3>
+                        <p>Create assignments, set due dates, and provide feedback. Automated grading saves time and ensures consistency.</p>
+                    </article>
+                    
+                    <article class="feature-card fade-in-up">
+                        <div class="feature-icon"><i class="fas fa-users"></i></div>
+                        <h3>Attendance Tracking</h3>
+                        <p>Monitor student attendance with QR codes or manual entry. Generate reports for administrators and parents.</p>
+                    </article>
+                    
+                    <article class="feature-card fade-in-up">
+                        <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
+                        <h3>Analytics & Reports</h3>
+                        <p>Gain insights with detailed analytics on student performance, engagement, and course effectiveness.</p>
+                    </article>
+                    
+                    <article class="feature-card fade-in-up">
+                        <div class="feature-icon"><i class="fas fa-credit-card"></i></div>
+                        <h3>Payment Processing</h3>
+                        <p>Handle tuition fees, course payments, and other transactions securely with integrated payment gateways including M-Pesa.</p>
+                    </article>
+                    
+                    <article class="feature-card fade-in-up">
+                        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                        <h3>Audit Logs & Security</h3>
+                        <p>Maintain comprehensive audit trails and ensure data security with role-based access controls.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Roles Section -->
+        <section class="section" id="roles">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Designed for Every Role</h2>
+                    <p>Edu-LMS provides tailored experiences for each user role within your educational institution.</p>
+                </div>
+                
+                <div class="roles-grid">
+                    <article class="role-card fade-in-up">
+                        <div class="role-icon"><i class="fas fa-user-tie"></i></div>
+                        <h3>Administrator</h3>
+                        <p>Full system control with user management, course oversight, and comprehensive reporting capabilities.</p>
+                    </article>
+                    
+                    <article class="role-card fade-in-up">
+                        <div class="role-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <h3>Teacher</h3>
+                        <p>Create courses, manage assignments, track student progress, and communicate with students and parents.</p>
+                    </article>
+                    
+                    <article class="role-card fade-in-up">
+                        <div class="role-icon"><i class="fas fa-user-graduate"></i></div>
+                        <h3>Student</h3>
+                        <p>Access course materials, submit assignments, track progress, and engage with learning content.</p>
+                    </article>
+                    
+                    <article class="role-card fade-in-up">
+                        <div class="role-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                        <h3>Finance</h3>
+                        <p>Manage payments, invoices, and financial reports with integrated accounting tools.</p>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Demo Section -->
+        <section class="section" id="demo">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Platform Preview</h2>
+                    <p>See how Edu-LMS can transform your educational institution with our interactive demo.</p>
+                </div>
+                
+                <div class="demo-container fade-in-up">
+                    <div class="demo-image">
+                        <img 
+                            src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" 
+                            alt="Dashboard preview showing analytics and course management"
+                            loading="lazy"
+                        >
+                    </div>
+                </div>
+                
+                <div class="demo-buttons" style="text-align: center; margin-top: var(--space-lg);">
+                    <a href="#contact" class="btn btn-primary btn-large">
+                        <i class="fas fa-calendar-check"></i> Request Live Demo
+                    </a>
+                    <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'd%20like%20to%20schedule%20a%20demo" class="btn btn-whatsapp btn-large" target="_blank" rel="noopener" style="margin-top: var(--space-sm);">
+                        <i class="fab fa-whatsapp"></i> Schedule Demo via WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="section" id="testimonials">
+            <div class="container">
+                <div class="section-title">
+                    <h2>What Kenyan Institutions Say</h2>
+                    <p>Hear from educational institutions across Kenya that have transformed their operations with Edu-LMS.</p>
+                </div>
+                
+                <div class="testimonials-container">
+                    <article class="testimonial-card fade-in-up">
+                        <div class="testimonial-content">
+                            <p>"Edu-LMS has revolutionized how we manage our courses and track student progress. The intuitive interface reduced our training time by 60%."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar" aria-hidden="true">JK</div>
+                            <div class="author-info">
+                                <h4>Dr. James Kamau</h4>
+                                <p>Principal, Nairobi High School</p>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="testimonial-card fade-in-up">
+                        <div class="testimonial-content">
+                            <p>"The analytics and reporting features have given us insights we never had before. We've improved student retention by 25% since implementation."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar" aria-hidden="true">WN</div>
+                            <div class="author-info">
+                                <h4>Wanjiku Njoroge</h4>
+                                <p>IT Director, Kenya University</p>
+                            </div>
+                        </div>
+                    </article>
+                    
+                    <article class="testimonial-card fade-in-up">
+                        <div class="testimonial-content">
+                            <p>"As a teacher, I appreciate how Edu-LMS simplifies assignment management and grading. It's saved me hours each week on administrative tasks."</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar" aria-hidden="true">AO</div>
+                            <div class="author-info">
+                                <h4>Anne Ochieng</h4>
+                                <p>Mathematics Teacher, Mombasa Academy</p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section class="section" id="pricing">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Affordable Pricing for Kenyan Institutions</h2>
+                    <p>Choose the plan that fits your institution's needs. All plans include core features with scalable options.</p>
+                </div>
+                
+                <div class="pricing-grid">
+                    <article class="pricing-card fade-in-up">
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Starter</h3>
+                            <div class="pricing-price">KSh 2,900<span class="pricing-period">/month</span></div>
+                            <p>Perfect for small schools and individual instructors</p>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Up to 100 students</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 5 teacher accounts</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Basic course management</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Assignment tracking</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Email support</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Basic reports</li>
+                        </ul>
+                        <a href="/auth/register" class="btn btn-secondary">Get Started</a>
+                    </article>
+                    
+                    <article class="pricing-card featured fade-in-up">
+                        <div class="pricing-badge">Most Popular</div>
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Pro</h3>
+                            <div class="pricing-price">KSh 7,900<span class="pricing-period">/month</span></div>
+                            <p>Ideal for growing institutions</p>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Up to 500 students</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> 20 teacher accounts</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Advanced analytics</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Attendance tracking</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Priority support</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Custom branding</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> M-Pesa integration</li>
+                        </ul>
+                        <a href="/auth/register" class="btn btn-primary">Get Started</a>
+                    </article>
+                    
+                    <article class="pricing-card fade-in-up">
+                        <div class="pricing-header">
+                            <h3 class="pricing-name">Enterprise</h3>
+                            <div class="pricing-price">Custom</div>
+                            <p>For large institutions with specific needs</p>
+                        </div>
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Unlimited students</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Unlimited teachers</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Full feature access</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Advanced security</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Dedicated account manager</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> Custom integrations</li>
+                            <li><i class="fas fa-check" aria-hidden="true"></i> On-premise deployment</li>
+                        </ul>
+                        <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'm%20interested%20in%20the%20Enterprise%20plan" class="btn btn-secondary" target="_blank" rel="noopener">Contact Sales</a>
+                    </article>
+                </div>
+                
+                <div style="text-align: center; margin-top: var(--space-xl);">
+                    <p>All plans include a 30-day free trial. Annual billing available with 15% discount.</p>
+                    <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I%20have%20questions%20about%20your%20pricing%20plans" class="btn btn-whatsapp" target="_blank" rel="noopener" style="margin-top: var(--space-md);">
+                        <i class="fab fa-whatsapp"></i> Chat with us on WhatsApp
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="section" id="faq">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Frequently Asked Questions</h2>
+                    <p>Find answers to common questions about Edu-LMS implementation and features.</p>
+                </div>
+                
+                <div class="faq-container">
+                    <article class="faq-item fade-in-up">
+                        <div class="faq-question" role="button" tabindex="0" aria-expanded="false">How long does it take to implement Edu-LMS?</div>
+                        <div class="faq-answer">
+                            <p>Implementation time varies based on your institution's size and requirements. For most schools, the basic setup takes 2-4 weeks. Our team provides dedicated support throughout the process to ensure a smooth transition.</p>
+                        </div>
+                    </article>
+                    
+                    <article class="faq-item fade-in-up">
+                        <div class="faq-question" role="button" tabindex="0" aria-expanded="false">Can we integrate Edu-LMS with our existing systems?</div>
+                        <div class="faq-answer">
+                            <p>Yes, Edu-LMS offers API access and pre-built integrations for popular student information systems, payment gateways including M-Pesa, and authentication providers. Our Enterprise plan includes custom integration services.</p>
+                        </div>
+                    </article>
+                    
+                    <article class="faq-item fade-in-up">
+                        <div class="faq-question" role="button" tabindex="0" aria-expanded="false">Is training provided for our staff?</div>
+                        <div class="faq-answer">
+                            <p>Absolutely. We provide comprehensive training materials, video tutorials, and live training sessions for administrators and teachers. Ongoing support is available through our help center and dedicated support team.</p>
+                        </div>
+                    </article>
+                    
+                    <article class="faq-item fade-in-up">
+                        <div class="faq-question" role="button" tabindex="0" aria-expanded="false">How secure is our data with Edu-LMS?</div>
+                        <div class="faq-answer">
+                            <p>Security is our top priority. We employ industry-standard encryption, regular security audits, and comply with data protection regulations. Role-based access controls ensure that users only see information relevant to their responsibilities.</p>
+                        </div>
+                    </article>
+                    
+                    <article class="faq-item fade-in-up">
+                        <div class="faq-question" role="button" tabindex="0" aria-expanded="false">Can we customize the platform to match our branding?</div>
+                        <div class="faq-answer">
+                            <p>Yes, both Pro and Enterprise plans include branding customization options. You can add your logo, colors, and domain to create a seamless experience for your users.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="section" id="contact">
+            <div class="container">
+                <div class="section-title">
+                    <h2>Get In Touch</h2>
+                    <p>Have questions or ready to get started? Contact our team for a personalized demo or consultation.</p>
+                </div>
+                
+                <div class="contact-container">
+                    <div class="contact-form fade-in-up">
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <label for="name" class="form-label">Full Name <span class="required">*</span></label>
+                                <input type="text" id="name" name="name" class="form-control" autocomplete="name" aria-required="true" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                                <input type="email" id="email" name="email" class="form-control" autocomplete="email" aria-required="true" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" id="phone" name="phone" class="form-control" autocomplete="tel" placeholder="e.g., 0712 345 678">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="institution" class="form-label">Institution Name</label>
+                                <input type="text" id="institution" name="institution" class="form-control" autocomplete="organization">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="message" class="form-label">Message <span class="required">*</span></label>
+                                <textarea id="message" name="message" class="form-control" aria-required="true" required></textarea>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i> Send Message
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div class="contact-info">
+                        <div class="info-item fade-in-up">
+                            <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <h3>Our Office</h3>
+                                <p>Westlands Business District<br>Nairobi, Kenya</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item fade-in-up">
+                            <div class="info-icon"><i class="fas fa-phone"></i></div>
+                            <div>
+                                <h3>Phone Number</h3>
+                                <p>+254 712 345 678<br>Mon-Fri from 8am to 6pm</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item fade-in-up">
+                            <div class="info-icon"><i class="fas fa-envelope"></i></div>
+                            <div>
+                                <h3>Email Address</h3>
+                                <p>info@edulms.co.ke<br>We reply within 24 hours</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item fade-in-up">
+                            <div class="info-icon"><i class="fab fa-whatsapp"></i></div>
+                            <div>
+                                <h3>WhatsApp</h3>
+                                <p>+254 712 345 678<br>Quick responses during business hours</p>
+                                <a href="https://wa.me/254712345678?text=Hello%20Edu-LMS%20team,%20I'm%20interested%20in%20your%20services" class="btn btn-whatsapp" target="_blank" rel="noopener" style="margin-top: var(--space-sm);">
+                                    <i class="fab fa-whatsapp"></i> Message us on WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <!-- Footer -->
     <footer>
@@ -1505,14 +1649,37 @@
     </footer>
 
     <script>
+        // Throttle function for performance
+        function throttle(func, limit) {
+            let inThrottle;
+            return function() {
+                const args = arguments;
+                const context = this;
+                if (!inThrottle) {
+                    func.apply(context, args);
+                    inThrottle = true;
+                    setTimeout(() => inThrottle = false, limit);
+                }
+            }
+        }
+
         // Mobile Menu Toggle
         const hamburger = document.querySelector('.hamburger');
         const navMenu = document.querySelector('.nav-menu');
         
-        hamburger.addEventListener('click', () => {
+        function toggleMobileMenu() {
             const isExpanded = hamburger.getAttribute('aria-expanded') === 'true';
             hamburger.setAttribute('aria-expanded', !isExpanded);
             navMenu.classList.toggle('active');
+            
+            // Prevent body scroll when menu is open
+            document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+        }
+        
+        hamburger.addEventListener('click', toggleMobileMenu);
+        hamburger.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            toggleMobileMenu();
         });
         
         // Close mobile menu when clicking on a link
@@ -1520,6 +1687,7 @@
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
                 hamburger.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
                 
                 // Update active nav link
                 document.querySelectorAll('.nav-link').forEach(navLink => {
@@ -1529,20 +1697,42 @@
             });
         });
         
+        // Close menu when tapping outside on mobile
+        document.addEventListener('touchstart', (e) => {
+            if (navMenu.classList.contains('active') && 
+                !e.target.closest('.nav-menu') && 
+                !e.target.closest('.hamburger')) {
+                navMenu.classList.remove('active');
+                hamburger.setAttribute('aria-expanded', 'false');
+                document.body.style.overflow = '';
+            }
+        });
+        
         // FAQ Accordion
         document.querySelectorAll('.faq-question').forEach(question => {
             question.addEventListener('click', () => {
                 const item = question.parentNode;
                 const isActive = item.classList.contains('active');
+                const isExpanded = question.getAttribute('aria-expanded') === 'true';
                 
                 // Close all FAQ items
                 document.querySelectorAll('.faq-item').forEach(faqItem => {
                     faqItem.classList.remove('active');
+                    faqItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
                 });
                 
                 // Open clicked item if it wasn't active
                 if (!isActive) {
                     item.classList.add('active');
+                    question.setAttribute('aria-expanded', 'true');
+                }
+            });
+            
+            // Add keyboard support
+            question.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    question.click();
                 }
             });
         });
@@ -1594,8 +1784,8 @@
             });
         });
         
-        // Update active nav link on scroll
-        window.addEventListener('scroll', () => {
+        // Update active nav link on scroll with throttling
+        const updateActiveNavLink = throttle(() => {
             const header = document.getElementById('header');
             const sections = document.querySelectorAll('section');
             const navLinks = document.querySelectorAll('.nav-link');
@@ -1623,7 +1813,9 @@
                     link.classList.add('active');
                 }
             });
-        });
+        }, 100);
+        
+        window.addEventListener('scroll', updateActiveNavLink);
         
         // Intersection Observer for fade-in animations
         const observerOptions = {
@@ -1651,6 +1843,17 @@
             elementsToAnimate.forEach(el => {
                 el.classList.add('fade-in-up');
             });
+        });
+        
+        // Prevent zoom on iOS for form inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            if (/iPhone|iPad|iPod/.test(navigator.userAgent)) {
+                document.querySelectorAll('input, select, textarea').forEach(el => {
+                    el.addEventListener('focus', function() {
+                        this.style.fontSize = '16px';
+                    });
+                });
+            }
         });
     </script>
 </body>
