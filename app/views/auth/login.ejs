@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Secure Login - EduLMS</title>
+    <link rel="stylesheet" href="/css/responsive.css">
     <style>
         :root {
             --primary-blue: #2563eb;
@@ -531,28 +532,12 @@
         </div>
     </div>
 
+    <script src="/js/responsive.js" defer></script>
     <script>
-        // Password visibility toggle
         document.addEventListener('DOMContentLoaded', function() {
-            const togglePassword = document.getElementById('togglePassword');
-            const passwordInput = document.getElementById('password');
-            const eyeOpen = togglePassword.querySelector('.eye-open');
-            const eyeClosed = togglePassword.querySelector('.eye-closed');
             const loginForm = document.getElementById('loginForm');
             const loginButton = document.getElementById('loginButton');
             const loginSpinner = document.getElementById('loginSpinner');
-
-            // Toggle password visibility
-            togglePassword.addEventListener('click', function() {
-                const isPassword = passwordInput.type === 'password';
-                passwordInput.type = isPassword ? 'text' : 'password';
-                
-                eyeOpen.style.display = isPassword ? 'none' : 'block';
-                eyeClosed.style.display = isPassword ? 'block' : 'none';
-                
-                this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-            });
-
             // Form submission handling for traditional form
             loginForm.addEventListener('submit', function(e) {
                 // Show loading state
@@ -563,18 +548,17 @@
                 // Form will submit normally after this
             });
 
-            // Auto-fill test credentials for easier testing
             function autoFillTestCredentials() {
                 const urlParams = new URLSearchParams(window.location.search);
                 const testUser = urlParams.get('test');
-                
+
                 if (testUser) {
                     const credentials = {
                         admin: { email: 'admin@example.com', password: 'password123' },
                         teacher: { email: 'teacher1@example.com', password: 'password123' },
                         student: { email: 'student1@example.com', password: 'password123' }
                     };
-                    
+
                     const creds = credentials[testUser];
                     if (creds) {
                         document.getElementById('email').value = creds.email;
@@ -583,13 +567,11 @@
                 }
             }
 
-            // Auto-focus on email field
             const emailInput = document.getElementById('email');
             if (!emailInput.value) {
                 emailInput.focus();
             }
 
-            // Initialize auto-fill
             autoFillTestCredentials();
         });
     </script>

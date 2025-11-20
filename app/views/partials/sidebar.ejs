@@ -1,285 +1,71 @@
 <!-- Font Awesome -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link rel="stylesheet" href="/css/responsive.css">
 
-<style>
-body {
-  margin: 0;
-  font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f4f6f9;
-}
-
-.layout {
-  display: flex;
-}
-
-/* Sidebar */
-.sidebar {
-  display: flex;
-  flex-direction: column;
-  width: 240px;
-  background: #0d1117;
-  color: #fff;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  overflow-y: auto;
-  transition: transform 0.3s ease-in-out, background 0.3s ease;
-  z-index: 1000;
-}
-
-/* Hamburger */
-.hamburger {
-  display: none;
-  font-size: 1.5rem;
-  color: white;
-  cursor: pointer;
-  padding: 12px;
-  background: linear-gradient(45deg, #1f6feb, #10b981);
-  border-radius: 8px;
-  margin: 10px;
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  z-index: 1100;
-  transition: transform 0.2s ease;
-}
-.hamburger:hover {
-  transform: scale(1.1);
-}
-
-/* Main content */
-.main-content {
-  margin-left: 250px;
-  padding: 20px;
-  flex-grow: 1;
-}
-
-/* Brand */
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-  font-size: 1.3rem;
-  color: white;
-  text-decoration: none;
-  margin-bottom: 18px;
-  background: linear-gradient(45deg, #1f6feb, #10b981);
-  padding: 10px 14px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-.brand:hover {
-  background: linear-gradient(45deg, #10b981, #1f6feb);
-  transform: translateY(-2px);
-}
-
-/* Navigation */
-.nav {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  flex-grow: 1;
-}
-
-.nav-link {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: rgba(255, 255, 255, 0.85);
-  padding: 12px 16px;
-  border-radius: 6px;
-  margin-bottom: 8px;
-  text-decoration: none;
-  font-size: 0.95rem;
-  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-  position: relative;
-}
-.nav-link:hover {
-  background: rgba(31, 111, 235, 0.2);
-  color: #fff;
-  transform: translateX(4px);
-}
-.nav-link.active {
-  background: linear-gradient(90deg, #1f6feb, #10b981);
-  color: #fff;
-  font-weight: 500;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-/* Hover Glow Effect */
-.nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 0;
-  background: rgba(31, 111, 235, 0.3);
-  border-radius: 6px;
-  transition: width 0.3s ease;
-}
-.nav-link:hover::after {
-  width: 100%;
-}
-
-/* User Info */
-.user-wrap {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  transition: background 0.3s ease;
-}
-.user-wrap:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
-}
-
-
-.nav-link.active {
-  background: linear-gradient(90deg, #1f6feb, #10b981);
-  color: #fff;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(31, 111, 235, 0.4);
-  border-left: 4px solid #10b981;
-  transition: background 0.3s ease, color 0.3s ease, transform 0.2s ease;
-}
-
-.nav-link.active i {
-  color: #fff;
-}
-
-.nav-link.active span {
-  font-weight: bold;
-}
-
-.avatar {
-  position: relative;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: #1f6feb;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  flex-shrink: 0;
-  text-decoration: none;
-  transition: transform 0.2s ease;
-  /* border-radius: 50%; */
-}
-.avatar:hover {
-  transform: scale(1.1);
-}
-
-.online-dot {
-  position: absolute;
-  right: 2px;
-  bottom: 2px;
-  width: 10px;
-  height: 10px;
-  background: #28a745;
-  border: 2px solid #0d1117;
-  border-radius: 50%;
-}
-
-.user-name {
-  font-weight: 600;
-  font-size: 0.95rem;
-  color: #fff;
-  text-decoration: none;
-  padding-bottom: 2px;
-  transition: color 0.2s ease;
-}
-.user-name:hover {
-  color: #1f6feb;
-  text-decoration: underline;
-}
-
-.user-role {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.65);
-  margin-top: -2px;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .hamburger {
-    display: block;
-  }
-  .sidebar {
-    transform: translateX(-100%);
-  }
-  .sidebar.open {
-    transform: translateX(0);
-  }
-  .main-content {
-    margin-left: 0;
-    width: 100%;
-  }
-}
-</style>
+<!-- Overlay for mobile (click outside to close) -->
+<div class="sidebar-overlay" data-sidebar-overlay></div>
 
 <!-- Hamburger -->
-<div class="hamburger" onclick="toggleSidebar()">
+<div class="hamburger" data-sidebar-toggle aria-label="Toggle navigation menu">
   <i class="fas fa-bars"></i>
 </div>
 
+<script src="/js/responsive.js" defer></script>
+
 <div class="layout">
-  <div class="sidebar" id="sidebar">
+  <nav class="sidebar" data-sidebar data-sidebar-state="visible" aria-label="Main navigation">
     <a href="/" class="brand">
-      <i class="fas fa-graduation-cap"></i> EDU LMS
+      <i class="fas fa-graduation-cap" aria-hidden="true"></i> 
+      <span>EDU LMS</span>
     </a>
-    <hr>
+    
+    <hr aria-hidden="true">
+    
     <ul class="nav">
       <% if (menuItems && menuItems.length) { %>
         <% menuItems.forEach(item => { %>
           <li>
-            <a href="<%= item.url %>" class="nav-link <%= activePage === item.page ? 'active' : '' %>">
-              <i class="fas fa-<%= item.icon %>"></i> <span><%= item.label %></span>
+            <a href="<%= item.url %>" 
+               class="nav-link <%= activePage === item.page ? 'active' : '' %>"
+               aria-current="<%= activePage === item.page ? 'page' : 'false' %>">
+              <i class="fas fa-<%= item.icon %>" aria-hidden="true"></i> 
+              <span><%= item.label %></span>
             </a>
           </li>
         <% }) %>
       <% } %>
     </ul>
 
-      <div class="sidebar-footer">
-    <a href="/auth/logout"><i class="fas fa-sign-out-alt"></i> Log Out</a>
-    <p class="logout-text">Secure your leadership</p>
-  </div>
-    <hr>
+    <div class="sidebar-footer">
+      <a href="/auth/logout">
+        <i class="fas fa-sign-out-alt" aria-hidden="true"></i> 
+        <span>Log Out</span>
+      </a>
+      <p class="logout-text">Secure your leadership</p>
+    </div>
+    
+    <hr aria-hidden="true">
+    
     <div class="user-wrap">
-      <a href="/settings/profile" class="avatar" style=" border-radius: 50%;">
+      <a href="/settings/profile" class="avatar">
         <% if (user && user.name) {
             let parts = user.name.split(' ');
             let initials = parts.map(p => p[0]).join('').toUpperCase();
         %>
-          <div class="avatar-initials"><%= initials %></div>
+          <div class="avatar-initials" aria-hidden="true"><%= initials %></div>
         <% } else { %>
-          <div class="avatar-initials">U</div>
+          <div class="avatar-initials" aria-hidden="true">U</div>
         <% } %>
-        <span class="online-dot"></span>
+        <span class="online-dot" aria-label="Online status"></span>
       </a>
       <div style="display:flex;flex-direction:column; padding-left: 8px;">
-        <a href="/settings/profile" class="user-name"><%= user?.name || 'User' %></a>
-        <span class="user-role"><%= user?.roleName || user?.role || 'Member' %></span>
+        <a href="/settings/profile" class="user-name">
+          <%= user?.name || 'User' %>
+        </a>
+        <span class="user-role">
+          <%= user?.roleName || user?.role || 'Member' %>
+        </span>
       </div>
     </div>
-  </div>
+  </nav>
 </div>
-
-<script>
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-}
-</script>

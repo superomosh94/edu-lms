@@ -544,42 +544,9 @@
         </div>
     </div>
 
+    <script src="/js/responsive.js" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Password visibility toggles
-            const togglePassword = document.getElementById('togglePassword');
-            const passwordInput = document.getElementById('password');
-            const eyeOpen = togglePassword.querySelector('.eye-open');
-            const eyeClosed = togglePassword.querySelector('.eye-closed');
-            
-            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-            const confirmPasswordInput = document.getElementById('confirmPassword');
-            const eyeOpenConfirm = toggleConfirmPassword.querySelector('.eye-open');
-            const eyeClosedConfirm = toggleConfirmPassword.querySelector('.eye-closed');
-            
-            // Toggle main password visibility
-            togglePassword.addEventListener('click', function() {
-                const isPassword = passwordInput.type === 'password';
-                passwordInput.type = isPassword ? 'text' : 'password';
-                
-                eyeOpen.style.display = isPassword ? 'none' : 'block';
-                eyeClosed.style.display = isPassword ? 'block' : 'none';
-                
-                this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-            });
-            
-            // Toggle confirm password visibility
-            toggleConfirmPassword.addEventListener('click', function() {
-                const isPassword = confirmPasswordInput.type === 'password';
-                confirmPasswordInput.type = isPassword ? 'text' : 'password';
-                
-                eyeOpenConfirm.style.display = isPassword ? 'none' : 'block';
-                eyeClosedConfirm.style.display = isPassword ? 'block' : 'none';
-                
-                this.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
-            });
-            
-            // Form submission handling
             const registerForm = document.getElementById('registerForm');
             const registerButton = document.getElementById('registerButton');
             const registerSpinner = document.getElementById('registerSpinner');
@@ -618,7 +585,6 @@
                 // Form will submit normally after this
             });
             
-            // Auto-focus on name field
             const nameInput = document.getElementById('name');
             if (!nameInput.value) {
                 nameInput.focus();
